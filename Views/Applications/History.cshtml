@@ -1,0 +1,72 @@
+﻿@model IEnumerable<PROJEKT_PZ_NK_v3.Models.Applications>
+
+@{
+    ViewBag.Title = "History";
+}
+
+<h2>Historia</h2>
+<br />
+<table class="table">
+    <tr>
+        <th>
+            Opiekun
+        </th>
+        <th>
+            Oferta
+        </th>
+        <th>
+            Właściciel
+        </th>
+        <th>
+            Zwierze
+        </th>
+        <th></th>
+    </tr>
+
+@foreach (var item in Model) {
+<tr>
+    <td>
+        @if (item.Guardian.Email == User.Identity.Name)
+        {
+            <p>JA</p>
+        }
+        else
+        {
+            @Html.ActionLink(item.Guardian.Login, "Profiles", "Details")<br />
+            <p style="word-spacing: 0.1cm; ">
+                @Html.DisplayFor(modelItem => item.Guardian.FirstName)
+                @Html.DisplayFor(modelItem => item.Guardian.LastName)
+            </p>
+        }
+    </td>
+    <td>
+        @Html.ActionLink(item.Offer.Title, "Details")<br />
+        @Html.DisplayFor(modelItem => item.Offer.StartingDate) - @Html.DisplayFor(modelItem => item.Offer.EndDate)
+    </td>
+    <td>
+        @if (item.Owner.Email == User.Identity.Name)
+        {
+            <p>JA</p>
+        }
+        else
+        {
+            @Html.ActionLink(item.Owner.Login, "Profiles", "Details")<br />
+            <p style="word-spacing: 0.1cm; ">
+                @Html.DisplayFor(modelItem => item.Owner.FirstName)
+                @Html.DisplayFor(modelItem => item.Owner.LastName)
+            </p>
+        }
+    </td>
+    <td>
+        @Html.ActionLink(item.Offer.Animal.Name, "Animals", "Details")<br />
+        @Html.DisplayFor(modelItem => item.Offer.Animal.Species) - @Html.DisplayFor(modelItem => item.Offer.Animal.Race)
+    </td>
+    <td>
+        <a href='@Url.Action("Delete", new { id = item.ID })'>
+            <img src="~/Images/discard.jpg" width="45px" alt="Usuń">
+        </a>
+    </td>
+</tr>
+}
+
+</table>

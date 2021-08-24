@@ -1,0 +1,36 @@
+﻿@model IEnumerable<PROJEKT_PZ_NK_v3.ViewModels.EnrollmentDateGroup>
+
+@{
+    ViewBag.Title = "About";
+}
+<h2>@ViewBag.Title.</h2>
+<h3>@ViewBag.Message</h3>
+
+@{
+    ViewBag.Title = "Animals Statistics";
+}
+
+<h2>Animals Statistics</h2>
+
+<table>
+    <tr>
+        <th>
+            Species
+        </th>
+        <th>
+            SpeciesCount
+        </th>
+    </tr>
+
+    @foreach (var item in Model)
+    {
+        <tr>
+            <td>
+                @Html.DisplayFor(modelItem => item.Species)
+            </td>
+            <td>
+                @item.SpeciesCount
+            </td>
+        </tr>
+    }
+</table>

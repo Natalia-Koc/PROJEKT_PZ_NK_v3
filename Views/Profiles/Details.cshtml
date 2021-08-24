@@ -1,0 +1,227 @@
+﻿@model PROJEKT_PZ_NK_v3.Models.Profile
+
+@{
+    ViewBag.Title = "Details";
+}
+@Styles.Render("~/Content/Site.css")
+
+<h2>Szczegóły</h2>
+
+<p class="text-success">@ViewBag.StatusMessage</p>
+<div class="container-fluid">
+    <h4>Profilu</h4>
+    <hr />
+    <div class="row">
+        <div class="col-8 breadcrumb">
+            <dl class="dl-horizontal">
+                <dt>
+                    @Html.DisplayNameFor(model => model.Login)
+                </dt>
+
+                <dd>
+                    @Html.DisplayFor(model => model.Login)
+                </dd>
+
+                <dt>
+                    @Html.DisplayNameFor(model => model.Email)
+                </dt>
+
+                <dd>
+                    @Html.DisplayFor(model => model.Email)
+                </dd>
+
+                <dt>
+                    Imię
+                </dt>
+
+                <dd>
+                    @Html.DisplayFor(model => model.FirstName)
+                </dd>
+
+                <dt>
+                    Nazwisko
+                </dt>
+
+                <dd>
+                    @Html.DisplayFor(model => model.LastName)
+                </dd>
+
+                <dt>
+                    Numer telefonu
+                </dt>
+
+                <dd>
+                    @Html.DisplayFor(model => model.PhoneNumber)
+                </dd>
+
+                <dt>
+                    Adres zamieszkania
+                </dt>
+
+                <dd>
+                    @Html.DisplayFor(model => model.Address)
+                </dd>
+            </dl>
+        </div>
+        @if (Model.Email == User.Identity.Name)
+        {
+            <div class="col-4 list-group-item-heading" style="margin-top: 0.7%">
+                <p style="width: 100%">@Html.ActionLink("Dodaj nowego zwierzaka", "Create", "Animals", null, new { @class = "btn btn-success btn-block" }) </p>
+                <p style="width: 100%">@Html.ActionLink("Dodaj nową ofertę", "Create", "Offers", null, new { @class = "btn btn-success btn-block" }) </p>
+                <p style="width: 100%">@Html.ActionLink("Edytuj profil", "Edit", new { id = Model.ID }, new { @class = "btn btn-info btn-block" })</p>
+                <p style="width: 100%">@Html.ActionLink("Zmień hasło", "ChangePassword", "Manage", null, new { @class = "btn btn-info btn-block" }) </p>
+            </div>
+        }
+        else
+        {
+    <div class="col-4 list-group-item-heading" style="margin-top: 0.7%">
+        <b>Średnia ocen innych użytkowników: </b>
+
+
+        <div class="rating2">
+            @switch (((int)@Model.Comments.Where(m => m.ProfileID == Model.ID && m.Grade != 0).Select(m => m.Grade).Average()))
+            {
+                case 1:
+                    <input type="radio" disabled>
+                    <label for="5">☆</label>
+                    <input type="radio" disabled>
+                    <label for="4">☆</label>
+                    <input type="radio" disabled>
+                    <label for="3">☆</label>
+                    <input type="radio" disabled>
+                    <label for="2">☆</label>
+                    <input type="radio" checked disabled>
+                    <label for="1">☆</label>
+                    break;
+                case 2:
+                    <input type="radio" disabled>
+                    <label for="5">☆</label>
+                    <input type="radio" disabled>
+                    <label for="4">☆</label>
+                    <input type="radio" disabled>
+                    <label for="3">☆</label>
+                    <input type="radio" checked disabled>
+                    <label for="2">☆</label>
+                    <input type="radio" disabled>
+                    <label for="1">☆</label>
+                    break;
+                case 3:
+                    <input type="radio" disabled>
+                    <label for="5">☆</label>
+                    <input type="radio" disabled>
+                    <label for="4">☆</label>
+                    <input type="radio" checked disabled>
+                    <label for="3">☆</label>
+                    <input type="radio" disabled>
+                    <label for="2">☆</label>
+                    <input type="radio" disabled>
+                    <label for="1">☆</label>
+                    break;
+                case 4:
+                    <input type="radio" disabled>
+                    <label for="5">☆</label>
+                    <input type="radio" checked disabled>
+                    <label for="4">☆</label>
+                    <input type="radio" disabled>
+                    <label for="3">☆</label>
+                    <input type="radio" disabled>
+                    <label for="2">☆</label>
+                    <input type="radio" disabled>
+                    <label for="1">☆</label>
+                    break;
+                case 5:
+                    <input type="radio" checked disabled>
+                    <label for="5">☆</label>
+                    <input type="radio" disabled>
+                    <label for="4">☆</label>
+                    <input type="radio" disabled>
+                    <label for="3">☆</label>
+                    <input type="radio" disabled>
+                    <label for="2">☆</label>
+                    <input type="radio" disabled>
+                    <label for="1">☆</label>
+                    break;
+
+            }
+        </div>
+    </div>
+        }
+    </div>
+
+    <div class="container row">
+        @foreach (var item in Model.Animals)
+                {
+            <div class="card col-3 list-group-item-heading">
+                <a href="@Url.Action("Details", "Animals", new { id = item.ID })"><img class="card-img-top" src="~/ImagesAnimals/@item.Image" alt="Card image"></a>
+                <div class="card-body">
+                    <h4 class="card-title">@item.Name</h4>
+                </div>
+            </div>
+        }
+    </div>
+
+    <div>
+        <h2>Komentarze</h2>
+
+        @using (Html.BeginForm("Create", "Comments"))
+        {
+            if (Model.Email != User.Identity.Name)
+            {
+                <div class="rating">
+                    <input type="radio" name="Grade" value="5" id="5">
+                    <label for="5">☆</label>
+                    <input type="radio" name="Grade" value="4" id="4">
+                    <label for="4">☆</label>
+                    <input type="radio" name="Grade" value="3" id="3">
+                    <label for="3">☆</label>
+                    <input type="radio" name="Grade" value="2" id="2">
+                    <label for="2">☆</label>
+                    <input type="radio" name="Grade" value="1" id="1">
+                    <label for="1">☆</label>
+                </div>
+                <div class="form-horizontal">
+                    <hr />
+                    <div class="form-group">
+                        @Html.Label("Contents", htmlAttributes: new { @class = "control-label col-md-1" })
+                        <div class="form-group">
+                            @*<input type="text" name="Contents" class="form-control"/>*@
+                            @Html.Editor("Contents", new { htmlAttributes = new { @class = "form-control col-md-9", style = "margin-right:15px" } })
+                            @Html.ValidationMessage("Contents", "", new { @class = "text-danger" })
+
+                            <input type="submit" value="Zapisz" class="btn btn-success  col-md-1" />
+                        </div>
+                        <div class="col-md-10">
+                            @Html.Hidden("ProfileID", Model.ID, new { htmlAttributes = new { @class = "form-control" } })
+                        </div>
+                    </div>
+                </div>
+            }
+        }
+    <table class="table table-striped">
+        <tr>
+            <th>Autor</th>
+            <th>Komentarz</th>
+            <th>Ocena</th>
+        </tr>
+        @foreach (var item in Model.Comments)
+        {
+            <tr>
+                <td>@item.Author.FirstName</td>
+                <td>@item.Contents</td>
+                <td>
+                    @if (item.Grade == 0)
+                    {
+                        <p>brak</p>
+                    }
+                    else
+                    {
+                        @item.Grade
+                    }
+                </td>
+            </tr>
+        }
+    </table>
+    </div>
+
+
+</div>

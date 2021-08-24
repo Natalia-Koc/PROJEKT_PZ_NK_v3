@@ -1,0 +1,43 @@
+﻿@model PROJEKT_PZ_NK_v3.Models.Applications
+
+@{
+    ViewBag.Title = "Delete";
+}
+
+<h2>Usuwanie</h2>
+
+<h3>Na pewno chcesz usunąć wpis z historii?</h3>
+<div>
+    <hr />
+    <dl class="dl-horizontal">
+        <dt>
+            Oferta
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.Offer.Title)<br />
+            @Html.DisplayFor(model => model.Offer.Description) <br />
+            @Html.DisplayFor(model => model.Offer.StartingDate) - @Html.DisplayFor(model => model.Offer.EndDate)
+        </dd>
+         
+        @if (Html.DisplayFor(model => model.Owner.Email).Equals(User.Identity.Name))
+        {
+            <dt>
+                Opiekun
+            </dt>
+
+            <dd>
+                @Html.DisplayFor(model => model.Owner.Login)
+            </dd>
+        }
+
+    </dl>
+
+    @using (Html.BeginForm()) {
+        @Html.AntiForgeryToken()
+        <div class="form-actions no-color">
+            @Html.ActionLink("Powrót", "History", null, new { @class = "btn btn-default" })
+            <input type="submit" value="Usuń" class="btn btn-danger" />
+        </div>
+    }
+</div>

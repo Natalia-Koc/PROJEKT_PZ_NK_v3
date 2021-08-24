@@ -1,0 +1,69 @@
+﻿@model IEnumerable<PROJEKT_PZ_NK_v3.Models.Applications>
+
+@{
+    ViewBag.Title = "ApplicationsToMyOffers";
+}
+
+<div class="container">
+    <h2 style="margin:4%">Zgłoszenia do moich ofert</h2>
+
+    <table class="table table-striped">
+        <tr>
+            <th>
+                Oferta
+            </th>
+            <th>
+                Zwierzak
+            </th>
+            <th>
+                Opiekun
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Status)
+            </th>
+            <th></th>
+        </tr>
+
+        @foreach (var item in Model)
+        {
+            <tr>
+                <td>
+                    <b>@Html.ActionLink(item.Offer.Title, "Details", "Offers", new { id = item.Offer.ID }, null)</b><br />
+                    <b>@Html.DisplayFor(modelItem => item.Offer.StartingDate) - @Html.DisplayFor(modelItem => item.Offer.EndDate)</b>
+                </td>
+                <td>
+                    @Html.ActionLink(item.Offer.Animal.Name, "Details", "Animals", new { id = item.Offer.AnimalID }, null)<br />
+                    @Html.DisplayFor(modelItem => item.Offer.Animal.Species) - @Html.DisplayFor(modelItem => item.Offer.Animal.Race)
+                </td>
+                <td>
+                    @Html.ActionLink(item.Guardian.Login, "DetailsAnotherProfile", "Profiles", new { id = item.Guardian }, null)<br />
+                    @Html.DisplayFor(modelItem => item.Guardian.FirstName) @Html.DisplayFor(modelItem => item.Guardian.LastName)<br />
+                    @Html.DisplayFor(modelItem => item.Guardian.Address)<br />
+                    @Html.DisplayFor(modelItem => item.Guardian.PhoneNumber)
+                </td>
+                <td>
+                    @if (item.Status == "Zaakceptowane!")
+                    {
+                        <b style="color: limegreen">@Html.DisplayFor(modelItem => item.Status)</b>
+                    }
+                    else
+                    {
+                        <p>@Html.DisplayFor(modelItem => item.Status)</p>
+                    }
+                </td>
+                <td>
+                    @if (item.Status != "Zaakceptowane!" && item.Status != "Opiekun zrezygnował z oferty")
+                    {
+                        <a href='@Url.Action("EditAccept", new { id = item.ID })'>
+                            <img src="~/Images/accept.jpg" width="45px" alt="Akceptuj">
+                        </a>
+                    }
+                    <a href='@Url.Action("EditDiscard", new { id = item.ID })'>
+                        <img src="~/Images/discard.jpg" width="45px" alt="Odrzuć">
+                    </a>
+                </td>
+            </tr>
+        }
+
+    </table>
+</div>

@@ -1,0 +1,93 @@
+﻿@model PROJEKT_PZ_NK_v3.Models.Offer
+@using System.ComponentModel.DataAnnotations;
+@using System.Data;
+@{
+    ViewBag.Title = "Create";
+}
+
+<h2>Tworzenie nowej oferty</h2>
+
+@using (Html.BeginForm())
+{
+    @Html.AntiForgeryToken()
+
+<div class="form-horizontal">
+    <h4>Oferta</h4>
+    <hr />
+    @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+    <div class="form-group">
+        <b class="control-label col-md-2"> Tytuł </b>
+        <div class="col-md-10">
+            @Html.EditorFor(model => model.Title, new { htmlAttributes = new { @class = "form-control" } })
+            @Html.ValidationMessageFor(model => model.Title, "", new { @class = "text-danger" })
+        </div>
+    </div>
+
+    <div class="form-group">
+        <b class="control-label col-md-2"> Opis </b>
+        <div class="col-md-10">
+            @Html.EditorFor(model => model.Description, new { htmlAttributes = new { @class = "form-control" } })
+            @Html.ValidationMessageFor(model => model.Description, "", new { @class = "text-danger" })
+        </div>
+    </div>
+
+    <div class="form-group">
+        <b class="control-label col-md-2"> Cena </b>
+        <div class="col-md-10">
+            @Html.EditorFor(model => model.Price, new { htmlAttributes = new { @class = "form-control" } })
+            @Html.ValidationMessageFor(model => model.Price, "", new { @class = "text-danger" })
+        </div>
+    </div>
+
+    <div class="form-group">
+        <b class="control-label col-md-2"> Data początkowa </b>
+        <div class="col-md-10">
+            @Html.TextBoxFor(model => model.StartingDate, new { @class = "form-control", type = "datetime-local" })
+            @Html.ValidationMessageFor(model => model.StartingDate, "", new { @class = "text-danger" })
+        </div>
+    </div>
+
+    <div class="form-group">
+        <b class="control-label col-md-2"> Data końcowa </b>
+        <div class="col-md-10">
+            @Html.EditorFor(model => model.EndDate, new { htmlAttributes = new { @class = "form-control", type = "datetime-local" } })
+            @Html.ValidationMessageFor(model => model.EndDate, "", new { @class = "text-danger" })
+        </div>
+    </div>
+    <div class="form-group">
+        <b class="control-label col-md-2">Zwierze</b>
+        @{bool isFirstAnimal = true; }
+        @foreach (PROJEKT_PZ_NK_v3.Models.Animal item in ViewBag.Animals)
+        {
+            <div class="form-check">
+                <input type="radio" name="AnimalID" value="@item.ID" @((isFirstAnimal) ? "checked" : "") /> @item.Name
+                @{ isFirstAnimal = false; }
+            </div>
+        }
+    </div>
+    @foreach (PROJEKT_PZ_NK_v3.Models.Animal item in ViewBag.Animals)
+    {
+        if (item != null)
+        {
+            <div class="form-group">
+                <div class="col-md-offset-2 col-md-10">
+                    <input type="submit" value="Zapisz" class="btn btn-success" />
+                </div>
+            </div>
+            break;
+        }
+    }
+</div>
+}
+
+
+@section Scripts {
+    @Scripts.Render("~/bundles/jqueryval")
+
+<script type="text/javascript">
+
+    $(function () { // will trigger when the document is ready
+        $('#datetimepicker2').datetimepicker(); //Initialise any date pickers
+    });
+</script>
+}

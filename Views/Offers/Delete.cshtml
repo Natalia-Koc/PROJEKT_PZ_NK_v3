@@ -1,0 +1,62 @@
+﻿@model PROJEKT_PZ_NK_v3.Models.Offer
+
+@{
+    ViewBag.Title = "Delete";
+}
+
+<h2>Usuwanie oferty.</h2>
+
+<h3>Na pewno chcesz usunąć ofertę?</h3>
+<div>
+    <hr />
+    <dl class="dl-horizontal">
+        <dt>
+            <b>Tytuł</b>
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.Title)
+        </dd>
+
+        <dt>
+            <b>Opis</b>
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.Description)
+        </dd>
+
+        <dt>
+            <b>Cena</b>
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.Price)
+        </dd>
+
+        <dt>
+            <b>Data</b>
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.StartingDate) - @Html.DisplayFor(model => model.EndDate)
+        </dd>
+
+        <dt>
+            Zwierzak
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.Animal.Name)
+        </dd>
+
+    </dl>
+
+    @using (Html.BeginForm()) {
+        @Html.AntiForgeryToken()
+        <div class="form-actions no-color">
+            @Html.ActionLink("Wróć do listy ofert", "Index", null, new { @class = "btn btn-default" })
+            <input type="submit" value="Usuń" class="btn btn-danger" /> 
+        </div>
+    }
+</div>

@@ -1,0 +1,58 @@
+﻿@model PROJEKT_PZ_NK_v3.Models.Applications
+
+@{
+    ViewBag.Title = "Details";
+}
+
+<h2>Details</h2>
+
+<div>
+    <h4>Applications</h4>
+    <hr />
+    <dl class="dl-horizontal">
+        <dt>
+            @Html.DisplayNameFor(model => model.Guardian.Login)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.Guardian.Login)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.Offer.Title)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.Offer.Title)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.Owner.Login)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.Owner.Login)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.Status)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.Status)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.Message)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.Message)
+        </dd>
+
+    </dl>
+</div>
+<p>
+    @Html.ActionLink("Edit", "Edit", new { id = Model.ID }) |
+    @Html.ActionLink("Back to List", "Index")
+</p>

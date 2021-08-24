@@ -1,0 +1,81 @@
+﻿@model PROJEKT_PZ_NK_v3.Models.Animal
+
+@{
+    ViewBag.Title = "Details";
+}
+
+
+<div>
+    <hr />
+    <dl class="dl-horizontal">
+        <dt>
+            @Html.DisplayNameFor(model => model.Image)
+        </dt>
+
+        <dd>
+            <img src="~/ImagesAnimals/@Html.DisplayFor(model => model.Image)" width="300px">
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.Name)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.Name)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.Species)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.Species)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.Race)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.Race)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.Gender)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.Gender)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.DateOfBirth)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.DateOfBirth)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.Description)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.Description)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.Profiles)
+        </dt>
+
+        <dd>
+            @Html.ActionLink(Model.Profiles.Login, "DetailsAnotherProfile", "Profiles", new { id = Model.Profiles.ID }, null)
+        </dd>
+
+    </dl>
+</div>
+<p>
+    @Html.ActionLink("Edit", "Edit", new { id = Model.ID }) |
+    @Html.ActionLink("Back to Profile", "Details", "Profiles")
+</p>
+

@@ -1,0 +1,84 @@
+﻿@model PROJEKT_PZ_NK_v3.Models.Animal
+
+@{
+    ViewBag.Title = "Create";
+}
+
+<h2> Dodawanie nowego zwierzaka </h2>
+
+
+@using (Html.BeginForm("Create", "Animals", FormMethod.Post, new { enctype = "multipart/form-data" })) 
+{
+    @Html.AntiForgeryToken()
+    
+<div class="form-horizontal">
+    <h4>Zwierzak</h4>
+    <hr />
+    @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+    <div class="form-group">
+        <b class="control-label col-md-2"> Obrazek </b>
+        <div class=" =" col-md-10>
+            <input type="file" name="plikZObrazkiem" />
+            @Html.ValidationMessageFor(Model => Model.Image, "", new { @class = "text-danger" })
+        </div>
+    </div>
+    <div class="form-group">
+        <b class="control-label col-md-2"> Nazwa </b>
+        <div class="col-md-10">
+            @Html.EditorFor(model => model.Name, new { htmlAttributes = new { @class = "form-control" } })
+            @Html.ValidationMessageFor(model => model.Name, "", new { @class = "text-danger" })
+        </div>
+    </div>
+
+    <div class="form-group">
+        <b class="control-label col-md-2"> Gatunek </b>
+        <div class="col-md-10">
+            @Html.EditorFor(model => model.Species, new { htmlAttributes = new { @class = "form-control" } })
+            @Html.ValidationMessageFor(model => model.Species, "", new { @class = "text-danger" })
+        </div>
+    </div>
+
+    <div class="form-group">
+        <b class="control-label col-md-2"> Rasa </b>
+        <div class="col-md-10">
+            @Html.EditorFor(model => model.Race, new { htmlAttributes = new { @class = "form-control" } })
+            @Html.ValidationMessageFor(model => model.Race, "", new { @class = "text-danger" })
+        </div>
+    </div>
+
+    <div class="form-group">
+        <b class="control-label col-md-2"> Płeć </b>
+        <div class="col-md-10">
+            @Html.EditorFor(model => model.Gender, new { htmlAttributes = new { @class = "form-control" } })
+            @Html.ValidationMessageFor(model => model.Gender, "", new { @class = "text-danger" })
+        </div>
+    </div>
+
+    <div class="form-group date">
+        <b class="control-label col-md-2"> Data urodzenia </b>
+        <div class="col-md-10">
+            @Html.EditorFor(model => model.DateOfBirth, new { htmlAttributes = new { @class = "form-control" } })
+            @Html.ValidationMessageFor(model => model.DateOfBirth, "", new { @class = "text-danger" })
+        </div>
+    </div>
+
+    <div class="form-group">
+        <b class="control-label col-md-2"> Opis </b>
+        <div class="col-md-10">
+            @Html.EditorFor(model => model.Description, new { htmlAttributes = new { @class = "form-control" } })
+            @Html.ValidationMessageFor(model => model.Description, "", new { @class = "text-danger" })
+        </div>
+    </div>
+
+    <div class="form-group">
+        <div class="col-md-offset-2 col-md-10">
+            <input type="submit" value="Zapisz" class="btn btn-success" />
+        </div>
+    </div>
+</div>
+}
+
+
+@section Scripts {
+    @Scripts.Render("~/bundles/jqueryval")
+}
