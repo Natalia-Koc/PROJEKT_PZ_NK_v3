@@ -25,6 +25,7 @@ namespace PROJEKT_PZ_NK_v3.Models
 
         [Display(Name = "Gender")]
         public string Gender { get; set; }
+        public string Weight { get; set; }
 
         [DataType(DataType.Date)]
         [DisplayFormat(DataFormatString = "{0:yyyy-MM-dd}", ApplyFormatInEditMode = true)]

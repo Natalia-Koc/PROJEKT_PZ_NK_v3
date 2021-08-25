@@ -87,6 +87,7 @@ namespace PROJEKT_PZ_NK_v3.Controllers
         {
             Profile myProfile = db.Profiles.Single(p => p.Email == User.Identity.Name);
             ViewBag.Animals = myProfile.Animals.ToList();
+            ViewBag.AnimalsCount = myProfile.Animals.Count();
             return View();
         }
 

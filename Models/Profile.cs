@@ -26,7 +26,10 @@ namespace PROJEKT_PZ_NK_v3.Models
 
         [StringLength(9, ErrorMessage = "Phone number cannot be longer than 9 characters.")]
         public String PhoneNumber { get; set; }
-        public String Address { get; set; }
+        public String City { get; set; }
+        public String Street { get; set; }
+        public String HouseNumber { get; set; }
+
         public virtual List<Animal> Animals { get; set; }
         public virtual List<Comments> Comments { get; set; }
         public virtual List<Applications> Applications { get; set; }

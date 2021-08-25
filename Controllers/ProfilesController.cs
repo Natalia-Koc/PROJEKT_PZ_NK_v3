@@ -88,7 +88,7 @@ namespace PROJEKT_PZ_NK_v3.Controllers
         // Aby uzyskać więcej szczegółów, zobacz https://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Edit([Bind(Include = "ID,Login,Email,FirstName,LastName,Password,PhoneNumber,Address")] Profile profile)
+        public ActionResult Edit(Profile profile)
         {
             if (ModelState.IsValid)
             {

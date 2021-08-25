@@ -65,18 +65,18 @@
             </div>
         }
     </div>
-    @foreach (PROJEKT_PZ_NK_v3.Models.Animal item in ViewBag.Animals)
-    {
-        if (item != null)
-        {
-            <div class="form-group">
-                <div class="col-md-offset-2 col-md-10">
-                    <input type="submit" value="Zapisz" class="btn btn-success" />
-                </div>
-            </div>
-            break;
-        }
-    }
+    <div class="form-group">
+        <div class="col-md-offset-2 col-md-10">
+            @if (@ViewBag.AnimalsCount > 0)
+            {
+                <input type="submit" value="Zapisz" class="btn btn-success" />
+            }
+            else
+            {
+                <em style="color:red">Żeby dodać nową ofertę <b>musisz dodać jakieś zwierzę.</b></em>
+            }
+        </div>
+    </div>
 </div>
 }
 
