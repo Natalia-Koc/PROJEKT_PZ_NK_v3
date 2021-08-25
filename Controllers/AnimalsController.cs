@@ -115,7 +115,7 @@ namespace PROJEKT_PZ_NK_v3.Controllers
         // Aby uzyskać więcej szczegółów, zobacz https://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Edit([Bind(Include = "ID,Name,Species,Race,Gender,DateOfBirth,Description")] Animal animal)
+        public ActionResult Edit(Animal animal)
         {
             if (ModelState.IsValid)
             {
@@ -128,7 +128,7 @@ namespace PROJEKT_PZ_NK_v3.Controllers
                     file.SaveAs(HttpContext.Server.MapPath("~/ImagesAnimals/") + animal.Image);
                 }
                 db.SaveChanges();
-                return RedirectToAction("Details", "Animals");
+                return RedirectToAction("Details", "Animals", new { id = animal.ID });
             }
             return View(animal);
         }

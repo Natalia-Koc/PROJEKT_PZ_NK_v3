@@ -4,15 +4,23 @@
     ViewBag.Title = "Delete";
 }
 
-<h2>Delete</h2>
+<h2 style="color:red">Usuwanie</h2>
 
-<h3>Are you sure you want to delete this?</h3>
+<h3>Jesteś pewny/a, że chcesz usunąć zwierzaka?</h3>
 <div>
     <h4>Animal</h4>
     <hr />
     <dl class="dl-horizontal">
         <dt>
-            @Html.DisplayNameFor(model => model.Name)
+            Zdjęcie
+        </dt>
+
+        <dd>
+            <img src="~/ImagesAnimals/@Html.DisplayFor(model => model.Image)" width="300px">
+        </dd>
+
+        <dt>
+            Nazwa
         </dt>
 
         <dd>
@@ -20,7 +28,7 @@
         </dd>
 
         <dt>
-            @Html.DisplayNameFor(model => model.Species)
+            Gatunek
         </dt>
 
         <dd>
@@ -28,7 +36,7 @@
         </dd>
 
         <dt>
-            @Html.DisplayNameFor(model => model.Race)
+            Rasa
         </dt>
 
         <dd>
@@ -36,7 +44,7 @@
         </dd>
 
         <dt>
-            @Html.DisplayNameFor(model => model.Gender)
+            Płeć
         </dt>
 
         <dd>
@@ -44,7 +52,15 @@
         </dd>
 
         <dt>
-            @Html.DisplayNameFor(model => model.DateOfBirth)
+            Waga
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.Weight)
+        </dd>
+
+        <dt>
+            Data urodzenia
         </dt>
 
         <dd>
@@ -52,7 +68,7 @@
         </dd>
 
         <dt>
-            @Html.DisplayNameFor(model => model.Description)
+            Opis
         </dt>
 
         <dd>
@@ -65,8 +81,7 @@
         @Html.AntiForgeryToken()
 
         <div class="form-actions no-color">
-            <input type="submit" value="Delete" class="btn btn-default" /> |
-            @Html.ActionLink("Back to List", "Index")
+            <input type="submit" value="Delete" class="btn btn-danger" /> |
         </div>
     }
 </div>

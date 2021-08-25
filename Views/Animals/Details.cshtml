@@ -9,7 +9,7 @@
     <hr />
     <dl class="dl-horizontal">
         <dt>
-            @Html.DisplayNameFor(model => model.Image)
+            Zdjęcie
         </dt>
 
         <dd>
@@ -17,7 +17,7 @@
         </dd>
 
         <dt>
-            @Html.DisplayNameFor(model => model.Name)
+            Nazwa
         </dt>
 
         <dd>
@@ -25,7 +25,7 @@
         </dd>
 
         <dt>
-            @Html.DisplayNameFor(model => model.Species)
+            Gatunek
         </dt>
 
         <dd>
@@ -33,7 +33,7 @@
         </dd>
 
         <dt>
-            @Html.DisplayNameFor(model => model.Race)
+            Rasa
         </dt>
 
         <dd>
@@ -41,7 +41,7 @@
         </dd>
 
         <dt>
-            @Html.DisplayNameFor(model => model.Gender)
+            Płeć
         </dt>
 
         <dd>
@@ -49,7 +49,15 @@
         </dd>
 
         <dt>
-            @Html.DisplayNameFor(model => model.DateOfBirth)
+            Waga
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.Weight)
+        </dd>
+
+        <dt>
+            Data urodzenia
         </dt>
 
         <dd>
@@ -57,25 +65,29 @@
         </dd>
 
         <dt>
-            @Html.DisplayNameFor(model => model.Description)
+            Opis
         </dt>
 
         <dd>
             @Html.DisplayFor(model => model.Description)
         </dd>
+        @if (Model.Profiles.Email != User.Identity.Name)
+        {
+            <dt>
+                Właściciel
+            </dt>
 
-        <dt>
-            @Html.DisplayNameFor(model => model.Profiles)
-        </dt>
-
-        <dd>
-            @Html.ActionLink(Model.Profiles.Login, "DetailsAnotherProfile", "Profiles", new { id = Model.Profiles.ID }, null)
-        </dd>
-
+            <dd>
+                @Html.ActionLink(Model.Profiles.Login, "DetailsAnotherProfile", "Profiles", new { id = Model.Profiles.ID }, null)
+            </dd>
+        }
     </dl>
 </div>
-<p>
-    @Html.ActionLink("Edit", "Edit", new { id = Model.ID }) |
-    @Html.ActionLink("Back to Profile", "Details", "Profiles")
-</p>
+@if (Model.Profiles.Email == User.Identity.Name)
+{
+    <p>
+        @Html.ActionLink("Edytuj", "Edit", new { id = Model.ID }, new { @class = "btn btn-primary" })
+    </p>
+}
+
 
