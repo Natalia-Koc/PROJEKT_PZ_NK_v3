@@ -29,6 +29,7 @@ namespace PROJEKT_PZ_NK_v3.Controllers
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             }
             Comments comments = db.Comments.Find(id);
+            
             if (comments == null)
             {
                 return HttpNotFound();
@@ -52,9 +53,9 @@ namespace PROJEKT_PZ_NK_v3.Controllers
             {
                 Profile myProfile = db.Profiles.Single(p => p.Email == User.Identity.Name);
                 comments.AuthorID = myProfile.ID;
-                var comms = db.Comments.First(a => a.Author.Email == User.Identity.Name && a.Grade != 0);
-                if (comms != null)
+                if (db.Comments.Where(a => a.Author.Email == User.Identity.Name && a.Grade != 0).Count() > 0)
                 {
+                    var comms = db.Comments.First(a => a.Author.Email == User.Identity.Name && a.Grade != 0);
                     comms.Grade = comments.Grade;
                     comments.Grade = 0;
                 }
@@ -86,19 +87,17 @@ namespace PROJEKT_PZ_NK_v3.Controllers
         // Aby uzyskać więcej szczegółów, zobacz https://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Edit([Bind(Include = "ID,Contents")] Comments comments)
+        public ActionResult Edit(Comments comments)
         {
             if (ModelState.IsValid)
             {
-                db.Entry(comments).State = EntityState.Modified;
                 db.SaveChanges();
                 return RedirectToAction("Index");
             }
             return View(comments);
         }
 
-        // GET: Comments/Delete/5
-        public ActionResult Delete(int? id)
+        public ActionResult Delete(int? id, int profileID)
         {
             if (id == null)
             {
@@ -109,18 +108,9 @@ namespace PROJEKT_PZ_NK_v3.Controllers
             {
                 return HttpNotFound();
             }
-            return View(comments);
-        }
-
-        // POST: Comments/Delete/5
-        [HttpPost, ActionName("Delete")]
-        [ValidateAntiForgeryToken]
-        public ActionResult DeleteConfirmed(int id)
-        {
-            Comments comments = db.Comments.Find(id);
             db.Comments.Remove(comments);
             db.SaveChanges();
-            return RedirectToAction("Index");
+            return RedirectToAction("DetailsAnotherProfile", "Profiles", new { id = profileID});
         }
 
         protected override void Dispose(bool disposing)
