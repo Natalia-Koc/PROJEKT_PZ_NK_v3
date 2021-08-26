@@ -75,6 +75,12 @@ namespace PROJEKT_PZ_NK_v3.Controllers
                 return HttpNotFound();
             }
             ViewBag.IsApplied = db.Applications.Any(app => app.Guardian.Email == User.Identity.Name && app.OfferID == id);
+            List<Applications> AppList = db.Applications
+                .Include(a => a.Offer)
+                .Include(a => a.Guardian)
+                .Where(app => app.Owner.Email == User.Identity.Name && app.OfferID == id)
+                .ToList();
+            ViewBag.Applications = AppList;
             return View(offer);
         }
 

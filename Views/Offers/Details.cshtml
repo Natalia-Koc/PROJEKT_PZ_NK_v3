@@ -11,7 +11,8 @@
     <hr />
     <div class="row">
         <div class="col-5 list-group-item-heading">
-            <img src="~/ImagesAnimals/@Html.DisplayFor(model => model.Animal.Image)" width="400px">
+            <img src="~/ImagesAnimals/@Html.DisplayFor(model => model.Animal.Image)" width="400px" style="margin-bottom:2%">
+            <br />
             <p>
                 @Html.ActionLink("Powrót do listy", "Index", null, new { @class = "btn btn-default" })
                 @if (Model.Profile.Email == User.Identity.Name)
@@ -21,7 +22,7 @@
                 }
             </p>
         </div>
-        <div class="col-6 active" style="margin-top:3%">
+        <div class="col-6 active" style="margin-top:4%">
             <dl class="dl-horizontal">
                 <dt>
                     Tytuł
@@ -86,7 +87,7 @@
 
                             <div class="form-group">
                                 <p> Zaproponuj cenę i napisz wiadomość:</p>
-                                <textarea name="Message" id="Message"  class="form-control w-75"></textarea>
+                                <textarea name="Message" id="Message" class="form-control w-75"></textarea>
                                 <br />
                                 <div class="col-md-10">
                                     <input type="submit" value="Zgłaszam się do oferty" class="btn btn-success" />
@@ -105,3 +106,77 @@
     </div>
 </div>
 <br />
+<hr />
+@if (Model.Profile.Email == User.Identity.Name)
+{
+    <div class="container">
+        <h3 style="margin:4%; margin-top:1%">Zgłoszenia do oferty</h3>
+        <table class="table table-striped">
+            <tr>
+                <th>
+                    Oferta
+                </th>
+                <th>
+                    Zwierzak
+                </th>
+                <th>
+                    Opiekun
+                </th>
+                <th>
+                    Wiadomość
+                </th>
+                <th>
+                    Status
+                </th>
+                <th></th>
+            </tr>
+            @foreach (var item in ViewBag.Applications)
+            {
+                <tr>
+                    <td>
+                        <b>@item.Offer.Title</b><br />
+                        <ins>Początek</ins>: @item.Offer.StartingDate<br />
+                        <ins>Koniec</ins>: @item.Offer.EndDate
+                    </td>
+                    <td>
+                        <b>@item.Offer.Animal.Name</b><br />
+                        <ins>Gatunek</ins>: @item.Offer.Animal.Species<br />
+                        <ins>Rasa</ins>: @item.Offer.Animal.Race<br />
+                        <ins>Waga</ins>: @item.Offer.Animal.Weight
+                    </td>
+                    <td>
+                        <b>@item.Guardian.Login</b><br />
+                        <ins>Imię i nazwisko</ins>: @item.Guardian.FirstName @item.Guardian.LastName<br />
+                        <ins>Adres</ins>: @item.Guardian.City, @item.Guardian.Street <br />
+                        <ins>tel.</ins>: @item.Guardian.PhoneNumber
+                    </td>
+                    <td>
+                        @item.Message
+                    </td>
+                    <td>
+                        @if (item.Status == "Zaakceptowane!")
+                        {
+                            <b style="color: limegreen">@item.Status</b>
+                        }
+                        else
+                        {
+                            <b>@item.Status</b>
+                        }
+                    </td>
+                    <td>
+                        @if (item.Status != "Zaakceptowane!" && item.Status != "Opiekun zrezygnował z oferty")
+                        {
+                            <a href='@Url.Action("EditAccept", new { id = item.ID })'>
+                                <img src="~/Images/accept.jpg" width="45px" alt="Akceptuj">
+                            </a>
+                        }
+                        <a href='@Url.Action("EditDiscard", new { id = item.ID })'>
+                            <img src="~/Images/discard.jpg" width="45px" alt="Odrzuć">
+                        </a>
+                    </td>
+                </tr>
+            }
+        </table>
+    </div>
+}
+
