@@ -85,9 +85,10 @@
 </div>
 @if (Model.Profiles.Email == User.Identity.Name)
 {
-    <p>
-        @Html.ActionLink("Edytuj", "Edit", new { id = Model.ID }, new { @class = "btn btn-primary" })
-    </p>
+<p>
+    @Html.ActionLink("Edytuj", "Edit", new { id = Model.ID }, new { @class = "btn btn-primary" })
+    @Html.ActionLink("Usuń", "Delete", new { id = Model.ID }, new { @class = "btn btn-danger" })
+</p>
 }
 
 

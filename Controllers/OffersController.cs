@@ -22,7 +22,6 @@ namespace PROJEKT_PZ_NK_v3.Controllers
         public ActionResult Index(string sortOrder, string searchString, string currentFilter, int? page)
         {
             ViewBag.CurrentSort = sortOrder;
-            ViewBag.PriceSortParm = String.IsNullOrEmpty(sortOrder) ? "Price_desc" : "";
             ViewBag.TitleSortParm = String.IsNullOrEmpty(sortOrder) ? "Title_desc" : "";
             ViewBag.DateSortParm = String.IsNullOrEmpty(sortOrder) ? "StartingDate" : "";
 
@@ -47,9 +46,6 @@ namespace PROJEKT_PZ_NK_v3.Controllers
             }
             switch (sortOrder)
             {
-                case "Price_desc":
-                    offers = offers.OrderBy(s => s.Price);
-                    break;
                 case "StartingDate":
                     offers = offers.OrderBy(s => s.StartingDate);
                     break;

@@ -66,7 +66,7 @@
                 </dt>
 
                 <dd>
-                    @Html.DisplayFor(model => model.City), 
+                    @Html.DisplayFor(model => model.City),
                     @Html.DisplayFor(model => model.Street) @Html.DisplayFor(model => model.HouseNumber)
                 </dd>
             </dl>
@@ -102,7 +102,9 @@
                     <img class="card-img-top" src="~/ImagesAnimals/@item.Image" alt="Card image">
                 </a>
                 <div class="card-body">
-                    <h4 class="card-title">@item.Name</h4>
+                    <a href="@Url.Action("Details", "Animals", new { id = item.ID })">
+                        <h4 class="card-title">@item.Name</h4>
+                    </a>
                 </div>
             </div>
         }

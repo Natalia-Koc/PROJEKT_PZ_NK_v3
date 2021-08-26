@@ -26,7 +26,6 @@
                 </button>
                 <ul class="dropdown-menu">
                     <li>@Html.ActionLink("tytule", "Index", "Offers", new { sortOrder = ViewBag.TitleSortParm, currentFilter = ViewBag.CurrentFilter }, null)</li>
-                    <li>@Html.ActionLink("cenie", "Index", "Offers", new { sortOrder = ViewBag.PriceSortParm, currentFilter = ViewBag.CurrentFilter }, null)</li>
                     <li>@Html.ActionLink("dacie rozpoczęcia oferty", "Index", "Offers", new { sortOrder = ViewBag.DateSortParm, currentFilter = ViewBag.CurrentFilter }, null)</li>
                 </ul>
             </div>
@@ -42,8 +41,10 @@
         {
 
             <div class="card col-4 list-group-item-heading" style="width:400px">
-                <img class="card-img-top" src="~/ImagesAnimals/@item.Animal.Image"
-                     alt="Card image" style="height:50%">
+                <a  href="@Url.Action("Details", "Offers", new { id = item.ID })">
+                    <img class="card-img-top" src="~/ImagesAnimals/@item.Animal.Image"
+                         alt="Card image" style="height:100%">
+                </a>
                 <div class="card-body">
                     <h4 class="card-title">@item.Title</h4>
                     <p class="card-text">@item.StartingDate.ToString("yyyy-MM-dd HH:mm")- @item.EndDate.ToString("yyyy-MM-dd HH:mm")</p>
@@ -55,7 +56,6 @@
                         Owner: @Html.ActionLink(item.Profile.Login,
                  "DetailsAnotherProfile", "Profiles", new { id = item.Profile.ID }, null)
                     </p>
-                    <p class="card-text">Price: @item.Price zł</p>
                     <p class="text-right btn-block">@Html.ActionLink("Więcej informacji", "Details", "Offers", new { id = item.ID }, null) </p>
                 </div>
             </div>

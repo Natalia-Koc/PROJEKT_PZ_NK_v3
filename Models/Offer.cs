@@ -22,7 +22,6 @@ namespace PROJEKT_PZ_NK_v3.Models
         [Display(Name = "Description")]
         [StringLength(1500, ErrorMessage = "Description cannot be longer than 1500 characters.")]
         public String Description { get; set; }
-        public float Price { get; set; }
 
         [DataType(DataType.DateTime)]
         [DisplayFormat(DataFormatString = "{0:yyyy-MM-dd HH:mm}", ApplyFormatInEditMode = true)]
@@ -33,7 +32,6 @@ namespace PROJEKT_PZ_NK_v3.Models
         public DateTime EndDate { get; set; }
 
         public int AnimalID { get; set; }
-
         public virtual Profile Profile { get; set; }
         public virtual Animal Animal { get; set; }
 

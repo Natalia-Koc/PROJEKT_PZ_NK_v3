@@ -127,6 +127,10 @@ namespace PROJEKT_PZ_NK_v3.Controllers
                     animal.Image = file.FileName;
                     file.SaveAs(HttpContext.Server.MapPath("~/ImagesAnimals/") + animal.Image);
                 }
+                else
+                {
+                    animal.Image = db.Animals.AsNoTracking().Single(a => a.ID == animal.ID).Image; ;
+                }
                 db.SaveChanges();
                 return RedirectToAction("Details", "Animals", new { id = animal.ID });
             }

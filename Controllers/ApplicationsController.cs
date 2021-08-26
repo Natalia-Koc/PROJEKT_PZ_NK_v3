@@ -74,20 +74,16 @@ namespace PROJEKT_PZ_NK_v3.Controllers
         }
 
         // GET: Applications/Create
-        public ActionResult Create(int offerID, int ownerID)
+        public ActionResult Create(int offerID, int ownerID, Applications application)
         {
-            Applications applications = new Applications
-            {
-                Guardian = db.Profiles.Single(p => p.Email == User.Identity.Name),
-                GuardianID = db.Profiles.Single(p => p.Email == User.Identity.Name).ID,
-                Owner = db.Profiles.Find(ownerID),
-                OwnerID = ownerID,
-                Offer = db.Offers.Find(offerID),
-                OfferID = offerID,
-                Message = " ",
-                Status = "Oczekuje na akceptacje"
-            };
-            db.Applications.Add(applications);
+            application.Guardian = db.Profiles.Single(p => p.Email == User.Identity.Name);
+            application.GuardianID = db.Profiles.Single(p => p.Email == User.Identity.Name).ID;
+            application.Owner = db.Profiles.Find(ownerID);
+            application.OwnerID = ownerID;
+            application.Offer = db.Offers.Find(offerID);
+            application.OfferID = offerID;
+            application.Status = "Oczekuje na akceptacje";
+            db.Applications.Add(application);
             db.SaveChanges();
 
             return RedirectToAction("Details", "Offers", new { id = offerID });

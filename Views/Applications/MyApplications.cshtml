@@ -17,46 +17,55 @@
             <th>
                 Właściciel
             </th>
+            <th>
+                Wiadomość
+            </th>
             <th></th>
         </tr>
 
         @foreach (var item in Model)
         {
-            <tr>
-                <td>
-                    <b>@Html.ActionLink(item.Offer.Title, "Details", "Offers", new { id = item.Offer.ID }, null)</b><br />
-                    <b>@Html.DisplayFor(modelItem => item.Offer.StartingDate) - @Html.DisplayFor(modelItem => item.Offer.EndDate)</b>
-                </td>
-                <td>
-                    @Html.ActionLink(item.Offer.Animal.Name, "Details", "Animals", new { id = item.Offer.AnimalID }, null)<br />
-                    @Html.DisplayFor(modelItem => item.Offer.Animal.Species) - @Html.DisplayFor(modelItem => item.Offer.Animal.Race)
-                </td>
-                <td>
-                    @Html.ActionLink(item.Owner.Login, "DetailsAnotherProfile", "Profiles", new { id = item.OwnerID }, null)<br />
-                    @Html.DisplayFor(modelItem => item.Owner.FirstName) @Html.DisplayFor(modelItem => item.Owner.LastName)<br />
-                    @Html.DisplayFor(modelItem => item.Owner.Address)<br />
-                    @Html.DisplayFor(modelItem => item.Owner.PhoneNumber)
-                </td>
-                <td>
-                    @if (item.Status == "Zaakceptowane!")
-                    {
-                        <b style="color: limegreen">@Html.DisplayFor(modelItem => item.Status)</b>
-                    }
-                    else
-                    {
-                        <p>@Html.DisplayFor(modelItem => item.Status)</p>
-                    }
+    <tr>
+        <td>
+            <b>@Html.ActionLink(item.Offer.Title, "Details", "Offers", new { id = item.Offer.ID }, null)</b><br />
+            <ins>Początek</ins>: @Html.DisplayFor(modelItem => item.Offer.StartingDate)<br />
+            <ins>Koniec</ins>: @Html.DisplayFor(modelItem => item.Offer.EndDate)
+        </td>
+        <td>
+            @Html.ActionLink(item.Offer.Animal.Name, "Details", "Animals", new { id = item.Offer.AnimalID }, null)<br />
+            <ins>Gatunek</ins>: @Html.DisplayFor(modelItem => item.Offer.Animal.Species)<br />
+            <ins>Rasa</ins>: @Html.DisplayFor(modelItem => item.Offer.Animal.Race)<br />
+            <ins>Waga</ins>: @Html.DisplayFor(modelItem => item.Offer.Animal.Weight)
+        </td>
+        <td>
+            <b>@Html.ActionLink(item.Owner.Login, "DetailsAnotherProfile", "Profiles", new { id = item.OwnerID }, null)</b><br />
+            <ins>Imię i nazwisko</ins>: @Html.DisplayFor(modelItem => item.Owner.FirstName) @Html.DisplayFor(modelItem => item.Owner.LastName)<br />
+            <ins>Adres</ins>: @Html.DisplayFor(modelItem => item.Owner.City), @Html.DisplayFor(modelItem => item.Owner.Street) <br />
+            <ins>tel.</ins>: @Html.DisplayFor(modelItem => item.Owner.PhoneNumber)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.Message)
+        </td>
+        <td>
+            @if (item.Status == "Zaakceptowane!")
+            {
+                <b style="color: limegreen">@Html.DisplayFor(modelItem => item.Status)</b>
+            }
+            else
+            {
+                <b>@Html.DisplayFor(modelItem => item.Status)</b>
+            }
 
-                </td>
-                <td>
-                    @if (item.Offer.StartingDate.Day > DateTime.Now.Day)
-                    {
-                        <a href='@Url.Action("Edit", new { id = item.ID })'>
-                            <img src="~/Images/resign.png" width="70px" alt="Rezygnuj">
-                        </a>
-                    }
-                </td>
-            </tr>
+        </td>
+        <td>
+            @if (item.Offer.StartingDate > DateTime.Now)
+            {
+                <a href='@Url.Action("Edit", new { id = item.ID })'>
+                    <img src="~/Images/resign.png" width="70px" alt="Rezygnuj">
+                </a>
+            }
+        </td>
+    </tr>
         }
 
     </table>
