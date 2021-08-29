@@ -22,8 +22,10 @@ namespace PROJEKT_PZ_NK_v3.Controllers
         public ActionResult Index(string sortOrder, string searchString, string currentFilter, int? page)
         {
             ViewBag.CurrentSort = sortOrder;
-            ViewBag.TitleSortParm = String.IsNullOrEmpty(sortOrder) ? "Title_desc" : "";
-            ViewBag.DateSortParm = String.IsNullOrEmpty(sortOrder) ? "StartingDate" : "";
+            ViewBag.TitleSortParmAsc = String.IsNullOrEmpty(sortOrder) ? "Title_asc" : "";
+            ViewBag.TitleSortParmDesc = String.IsNullOrEmpty(sortOrder) ? "Title_desc" : "";
+            ViewBag.DateSortParmAsc = String.IsNullOrEmpty(sortOrder) ? "StartingDateAsc" : "";
+            ViewBag.DateSortParmDesc = String.IsNullOrEmpty(sortOrder) ? "StartingDateDesc" : "";
 
             if (searchString != null)
             {
@@ -37,7 +39,7 @@ namespace PROJEKT_PZ_NK_v3.Controllers
             ViewBag.CurrentFilter = searchString;
 
             var offers = from s in db.Offers
-                         where s.StartingDate >= DateTime.Now
+                         where s.StartingDate > DateTime.Now
                          select s;
 
             if (!String.IsNullOrEmpty(searchString))
@@ -46,11 +48,17 @@ namespace PROJEKT_PZ_NK_v3.Controllers
             }
             switch (sortOrder)
             {
-                case "StartingDate":
-                    offers = offers.OrderBy(s => s.StartingDate);
+                case "StartingDateAsc":
+                    offers = offers.OrderBy(s => s.StartingDate.Year).ThenBy(s => s.StartingDate.Month).ThenBy(s => s.StartingDate.Day);
+                    break;
+                case "StartingDateDesc":
+                    offers = offers.OrderByDescending(s => s.StartingDate.Year).ThenByDescending(s => s.StartingDate.Month).ThenByDescending(s => s.StartingDate.Day);
                     break;
                 case "Title_desc":
                     offers = offers.OrderByDescending(s => s.Title);
+                    break;
+                case "Title_asc":
+                    offers = offers.OrderBy(s => s.Title);
                     break;
                 default:
                     offers = offers.OrderBy(s => s.ID);

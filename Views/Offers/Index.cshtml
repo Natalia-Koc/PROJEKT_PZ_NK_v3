@@ -25,8 +25,10 @@
                     Sortuj po..
                 </button>
                 <ul class="dropdown-menu">
-                    <li>@Html.ActionLink("tytule", "Index", "Offers", new { sortOrder = ViewBag.TitleSortParm, currentFilter = ViewBag.CurrentFilter }, null)</li>
-                    <li>@Html.ActionLink("dacie rozpoczęcia oferty", "Index", "Offers", new { sortOrder = ViewBag.DateSortParm, currentFilter = ViewBag.CurrentFilter }, null)</li>
+                    <li>@Html.ActionLink("tytuł rosnąco", "Index", "Offers", new { sortOrder = ViewBag.TitleSortParmAsc, currentFilter = ViewBag.CurrentFilter }, null)</li>
+                    <li>@Html.ActionLink("tytuł malejąco", "Index", "Offers", new { sortOrder = ViewBag.TitleSortParmDesc, currentFilter = ViewBag.CurrentFilter }, null)</li>
+                    <li>@Html.ActionLink("data rosnąco", "Index", "Offers", new { sortOrder = ViewBag.DateSortParmAsc, currentFilter = ViewBag.CurrentFilter }, null)</li>
+                    <li>@Html.ActionLink("data malejąco", "Index", "Offers", new { sortOrder = ViewBag.DateSortParmDesc, currentFilter = ViewBag.CurrentFilter }, null)</li>
                 </ul>
             </div>
         </div>
