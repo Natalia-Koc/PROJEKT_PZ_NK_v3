@@ -102,14 +102,11 @@
                 }
             }
         </div>
-
     </div>
-</div>
-<br />
-<hr />
-@if (Model.Profile.Email == User.Identity.Name)
-{
-    <div class="container">
+    <br />
+    <hr />
+    @if (Model.Profile.Email == User.Identity.Name && ViewBag.Applications != null)
+    {
         <h3 style="margin:4%; margin-top:1%">Zgłoszenia do oferty</h3>
         <table class="table table-striped">
             <tr>
@@ -139,13 +136,13 @@
                         <ins>Koniec</ins>: @item.Offer.EndDate
                     </td>
                     <td>
-                        <b>@item.Offer.Animal.Name</b><br />
+                        <b><a href="@Url.Action("Details", "Animals", new { id = item.Offer.AnimalID })">@item.Offer.Animal.Name</a></b><br />
                         <ins>Gatunek</ins>: @item.Offer.Animal.Species<br />
                         <ins>Rasa</ins>: @item.Offer.Animal.Race<br />
                         <ins>Waga</ins>: @item.Offer.Animal.Weight
                     </td>
                     <td>
-                        <b>@item.Guardian.Login</b><br />
+                        <b><a href="@Url.Action("DetailsAnotherProfile", "Profiles", new { id = item.GuardianID })">@item.Guardian.Login</a></b><br />
                         <ins>Imię i nazwisko</ins>: @item.Guardian.FirstName @item.Guardian.LastName<br />
                         <ins>Adres</ins>: @item.Guardian.City, @item.Guardian.Street <br />
                         <ins>tel.</ins>: @item.Guardian.PhoneNumber
@@ -157,6 +154,10 @@
                         @if (item.Status == "Zaakceptowane!")
                         {
                             <b style="color: limegreen">@item.Status</b>
+                        }
+                        else if (item.Status == "Właściciel odrzucił ofertę" || item.Status == "Opiekun zrezygnował z oferty")
+                        {
+                            <b style="color: darkred">@item.Status</b>
                         }
                         else
                         {
@@ -177,6 +178,7 @@
                 </tr>
             }
         </table>
-    </div>
-}
+    }
 
+
+</div>

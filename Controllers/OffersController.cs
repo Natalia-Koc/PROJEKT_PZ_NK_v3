@@ -133,7 +133,7 @@ namespace PROJEKT_PZ_NK_v3.Controllers
         // Aby uzyskać więcej szczegółów, zobacz https://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Edit([Bind(Include = "ID,Title,Description,Price,StartingDate,EndDate,UserID,AnimalID")] Offer offer)
+        public ActionResult Edit(Offer offer)
         {
             if (ModelState.IsValid)
             {

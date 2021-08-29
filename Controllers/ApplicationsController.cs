@@ -54,7 +54,10 @@ namespace PROJEKT_PZ_NK_v3.Controllers
                 .Include(a => a.Guardian)
                 .Include(a => a.Offer)
                 .Include(a => a.Owner)
-                .Where(a => a.Offer.StartingDate < DateTime.Now && !a.Status.Contains(User.Identity.Name));
+                .Where(a => (a.Offer.StartingDate < DateTime.Now || 
+                    (a.Status == "Właściciel odrzucił ofertę" && a.Owner.Email == User.Identity.Name) ||
+                    (a.Status == "Opiekun zrezygnował z oferty" && a.Guardian.Email == User.Identity.Name)) && 
+                    !a.Status.Contains(User.Identity.Name));
             return View(applications.ToList());
         }
 
@@ -143,7 +146,7 @@ namespace PROJEKT_PZ_NK_v3.Controllers
         // Aby uzyskać więcej szczegółów, zobacz https://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Edit([Bind(Include = "ID,OwnerID,GuardianID,OfferID,Status,Message")] Applications applications)
+        public ActionResult Edit(Applications applications)
         {
             if (ModelState.IsValid)
             {

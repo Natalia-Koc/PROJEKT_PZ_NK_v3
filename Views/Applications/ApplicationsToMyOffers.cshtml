@@ -55,6 +55,10 @@
             {
                 <b style="color: limegreen">@Html.DisplayFor(modelItem => item.Status)</b>
             }
+            else if (item.Status == "Opiekun zrezygnował z oferty")
+            {
+                <b style="color: darkred">@item.Status</b>
+            }
             else
             {
                 <b>@Html.DisplayFor(modelItem => item.Status)</b>
