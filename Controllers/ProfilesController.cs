@@ -20,14 +20,6 @@ namespace PROJEKT_PZ_NK_v3.Controllers
             Profile profile = db.Profiles.FirstOrDefault(p => p.Email == User.Identity.Name);
             Comments comments = new Comments();
             ViewBag.comments = comments;
-            if (db.Comments.Any(m => m.Profile.Email == User.Identity.Name && m.Grade != 0))
-            {
-                ViewBag.ProgressBar = (int)(db.Comments.Where(m => m.Profile.Email == User.Identity.Name && m.Grade != 0).Select(m => m.Grade).Average() * 20);
-            }
-            else
-            {
-                ViewBag.ProgressBar = 0;
-            }
             ViewBag.ProgressBarCount = db.Comments.Where(m => m.Profile.Email == User.Identity.Name && m.Grade != 0).Count();
             ViewBag.FoundComment = db.Comments.Any(m => m.Author.Email == User.Identity.Name);
             
@@ -41,15 +33,7 @@ namespace PROJEKT_PZ_NK_v3.Controllers
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             }
             Profile 
-            profile = db.Profiles.Find(id);
-            if (db.Comments.Any(m => m.ProfileID == id && m.Grade != 0))
-            {
-                ViewBag.ProgressBar = (int)(db.Comments.Where(m => m.ProfileID == id && m.Grade != 0).Select(m => m.Grade).Average() * 20);
-            } 
-            else
-            {
-                ViewBag.ProgressBar = 0;
-            }
+            profile = db.Profiles.Find(id); 
             ViewBag.ProgressBarCount = db.Comments.Where(m => m.ProfileID == id && m.Grade != 0).Count();
             ViewBag.FoundComment = db.Comments.Any(m => m.Author.Email == User.Identity.Name);
             if (!ViewBag.FoundComment)
@@ -92,6 +76,7 @@ namespace PROJEKT_PZ_NK_v3.Controllers
         {
             if (ModelState.IsValid)
             {
+                profile.Rate = 0;
                 db.Entry(profile).State = EntityState.Modified;
                 db.SaveChanges();
                 return RedirectToAction("Details");

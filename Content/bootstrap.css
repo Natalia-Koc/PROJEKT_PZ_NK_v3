@@ -22,7 +22,6 @@ header,
 hgroup,
 main,
 menu,
-nav,
 section,
 summary {
   display: block;
@@ -239,9 +238,6 @@ th {
   h2,
   h3 {
     page-break-after: avoid;
-  }
-  .navbar {
-    display: none;
   }
   .btn > .caret,
   .dropup > .btn > .caret {
@@ -4066,11 +4062,11 @@ select[multiple].input-group-sm > .input-group-btn > .btn {
   background-color: #eeeeee;
 }
 .nav > li.disabled > a {
-  color: #777777;
+  color: #fff;
 }
 .nav > li.disabled > a:hover,
 .nav > li.disabled > a:focus {
-  color: #777777;
+  color: #eeeeee;
   text-decoration: none;
   cursor: not-allowed;
   background-color: transparent;
@@ -4079,7 +4075,7 @@ select[multiple].input-group-sm > .input-group-btn > .btn {
 .nav .open > a:hover,
 .nav .open > a:focus {
   background-color: #eeeeee;
-  border-color: #337ab7;
+  border-color: #fff;
 }
 .nav .nav-divider {
   height: 1px;
@@ -4353,10 +4349,6 @@ select[multiple].input-group-sm > .input-group-btn > .btn {
   font-size: 18px;
   line-height: 20px;
 }
-.navbar-brand:hover,
-.navbar-brand:focus {
-  text-decoration: none;
-}
 .navbar-brand > img {
   display: block;
 }
@@ -4580,7 +4572,7 @@ select[multiple].input-group-sm > .input-group-btn > .btn {
   background-color: transparent;
 }
 .navbar-default .navbar-text {
-  color: #777;
+  color: #fff;
 }
 .navbar-default .navbar-nav > li > a {
   color: #777;

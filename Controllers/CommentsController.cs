@@ -61,6 +61,14 @@ namespace PROJEKT_PZ_NK_v3.Controllers
                 }
                 db.Comments.Add(comments);
                 db.SaveChanges();
+                if (comments.Grade != 0)
+                {
+                    int id = db.Profiles.Single(p => p.ID == comments.ProfileID).ID;
+                    var komy = db.Comments.Where(a => a.ProfileID == id && a.Grade != 0).Select(a => a.Grade);
+                    int b = (int)komy.Average() * 20;
+                    db.Profiles.Single(p => p.ID == comments.ProfileID).Rate = b;
+                }
+                db.SaveChanges();
                 return RedirectToAction("DetailsAnotherProfile", "Profiles", new { id = comments.ProfileID});
             }
 

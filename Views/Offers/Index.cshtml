@@ -6,29 +6,44 @@
     ViewBag.Title = "Index";
 }
 <div class="well">
-    <h2>Wszystkie oferty</h2>
 
-    <div class="row">
-        <div class="col-4 well">
+    <div class="row" style="margin-top:4%">
+        <div class="col-11">
             @using (Html.BeginForm("Index", "Offers", FormMethod.Get))
             {
-                <p style="height:15px">
-                    @Html.TextBox("SearchString", ViewBag.CurrentFilter as string, new { placeholder = "Szukany tytuł", style = "height:32px" })
-                    <input type="submit" class="btn btn-primary" value="Szukaj" />
-                </p>
+            <div class="form-group row">
+                <div class="col-xs-3">
+                    <label for="ex1">Tytuł oferty:</label>
+                    @Html.TextBox("SearchString", ViewBag.CurrentFilterT as string, new { placeholder = "Tytuł", style = "height:32px", @id = "ex1", @class = "form-control" })
+                </div>
+                <div class="col-xs-3">
+                    <label for="ex2">Rasa zwierzaka:</label>
+                    @Html.TextBox("SearchRace", ViewBag.CurrentFilterR as string, new { placeholder = "Rasa", style = "height:32px", @id = "ex2", @class = "form-control" })
+                </div>
+                <div class="col-xs-3">
+                    <label for="ex3">Gatunek zwierzaka:</label>
+                    @Html.TextBox("SearchSpecies", ViewBag.CurrentFilterS as string, new { placeholder = "Gatunek", style = "height:32px", @id = "ex3", @class = "form-control" })
+                </div>
+                <div class="col-xs-1">
+                    <input type="submit" class="btn btn-primary" value="Szukaj" style="margin-top: 45%; height: 32px" />
+                </div>
+                <div class="col-xs-1">
+                    @Html.ActionLink("Wyczyść", "Index", "Offers", new { sortOrder = "", searchString = "", searchSpecies = "", searchRace = "" }, new {@class = "btn btn-warning", style = "margin-top: 45%; height: 32px" })
+                </div>
+            </div>
             }
         </div>
-        <div class="col-2 well">
+        <div class="col-2">
             <div class="dropdown">
 
-                <button type="button" class="btn btn-primary dropdown-toggle" data-toggle="dropdown">
+                <button type="button" class="btn btn-primary dropdown-toggle" data-toggle="dropdown" style="margin-top: 16%; height: 32px">
                     Sortuj po..
                 </button>
                 <ul class="dropdown-menu">
-                    <li>@Html.ActionLink("tytuł rosnąco", "Index", "Offers", new { sortOrder = ViewBag.TitleSortParmAsc, currentFilter = ViewBag.CurrentFilter }, null)</li>
-                    <li>@Html.ActionLink("tytuł malejąco", "Index", "Offers", new { sortOrder = ViewBag.TitleSortParmDesc, currentFilter = ViewBag.CurrentFilter }, null)</li>
-                    <li>@Html.ActionLink("data rosnąco", "Index", "Offers", new { sortOrder = ViewBag.DateSortParmAsc, currentFilter = ViewBag.CurrentFilter }, null)</li>
-                    <li>@Html.ActionLink("data malejąco", "Index", "Offers", new { sortOrder = ViewBag.DateSortParmDesc, currentFilter = ViewBag.CurrentFilter }, null)</li>
+                    <li>@Html.ActionLink("tytuł rosnąco", "Index", "Offers", new { sortOrder = ViewBag.TitleSortParmAsc, searchString = ViewBag.CurrentFilterT, searchSpecies = ViewBag.CurrentFilterS, searchRace = ViewBag.CurrentFilterR }, null)</li>
+                    <li>@Html.ActionLink("tytuł malejąco", "Index", "Offers", new { sortOrder = ViewBag.TitleSortParmDesc, searchString = ViewBag.CurrentFilterT, searchSpecies = ViewBag.CurrentFilterS, searchRace = ViewBag.CurrentFilterR }, null)</li>
+                    <li>@Html.ActionLink("data rosnąco", "Index", "Offers", new { sortOrder = ViewBag.DateSortParmAsc, searchString = ViewBag.CurrentFilterT, searchSpecies = ViewBag.CurrentFilterS, searchRace = ViewBag.CurrentFilterR }, null)</li>
+                    <li>@Html.ActionLink("data malejąco", "Index", "Offers", new { sortOrder = ViewBag.DateSortParmDesc, searchString = ViewBag.CurrentFilterT, searchSpecies = ViewBag.CurrentFilterS, searchRace = ViewBag.CurrentFilterR }, null)</li>
                 </ul>
             </div>
         </div>
@@ -44,8 +59,8 @@
 
             <div class="card col-4 list-group-item-heading" style="width:400px">
                 <a  href="@Url.Action("Details", "Offers", new { id = item.ID })">
-                    <img class="card-img-top" src="~/ImagesAnimals/@item.Animal.Image"
-                         alt="Card image" style="height:100%">
+                    <img class="card-img-top center-block" src="~/ImagesAnimals/@item.Animal.Image"
+                         alt="Card image" style="max-height: 300px; width: auto;" >
                 </a>
                 <div class="card-body">
                     <h4 class="card-title">@item.Title</h4>

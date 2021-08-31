@@ -19,7 +19,7 @@ namespace PROJEKT_PZ_NK_v3.Controllers
 
         // GET: Offers
         [Authorize]
-        public ActionResult Index(string sortOrder, string searchString, string currentFilter, int? page)
+        public ActionResult Index(string sortOrder, string searchString, string searchSpecies, string searchRace, string currentFilter, int? page)
         {
             ViewBag.CurrentSort = sortOrder;
             ViewBag.TitleSortParmAsc = String.IsNullOrEmpty(sortOrder) ? "Title_asc" : "";
@@ -31,12 +31,9 @@ namespace PROJEKT_PZ_NK_v3.Controllers
             {
                 page = 1;
             }
-            else
-            {
-                searchString = currentFilter;
-            }
-
-            ViewBag.CurrentFilter = searchString;
+            ViewBag.CurrentFilterT = searchString;
+            ViewBag.CurrentFilterS = searchSpecies;
+            ViewBag.CurrentFilterR = searchRace;
 
             var offers = from s in db.Offers
                          where s.StartingDate > DateTime.Now
@@ -44,7 +41,15 @@ namespace PROJEKT_PZ_NK_v3.Controllers
 
             if (!String.IsNullOrEmpty(searchString))
             {
-                offers = offers.Where(s => s.Title.Contains(searchString));
+                offers = offers.Where(s => s.Title.ToLower().Contains(searchString.ToLower()));
+            }
+            if (!String.IsNullOrEmpty(searchSpecies))
+            {
+                offers = offers.Where(s => s.Animal.Species.ToLower().Contains(searchSpecies.ToLower()));
+            }
+            if (!String.IsNullOrEmpty(searchRace))
+            {
+                offers = offers.Where(s => s.Animal.Race.ToLower().Contains(searchRace.ToLower()));
             }
             switch (sortOrder)
             {
@@ -66,6 +71,7 @@ namespace PROJEKT_PZ_NK_v3.Controllers
             }
             int pageSize = 9;
             int pageNumber = (page ?? 1);
+            ViewBag.SortList = new List<string>() {"tytuł malejąco", "tytuł rosnąco", "data malejąco", "data rosnąco"};
             return View(offers.ToPagedList(pageNumber, pageSize));
         }
 

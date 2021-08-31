@@ -5,7 +5,6 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Web;
 using System.Web.Mvc;
-using PROJEKT_PZ_NK_v3.DAL;
 using PROJEKT_PZ_NK_v3.ViewModels;
 
 namespace PROJEKT_PZ_NK_v3.Controllers
