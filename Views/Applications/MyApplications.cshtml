@@ -12,10 +12,10 @@
                 Oferta
             </th>
             <th>
-                Zwierzak
+                Właściciel
             </th>
             <th>
-                Właściciel
+                Zwierzak
             </th>
             <th>
                 Wiadomość
@@ -32,16 +32,16 @@
             <ins>Koniec</ins>: @Html.DisplayFor(modelItem => item.Offer.EndDate)
         </td>
         <td>
-            @Html.ActionLink(item.Offer.Animal.Name, "Details", "Animals", new { id = item.Offer.AnimalID }, null)<br />
-            <ins>Gatunek</ins>: @Html.DisplayFor(modelItem => item.Offer.Animal.Species)<br />
-            <ins>Rasa</ins>: @Html.DisplayFor(modelItem => item.Offer.Animal.Race)<br />
-            <ins>Waga</ins>: @Html.DisplayFor(modelItem => item.Offer.Animal.Weight)
-        </td>
-        <td>
             <b>@Html.ActionLink(item.Owner.Login, "DetailsAnotherProfile", "Profiles", new { id = item.OwnerID }, null)</b><br />
             <ins>Imię i nazwisko</ins>: @Html.DisplayFor(modelItem => item.Owner.FirstName) @Html.DisplayFor(modelItem => item.Owner.LastName)<br />
             <ins>Adres</ins>: @Html.DisplayFor(modelItem => item.Owner.City), @Html.DisplayFor(modelItem => item.Owner.Street) <br />
             <ins>tel.</ins>: @Html.DisplayFor(modelItem => item.Owner.PhoneNumber)
+        </td>
+        <td>
+            <b>@Html.ActionLink(item.Offer.Animal.Name, "Details", "Animals", new { id = item.Offer.AnimalID }, null)</b><br />
+            <ins>Gatunek</ins>: @Html.DisplayFor(modelItem => item.Offer.Animal.Species)<br />
+            <ins>Rasa</ins>: @Html.DisplayFor(modelItem => item.Offer.Animal.Race)<br />
+            <ins>Waga</ins>: @Html.DisplayFor(modelItem => item.Offer.Animal.Weight)
         </td>
         <td>
             @Html.DisplayFor(modelItem => item.Message)
@@ -55,6 +55,10 @@
             {
                 <b style="color: darkred">@item.Status</b>
             }
+            else if (item.Status.Contains("Usunieta"))
+            {
+                <b style="color: black">Odrzucone</b>
+            }
             else
             {
                 <b>@Html.DisplayFor(modelItem => item.Status)</b>
@@ -64,7 +68,7 @@
         <td>
             @if (item.Offer.StartingDate > DateTime.Now)
             {
-                <a href='@Url.Action("Edit", new { id = item.ID })'>
+                <a href='@Url.Action("EditResign", new { id = item.ID })'>
                     <img src="~/Images/resign.png" width="70px" alt="Rezygnuj">
                 </a>
             }

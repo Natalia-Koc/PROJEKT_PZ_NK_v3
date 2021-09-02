@@ -8,13 +8,13 @@
 <table class="table  table-striped">
     <tr>
         <th>
-            Opiekun
-        </th>
-        <th>
             Oferta
         </th>
         <th>
             Właściciel
+        </th>
+        <th>
+            Opiekun
         </th>
         <th>
             Zwierze
@@ -27,20 +27,6 @@
 
 @foreach (var item in Model) {
 <tr>
-    <td>
-        @if (item.Guardian.Email == User.Identity.Name)
-        {
-            <p>JA</p>
-        }
-        else
-        {
-            @Html.ActionLink(item.Guardian.Login, "Profiles", "Details")<br />
-            <p style="word-spacing: 0.1cm; ">
-                @Html.DisplayFor(modelItem => item.Guardian.FirstName)
-                @Html.DisplayFor(modelItem => item.Guardian.LastName)
-            </p>
-        }
-    </td>
     <td>
         @Html.ActionLink(item.Offer.Title, "Details")<br />
         @Html.DisplayFor(modelItem => item.Offer.StartingDate) - @Html.DisplayFor(modelItem => item.Offer.EndDate)
@@ -60,8 +46,42 @@
         }
     </td>
     <td>
-        @Html.ActionLink(item.Offer.Animal.Name, "Animals", "Details")<br />
+        @if (item.Guardian.Email == User.Identity.Name)
+        {
+            <p>JA</p>
+        }
+        else
+        {
+            @Html.ActionLink(item.Guardian.Login, "Profiles", "Details")<br />
+            <p style="word-spacing: 0.1cm; ">
+                @Html.DisplayFor(modelItem => item.Guardian.FirstName)
+                @Html.DisplayFor(modelItem => item.Guardian.LastName)
+            </p>
+        }
+    </td>
+    <td>
+        @Html.ActionLink(item.Offer.Animal.Name, "Details", "Animals", new { id = item.Offer.AnimalID}, null)<br />
         @Html.DisplayFor(modelItem => item.Offer.Animal.Species) - @Html.DisplayFor(modelItem => item.Offer.Animal.Race)
+    </td>
+    <td>
+        @if (item.Status == "Zaakceptowane!")
+        {
+            <b style="color: limegreen">@Html.DisplayFor(modelItem => item.Status)</b>
+        }
+        else if (item.Status == "Opiekun zrezygnował z oferty"
+                        || item.Status == "Odrzucone"
+                        || item.Status == "Właściciel odrzucił ofertę")
+        {
+            <b style="color: darkred">@item.Status</b>
+        }
+        else if (item.Status.Contains("Usunieta"))
+        {
+            <b style="color: black">Odrzucone</b>
+        }
+        else
+        {
+            <b>@Html.DisplayFor(modelItem => item.Status)</b>
+        }
     </td>
     <td>
         <a href='@Url.Action("Delete", new { id = item.ID })'>

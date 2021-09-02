@@ -34,7 +34,9 @@ namespace PROJEKT_PZ_NK_v3.Controllers
                 .Include(a => a.Owner)
                 .Where(a => a.Guardian.Email == User.Identity.Name 
                 && a.Offer.StartingDate > DateTime.Now
-                && a.Status != "Opiekun zrezygnował z oferty");
+                && a.Status != "Opiekun zrezygnował z oferty"
+                && a.Status != "Odrzucone"
+                && !a.Status.Contains("Usunieta"));
             return View(applications.ToList());
         }
 
@@ -44,7 +46,11 @@ namespace PROJEKT_PZ_NK_v3.Controllers
                 .Include(a => a.Guardian)
                 .Include(a => a.Offer)
                 .Include(a => a.Owner)
-                .Where(a => a.Owner.Email == User.Identity.Name && a.Offer.StartingDate > DateTime.Now);
+                .Where(a => a.Owner.Email == User.Identity.Name 
+                && a.Offer.StartingDate > DateTime.Now
+                && a.Status != "Właściciel odrzucił zgłoszenie"
+                && a.Status != "Odrzucone"
+                && !a.Status.Contains("Usunieta"));
             return View(applications.ToList());
         }
 
@@ -56,8 +62,10 @@ namespace PROJEKT_PZ_NK_v3.Controllers
                 .Include(a => a.Owner)
                 .Where(a => (a.Offer.StartingDate < DateTime.Now || 
                     (a.Status == "Właściciel odrzucił ofertę" && a.Owner.Email == User.Identity.Name) ||
-                    (a.Status == "Opiekun zrezygnował z oferty" && a.Guardian.Email == User.Identity.Name)) && 
-                    !a.Status.Contains(User.Identity.Name));
+                    (a.Status == "Opiekun zrezygnował z oferty" && a.Guardian.Email == User.Identity.Name) ||
+                    a.Status == "Odrzucone" ||
+                    a.Status.Contains("Usunieta")) && 
+                    a.Status != "Usunieta przez " + User.Identity.Name);
             return View(applications.ToList());
         }
 
@@ -94,7 +102,7 @@ namespace PROJEKT_PZ_NK_v3.Controllers
 
 
         // GET: Applications/Edit/5
-        public ActionResult Edit(int? id)
+        public ActionResult EditResign(int? id)
         {
             if (id == null)
             {
@@ -102,7 +110,7 @@ namespace PROJEKT_PZ_NK_v3.Controllers
             }
             if (db.Applications.Find(id).Status == "Właściciel odrzucił ofertę")
             {
-                db.Applications.Remove(db.Applications.Find(id));
+                db.Applications.Find(id).Status = "Odrzucone";
             }
             else
             {
@@ -120,7 +128,7 @@ namespace PROJEKT_PZ_NK_v3.Controllers
             }
             if (db.Applications.Find(id).Status == "Opiekun zrezygnował z oferty")
             {
-                db.Applications.Remove(db.Applications.Find(id));
+                db.Applications.Find(id).Status = "Odrzucone";
             }
             else
             {
@@ -168,7 +176,10 @@ namespace PROJEKT_PZ_NK_v3.Controllers
             {
                 db.Applications.Remove(applications);
             }
-            db.Applications.Find(id).Status = "Usunieta przez " + User.Identity.Name;
+            else
+            {
+                db.Applications.Find(id).Status = "Usunieta przez " + User.Identity.Name;
+            }
             db.SaveChanges();
             return RedirectToAction("History");
         }

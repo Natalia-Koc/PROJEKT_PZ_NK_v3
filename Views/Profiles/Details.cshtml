@@ -3,7 +3,6 @@
 @{
     ViewBag.Title = "Details";
 }
-@Styles.Render("~/Content/Site.css")
 
 <p class="text-success">@ViewBag.StatusMessage</p>
 <br />
@@ -97,9 +96,11 @@
     <div class="container row">
         @foreach (var item in Model.Animals)
         {
-            <div class="card col-3 list-group-item-heading">
+            <div class="card col-3 list-group-item-heading" style="padding:1%">
                 <a href="@Url.Action("Details", "Animals", new { id = item.ID })">
-                    <img class="card-img-top" src="~/ImagesAnimals/@item.Image" alt="Card image">
+                    <img class="card-img-top center-block block d-block mx-auto"
+                         style="max-height: 200px; object-fit: cover;"
+                         src="~/ImagesAnimals/@item.Image" alt="Card image">
                 </a>
                 <div class="card-body">
                     <a href="@Url.Action("Details", "Animals", new { id = item.ID })">
