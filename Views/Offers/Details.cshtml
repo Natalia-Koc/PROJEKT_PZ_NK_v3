@@ -4,10 +4,7 @@
     ViewBag.Title = "Details";
 }
 
-<h2>Szczegóły</h2>
-
 <div class="container-fluid">
-    <h4>Oferta: @Html.DisplayFor(model => model.Title)</h4>
     <hr />
     <div class="row">
         <div class="col-5 list-group-item-heading">
@@ -25,11 +22,10 @@
         <div class="col-6 active" style="margin-top:4%">
             <dl class="dl-horizontal">
                 <dt>
-                    Tytuł
                 </dt>
 
                 <dd>
-                    @Html.DisplayFor(model => model.Title)
+                    <h3>@Html.DisplayFor(model => model.Title)</h3>
                 </dd>
 
                 <dt>
@@ -153,25 +149,29 @@
                     <td>
                         @if (item.Status == "Zaakceptowane!")
                         {
-                            <b style="color: limegreen">@item.Status</b>
+                        <b style="color: limegreen">@item.Status</b>
                         }
-                        else if (item.Status == "Właściciel odrzucił ofertę" || item.Status == "Opiekun zrezygnował z oferty")
+                        else if (item.Status == "Opiekun zrezygnował z oferty")
                         {
                             <b style="color: darkred">@item.Status</b>
                         }
+                        else if (item.Status.Contains("Usunieta"))
+                        {
+                            <b style="color: black">Odrzucone</b>
+                        }
                         else
                         {
-                            <b>@item.Status</b>
+                    <b>@item.Status</b>
                         }
                     </td>
                     <td>
                         @if (item.Status != "Zaakceptowane!" && item.Status != "Opiekun zrezygnował z oferty")
                         {
-                            <a href='@Url.Action("EditAccept", new { id = item.ID })'>
+                            <a href='@Url.Action("EditAccept", "Applications", new { id = item.ID })'>
                                 <img src="~/Images/accept.jpg" width="45px" alt="Akceptuj">
                             </a>
                         }
-                        <a href='@Url.Action("EditDiscard", new { id = item.ID })'>
+                        <a href='@Url.Action("EditDiscard", "Applications", new { id = item.ID })'>
                             <img src="~/Images/discard.jpg" width="45px" alt="Odrzuć">
                         </a>
                     </td>
