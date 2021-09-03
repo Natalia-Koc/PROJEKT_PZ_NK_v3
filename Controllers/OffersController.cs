@@ -19,7 +19,7 @@ namespace PROJEKT_PZ_NK_v3.Controllers
 
         // GET: Offers
         [Authorize]
-        public ActionResult Index(string sortOrder, string searchString, string searchSpecies, string searchRace, string currentFilter, int? page)
+        public ActionResult Index(string sortOrder, string searchString, string searchSpecies, string searchRace, int? page)
         {
             ViewBag.CurrentSort = sortOrder;
             ViewBag.TitleSortParmAsc = String.IsNullOrEmpty(sortOrder) ? "Title_asc" : "";
@@ -69,10 +69,18 @@ namespace PROJEKT_PZ_NK_v3.Controllers
                     offers = offers.OrderBy(s => s.ID);
                     break;
             }
-            int pageSize = 9;
+            int pageSize = 12;
             int pageNumber = (page ?? 1);
             ViewBag.SortList = new List<string>() {"tytuł malejąco", "tytuł rosnąco", "data malejąco", "data rosnąco"};
             return View(offers.ToPagedList(pageNumber, pageSize));
+        }
+
+        public ActionResult MyOffers()
+        {
+            var offers = from s in db.Offers
+                         where s.StartingDate > DateTime.Now && s.Profile.Email == User.Identity.Name
+                         select s;
+            return View(offers.ToList());
         }
 
         // GET: Offers/Details/5

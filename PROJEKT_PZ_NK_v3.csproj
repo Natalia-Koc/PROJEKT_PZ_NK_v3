@@ -283,6 +283,7 @@
     <Content Include="Views\Applications\MyApplications.cshtml" />
     <Content Include="Views\Applications\ApplicationsToMyOffers.cshtml" />
     <Content Include="Views\Applications\History.cshtml" />
+    <Content Include="Views\Offers\MyOffers.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

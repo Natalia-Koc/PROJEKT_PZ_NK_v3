@@ -27,7 +27,18 @@
             <div class="navbar-collapse collapse">
                 <ul class="nav navbar-nav">
                     <li>@Html.ActionLink("Strona główna", "Index", "Home")</li>
-                    <li>@Html.ActionLink("Oferty", "Index", "Offers")</li>
+                    <li style="width:15%">
+                        @Html.ActionLink("Oferty", "Index", "Offers")
+                    </li>
+                    <li>
+                        <a class="dropdown-toggle dropdown-toggle-split" id="dropdownMenuReference"
+                           data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" data-reference="parent">
+                            <span class="sr-only" style="padding-left:0%">Toggle Dropdown</span>
+                        </a>
+                        <div class="dropdown-menu" aria-labelledby="dropdownMenuReference">
+                            <a class="dropdown-item" href="@Url.Action("MyOffers", "Offers",null)">Moje oferty</a>
+                        </div>
+                    </li>
                     <li class="dropdown">
                         <a class="dropdown-toggle" data-toggle="dropdown" href="#">
                             Zgłoszenia
