@@ -35,5 +35,7 @@ namespace PROJEKT_PZ_NK_v3.Models
         public virtual List<Animal> Animals { get; set; }
         public virtual List<Comments> Comments { get; set; }
         public virtual List<Applications> Applications { get; set; }
+        public virtual List<Offer> Offers { get; set; }
+
     }
 }

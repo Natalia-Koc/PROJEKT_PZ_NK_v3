@@ -130,8 +130,9 @@ namespace PROJEKT_PZ_NK_v3.Controllers
             {
                 Profile myProfile = db.Profiles.Single(p => p.Email == User.Identity.Name);
                 offer.Profile = myProfile;
-
                 db.Offers.Add(offer);
+                db.SaveChanges();
+                db.Profiles.Single(p => p.Email == User.Identity.Name).Offers.Add(offer);
                 db.SaveChanges();
                 return RedirectToAction("Index");
             }
@@ -164,7 +165,6 @@ namespace PROJEKT_PZ_NK_v3.Controllers
             if (ModelState.IsValid)
             {
                 db.Entry(offer).State = EntityState.Modified;
-                
                 db.SaveChanges();
                 return RedirectToAction("Index");
             }

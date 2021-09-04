@@ -15,6 +15,11 @@ namespace PROJEKT_PZ_NK_v3.Controllers
     {
         private OfferContext db = new OfferContext();
 
+        public ActionResult Ranking()
+        {
+            var profiles = db.Profiles.OrderByDescending(p => p.Rate).Take(20).ToList();
+            return View(profiles);
+        }
         public ActionResult Details()
         {
             Profile profile = db.Profiles.FirstOrDefault(p => p.Email == User.Identity.Name);

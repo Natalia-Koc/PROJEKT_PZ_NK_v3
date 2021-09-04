@@ -21,10 +21,10 @@
                 <h4 class="card-title">@item.Title</h4>
                 <p class="card-text">@item.StartingDate.ToString("yyyy-MM-dd HH:mm")- @item.EndDate.ToString("yyyy-MM-dd HH:mm")</p>
                 <p class="card-text">
-                    Animal: @Html.ActionLink(item.Animal.Name, "Details", "Animals", new { id = item.Animal.ID }, null)
+                    Zwierze: @Html.ActionLink(item.Animal.Name, "Details", "Animals", new { id = item.Animal.ID }, null)
                 </p>
                 <p class="card-text">
-                    Owner: @Html.ActionLink(item.Profile.Login, "DetailsAnotherProfile", "Profiles", new { id = item.Profile.ID }, null)
+                    Właściciel: @Html.ActionLink(item.Profile.Login, "DetailsAnotherProfile", "Profiles", new { id = item.Profile.ID }, null)
                 </p>
                 <p class="text-right btn-block">@Html.ActionLink("Więcej informacji", "Details", "Offers", new { id = item.ID }, null) </p>
             </div>
