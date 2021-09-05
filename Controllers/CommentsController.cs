@@ -100,23 +100,40 @@ namespace PROJEKT_PZ_NK_v3.Controllers
             if (ModelState.IsValid)
             {
                 db.SaveChanges();
+                
                 return RedirectToAction("Index");
             }
             return View(comments);
         }
 
-        public ActionResult Delete(int? id, int profileID)
+        public ActionResult Delete(int? idCommm, int profileID)
         {
-            if (id == null)
+            if (idCommm == null)
             {
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             }
-            Comments comments = db.Comments.Find(id);
+            Comments comments = db.Comments.Find(idCommm);
             if (comments == null)
             {
                 return HttpNotFound();
             }
             db.Comments.Remove(comments);
+            db.SaveChanges();
+            if (db.Profiles.Single(p => p.ID == profileID).Comments.Where(a => a.Grade > 0).Count() > 0)
+            {
+                db.Profiles.
+                    Single(p => p.ID == profileID)
+                    .Rate = (int)db.Comments
+                    .Where(a => a.ProfileID == profileID && a.Grade != 0)
+                    .Select(a => a.Grade)
+                    .Average() * 20;
+            }
+            else
+            {
+                db.Profiles.
+                    Single(p => p.ID == profileID)
+                    .Rate = 0;
+            }
             db.SaveChanges();
             return RedirectToAction("DetailsAnotherProfile", "Profiles", new { id = profileID});
         }

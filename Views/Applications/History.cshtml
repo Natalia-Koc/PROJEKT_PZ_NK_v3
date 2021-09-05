@@ -38,7 +38,7 @@
         }
         else
         {
-            @Html.ActionLink(item.Owner.Login, "Profiles", "Details")<br />
+            @Html.ActionLink(item.Owner.Login, "DetailsAnotherProfile", "Profiles", new {id = item.OwnerID }, null)<br />
             <p style="word-spacing: 0.1cm; ">
                 @Html.DisplayFor(modelItem => item.Owner.FirstName)
                 @Html.DisplayFor(modelItem => item.Owner.LastName)
@@ -52,7 +52,7 @@
         }
         else
         {
-            @Html.ActionLink(item.Guardian.Login, "Profiles", "Details")<br />
+            @Html.ActionLink(item.Guardian.Login, "DetailsAnotherProfile", "Profiles", new { id = item.OwnerID }, null)<br />
             <p style="word-spacing: 0.1cm; ">
                 @Html.DisplayFor(modelItem => item.Guardian.FirstName)
                 @Html.DisplayFor(modelItem => item.Guardian.LastName)
