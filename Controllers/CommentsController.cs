@@ -130,8 +130,8 @@ namespace PROJEKT_PZ_NK_v3.Controllers
             }
             else
             {
-                db.Profiles.
-                    Single(p => p.ID == profileID)
+                db.Profiles
+                    .Single(p => p.ID == profileID)
                     .Rate = 0;
             }
             db.SaveChanges();

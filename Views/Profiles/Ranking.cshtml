@@ -4,49 +4,53 @@
     ViewBag.Title = "Index";
 }
 
-<h2>Ranking 20 najlepiej ocenianych użytkowników.</h2>
-<div class="container">
-    <ul class="list-group"  id="accordion">
-            @foreach (var item in Model)
-            {
-                <div class="panel panel-default">
-                    <div class="panel-heading">
-                        <h4 class="panel-title list-group-item">
+<h2>Ranking 20 najlepiej ocenianych użytkowników.</h2><br />
+<div class="container-fluid container ">
+    <div class="list-group" id="accordion">
+        @foreach ((var item, int i) in Model.Select((T, i) => (T, i)))
+        {
+        <div class="row">
+            <div class="col-1">
+                <h2><em>@(i +1)</em></h2>
+            </div>
+            <div class="panel col-10">
+                <div class="panel-heading">
+                    <h4 class="panel-title list-group-item">
 
-                            <a data-toggle="collapse" data-parent="#accordion" href="#@item.ID"><b>@item.Login</b></a>
-                            <span class="badge">@item.Rate%</span><br />
-                            @item.FirstName @item.LastName
+                        <a data-toggle="collapse" data-parent="#accordion" href="#@item.ID"><b>@item.Login</b></a>
+                        <span class="badge">@item.Rate%</span><br />
+                        @item.FirstName @item.LastName
 
-                        </h4>
-                    </div>
-
-                    <div id="@item.ID" class="panel-collapse collapse">
-                        <div class="panel-body">
-                            <div class="container row">
-                                @foreach (var item2 in item.Offers)
-                                {
-                                    <div class="card col-3 list-group-item-heading" style="padding:1%">
-                                        <a href="@Url.Action("Details", "Offers", new { id = item2.ID })">
-                                            <img class="card-img-top center-block block d-block mx-auto"
-                                                 style="max-height: 150px; object-fit: cover;"
-                                                 src="~/ImagesAnimals/@item2.Animal.Image"
-                                                 alt="Card image">
-                                        </a>
-                                        <div class="card-body">
-                                            <h4 class="card-title">@item2.Title</h4>
-                                            <p class="card-text">
-                                                Zwierze: @Html.ActionLink(item2.Animal.Name, "Details", "Animals", new { id = item2.AnimalID }, null)<br />
-                                                @item2.StartingDate.Date.ToShortDateString()  -  @item2.EndDate.Date.ToShortDateString()
-                                            </p>
-                                            <p class="text-right btn-block"> </p>
-                                        </div>
-                                    </div>
-                                }
-                            </div>
-                        </div>
-                    </div>
+                    </h4>
                 </div>
-            }
-    </ul>
+
+                <div id="@item.ID" class="panel-collapse collapse panel-body">
+                    <div class="container row">
+                        @foreach (var item2 in item.Offers)
+                        {
+                            <div class="card col-3 list-group-item-heading" style="padding:1%">
+                                <a href="@Url.Action("Details", "Offers", new { id = item2.ID })">
+                                    <img class="card-img-top center-block block d-block mx-auto"
+                                         style="max-height: 150px; object-fit: cover;"
+                                         src="~/ImagesAnimals/@item2.Animal.Image"
+                                         alt="Card image">
+                                </a>
+                                <div class="card-body">
+                                    <h4 class="card-title">@item2.Title</h4>
+                                    <p class="card-text">
+                                        Zwierze: @Html.ActionLink(item2.Animal.Name, "Details", "Animals", new { id = item2.AnimalID }, null)<br />
+                                        @item2.StartingDate.Date.ToShortDateString()  -  @item2.EndDate.Date.ToShortDateString()
+                                    </p>
+                                    <p class="text-right btn-block"> </p>
+                                </div>
+                            </div>
+                        }
+                    </div>
+                    </div>
+            </div>
+        </div>
+
+                }
+        </div>
 </div>
 
