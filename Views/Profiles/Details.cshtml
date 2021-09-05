@@ -164,7 +164,7 @@
             @if (@ViewBag.MyComment != null)
             {
                 <tr>
-                    <td>@ViewBag.MyComment.Author.FirstName</td>
+                    <td>@ViewBag.MyComment.Author.Login</td>
                     <td>@ViewBag.MyComment.Contents</td>
                     <td>
                         @if (ViewBag.MyComment.Grade == 0)
@@ -187,7 +187,7 @@
             @foreach (var item in Model.Comments.Where(m => m.Author.Email != User.Identity.Name))
             {
                 <tr>
-                    <td>@item.Author.FirstName</td>
+                    <td><a href="@Url.Action("DetailsAnotherProfile", "Profiles", new { id = item.AuthorID })"><b>@item.Author.Login</b></a></td>
                     <td>@item.Contents</td>
                     <td>
                         @if (item.Grade == 0)
