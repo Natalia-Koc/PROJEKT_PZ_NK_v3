@@ -53,23 +53,16 @@ namespace PROJEKT_PZ_NK_v3.Controllers
             {
                 Profile myProfile = db.Profiles.Single(p => p.Email == User.Identity.Name);
                 comments.AuthorID = myProfile.ID;
-                if (db.Comments.Where(a => a.Author.Email == User.Identity.Name && a.Grade != 0).Count() > 0)
-                {
-                    var comms = db.Comments.First(a => a.Author.Email == User.Identity.Name && a.Grade != 0);
-                    comms.Grade = comments.Grade;
-                    comments.Grade = 0;
-                }
+                comments.Profile = db.Profiles.Single(a => a.ID == comments.ProfileID);
                 db.Comments.Add(comments);
                 db.SaveChanges();
                 if (comments.Grade != 0)
                 {
                     int id = db.Profiles.Single(p => p.ID == comments.ProfileID).ID;
-                    var komy = db.Comments.Where(a => a.ProfileID == id && a.Grade != 0).Select(a => a.Grade);
-                    int b = (int)komy.Average() * 20;
-                    db.Profiles.Single(p => p.ID == comments.ProfileID).Rate = b;
+                    var average = db.Comments.Where(a => a.ProfileID == id && a.Grade != 0).Select(a => a.Grade).Average() * 20;
+                    db.Profiles.Single(p => p.ID == comments.ProfileID).Rate = (int) average;
                 }
                 db.SaveChanges();
-                return RedirectToAction("DetailsAnotherProfile", "Profiles", new { id = comments.ProfileID});
             }
 
             return RedirectToAction("DetailsAnotherProfile", "Profiles", new { id = comments.ProfileID });

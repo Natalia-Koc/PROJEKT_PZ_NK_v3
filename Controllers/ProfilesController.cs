@@ -40,7 +40,7 @@ namespace PROJEKT_PZ_NK_v3.Controllers
             Profile 
             profile = db.Profiles.Find(id); 
             ViewBag.ProgressBarCount = db.Comments.Where(m => m.ProfileID == id && m.Grade != 0).Count();
-            ViewBag.FoundComment = db.Comments.Any(m => m.Author.Email == User.Identity.Name);
+            ViewBag.FoundComment = db.Comments.Any(m => m.Author.Email == User.Identity.Name && m.ProfileID == id);
             if (!ViewBag.FoundComment)
             {
                 ViewBag.MyComment = null;

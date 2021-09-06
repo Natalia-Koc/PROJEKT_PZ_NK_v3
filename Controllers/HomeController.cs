@@ -22,8 +22,8 @@ namespace PROJEKT_PZ_NK_v3.Controllers
             var offers = db.Offers
                 .Where(a => a.Profile.Email != User.Identity.Name && a.Profile.Comments
                     .Where(b => ((b.Author.Email == User.Identity.Name || b.Profile.Email == User.Identity.Name)
-                        && (b.Grade < 3 || b.Grade > 0)))
-                .Count() <= 0);
+                        && (b.Grade > 2 || b.Grade == 0)))
+                .Count() >= 0);
 
             if (db.Applications.Any(a => a.Guardian.Email == User.Identity.Name))
             {
@@ -32,22 +32,22 @@ namespace PROJEKT_PZ_NK_v3.Controllers
                 if (hours > days)
                 {
                     ViewBag.Offers1 = offers
-                        .OrderBy(a => DbFunctions.DiffDays(a.EndDate, a.StartingDate))
+                        .OrderByDescending(a => DbFunctions.DiffDays(a.EndDate, a.StartingDate))
                         .ThenByDescending(a => a.Profile.Rate)
                     .Take(4).ToList();
                     ViewBag.Offers2 = offers
-                        .OrderBy(a => DbFunctions.DiffDays(a.EndDate, a.StartingDate))
+                        .OrderByDescending(a => DbFunctions.DiffDays(a.EndDate, a.StartingDate))
                         .ThenByDescending(a => a.Profile.Rate)
                     .Skip(4).Take(4).ToList();
                 }
                 else
                 {
                     ViewBag.Offers1 = offers
-                        .OrderByDescending(a => DbFunctions.DiffDays(a.EndDate, a.StartingDate))
+                        .OrderBy(a => DbFunctions.DiffDays(a.EndDate, a.StartingDate))
                         .ThenByDescending(a => a.Profile.Rate)
                     .Take(4).ToList();
                     ViewBag.Offers2 = offers
-                        .OrderByDescending(a => DbFunctions.DiffDays(a.EndDate, a.StartingDate))
+                        .OrderBy(a => DbFunctions.DiffDays(a.EndDate, a.StartingDate))
                         .ThenByDescending(a => a.Profile.Rate)
                     .Skip(4).Take(4).ToList();
                 }
