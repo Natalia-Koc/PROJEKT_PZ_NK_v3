@@ -35,6 +35,8 @@ namespace PROJEKT_PZ_NK_v3.Controllers
                         .OrderByDescending(a => DbFunctions.DiffDays(a.EndDate, a.StartingDate))
                         .ThenByDescending(a => a.Profile.Rate)
                     .Take(4).ToList();
+
+
                     ViewBag.Offers2 = offers
                         .OrderByDescending(a => DbFunctions.DiffDays(a.EndDate, a.StartingDate))
                         .ThenByDescending(a => a.Profile.Rate)
@@ -64,14 +66,13 @@ namespace PROJEKT_PZ_NK_v3.Controllers
             return View();
         }
 
-        private async Task<int> Disctance(Profile profile)
+        /*private async Task<int> MyDisctance(Profile profile)
         {
             Geocoder geoCoder = new Geocoder();
 
             Profile myProfile = db.Profiles.Single(p => p.Email == User.Identity.Name);
             String myAddress = myProfile.City + ", " + myProfile.Street + " " + myProfile.HouseNumber;
-            IEnumerable<Position> myApproximateLocations = await geoCoder.GetPositionsForAddressAsync(myAddress);
-            Position myPosition = myApproximateLocations.FirstOrDefault();
+            Position myPosition = geoCoder.GetPositionsForAddressAsync(myAddress).Result.FirstOrDefault();
 
             String secondAddress = profile.City + ", " + profile.Street + " " + profile.HouseNumber;
             IEnumerable<Position> secondApproximateLocations = await geoCoder.GetPositionsForAddressAsync(secondAddress);
@@ -79,7 +80,7 @@ namespace PROJEKT_PZ_NK_v3.Controllers
 
             Distance distance = Distance.BetweenPositions(myPosition, secondPosition);
             return ((int)distance.Meters);
-        }
+        }*/
 
         public ActionResult About()
         {
