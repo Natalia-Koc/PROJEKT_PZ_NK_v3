@@ -106,19 +106,16 @@ namespace PROJEKT_PZ_NK_v3.Controllers
             return View(comments);
         }
 
-        public ActionResult Delete(int? idCommm, int profileID)
+        public ActionResult Delete(int profileID)
         {
-            if (idCommm == null)
-            {
-                return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
-            }
-            Comments comments = db.Comments.Find(idCommm);
+            Comments comments = db.Comments.Single(a => a.Author.Email == User.Identity.Name && a.ProfileID == profileID);
             if (comments == null)
             {
                 return HttpNotFound();
             }
             db.Comments.Remove(comments);
             db.SaveChanges();
+
             if (db.Profiles.Single(p => p.ID == profileID).Comments.Where(a => a.Grade > 0).Count() > 0)
             {
                 db.Profiles.
