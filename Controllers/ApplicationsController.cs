@@ -48,7 +48,7 @@ namespace PROJEKT_PZ_NK_v3.Controllers
                 .Include(a => a.Owner)
                 .Where(a => a.Owner.Email == User.Identity.Name 
                 && a.Offer.StartingDate > DateTime.Now
-                && a.Status != "Właściciel odrzucił zgłoszenie"
+                && a.Status != "Właściciel odrzucił ofertę"
                 && a.Status != "Odrzucone"
                 && !a.Status.Contains("Usunieta"));
             return View(applications.ToList());

@@ -66,7 +66,8 @@ namespace PROJEKT_PZ_NK_v3.Controllers
             return View();
         }
 
-        /*private async Task<int> MyDisctance(Profile profile)
+        /*
+        private async Task<int> MyDisctance(Profile profile)
         {
             Geocoder geoCoder = new Geocoder();
 
