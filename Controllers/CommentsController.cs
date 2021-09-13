@@ -86,7 +86,7 @@ namespace PROJEKT_PZ_NK_v3.Controllers
             return RedirectToAction("DetailsAnotherProfile", "Profiles", new { id = comments.ProfileID });
         }
 
-        public ActionResult Delete(int profileID)
+        public async Task<ActionResult> Delete(int profileID)
         {
             Comments comments = db.Comments.Single(a => a.Author.Email == User.Identity.Name && a.ProfileID == profileID);
             if (comments == null)

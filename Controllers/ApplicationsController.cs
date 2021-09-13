@@ -66,8 +66,8 @@ namespace PROJEKT_PZ_NK_v3.Controllers
                     (a.Status == "Właściciel odrzucił ofertę" && a.Owner.Email == User.Identity.Name) ||
                     (a.Status == "Opiekun zrezygnował z oferty" && a.Guardian.Email == User.Identity.Name) ||
                     a.Status == "Odrzucone" ||
-                    a.Status.Contains("Usunieta")) && 
-                    a.Status != "Usunieta przez " + User.Identity.Name);
+                    !a.Status.Contains("Usunieta")) && 
+                    !a.Status.Contains(User.Identity.Name));
             return View(applications.ToList());
         }
 
@@ -225,36 +225,35 @@ namespace PROJEKT_PZ_NK_v3.Controllers
             return RedirectToAction("ApplicationsToMyOffers");
         }
 
-        // POST: Applications/Edit/5
-        // Aby zapewnić ochronę przed atakami polegającymi na przesyłaniu dodatkowych danych, włącz określone właściwości, z którymi chcesz utworzyć powiązania.
-        // Aby uzyskać więcej szczegółów, zobacz https://go.microsoft.com/fwlink/?LinkId=317598.
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public ActionResult Edit(Applications applications)
-        {
-            if (ModelState.IsValid)
-            {
-                db.Entry(applications).State = EntityState.Modified;
-                db.SaveChanges();
-                return RedirectToAction("Index");
-            }
-            ViewBag.GuardianID = new SelectList(db.Profiles, "ID", "Login", applications.GuardianID);
-            ViewBag.OfferID = new SelectList(db.Offers, "ID", "Title", applications.OfferID);
-            ViewBag.OwnerID = new SelectList(db.Profiles, "ID", "Login", applications.OwnerID);
-            return View(applications);
-        }
-
         // GET: Applications/Delete/5
-        public ActionResult Delete(int? id)
+        public async Task<ActionResult> Delete(int? id)
         {
             Applications applications = db.Applications.Find(id);
-            if (applications.Status.Contains("Usunieta"))
+            IAsyncSession session = db._driver.AsyncSession();
+            try
             {
-                db.Applications.Remove(applications);
+                if (applications.Status.Contains("Usunieta"))
+                {
+                    db.Applications.Find(id).Status = "Usunieta";
+                    IResultCursor cursor = await session.RunAsync(
+                        "match (app:Application)-[ro:NOTIFICATION_TO_THE_OFFER]->(o:Offer {OfferID:" + db.Applications.Find(id).OfferID + "})" +
+                        "SET app.Status = 'Usunieta'"
+                    );
+                    await cursor.ConsumeAsync();
+                }
+                else
+                {
+                    db.Applications.Find(id).Status = "Usunieta przez " + User.Identity.Name;
+                    IResultCursor cursor = await session.RunAsync(
+                        "match (app:Application)-[ro:NOTIFICATION_TO_THE_OFFER]->(o:Offer {OfferID:" + db.Applications.Find(id).OfferID + "})" +
+                        "SET app.Status = 'Usunieta przez " + User.Identity.Name +"'"
+                    );
+                    await cursor.ConsumeAsync();
+                }
             }
-            else
+            finally
             {
-                db.Applications.Find(id).Status = "Usunieta przez " + User.Identity.Name;
+                await session.CloseAsync();
             }
             db.SaveChanges();
             return RedirectToAction("History");

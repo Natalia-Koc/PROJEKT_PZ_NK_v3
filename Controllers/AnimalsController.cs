@@ -203,11 +203,26 @@ namespace PROJEKT_PZ_NK_v3.Controllers
         // POST: Animals/Delete/5
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
-        public ActionResult DeleteConfirmed(int id)
+        public async Task<ActionResult> DeleteConfirmed(int id)
         {
             Animal animal = db.Animals.Find(id);
             db.Animals.Remove(animal);
             db.SaveChanges();
+            IAsyncSession session = db._driver.AsyncSession();
+            try
+            {
+                IResultCursor cursor = await session.RunAsync(
+                    "match (p:Profile {Email:'"+ User.Identity.Name +"'})" +
+                        "-[rel:OWNER]->(a:Animal {Name:'"+ animal.Name +"'})" +
+                        "-[rell:ANIMAL_OFFER]->(o:Offer)" +
+                        "<-[relll:NOTIFICATION_TO_THE_OFFER]-(app:Application)" +
+                        "DETACH delete a,o,app");
+                await cursor.ConsumeAsync();
+            }
+            finally
+            {
+                await session.CloseAsync();
+            }
             return RedirectToAction("Details", "Profiles");
         }
 

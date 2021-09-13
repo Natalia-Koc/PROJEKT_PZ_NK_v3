@@ -74,13 +74,9 @@
         {
             <b style="color: darkred">@item.Status</b>
         }
-        else if (item.Status.Contains("Usunieta"))
-        {
-            <b style="color: black">Odrzucone</b>
-        }
         else
         {
-            <b>@Html.DisplayFor(modelItem => item.Status)</b>
+            <b style="color: black">Odrzucone</b>
         }
     </td>
     <td>

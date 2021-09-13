@@ -240,6 +240,9 @@ namespace PROJEKT_PZ_NK_v3.Controllers
             }
             db.Offers.Remove(offer);
             db.SaveChanges();
+
+
+
             return RedirectToAction("Index");
         }
 
