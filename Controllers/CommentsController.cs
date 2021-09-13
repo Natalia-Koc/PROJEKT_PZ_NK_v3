@@ -4,8 +4,10 @@ using System.Data;
 using System.Data.Entity;
 using System.Linq;
 using System.Net;
+using System.Threading.Tasks;
 using System.Web;
 using System.Web.Mvc;
+using Neo4j.Driver;
 using PROJEKT_PZ_NK_v3.DAL;
 using PROJEKT_PZ_NK_v3.Models;
 
@@ -47,7 +49,7 @@ namespace PROJEKT_PZ_NK_v3.Controllers
         // Aby zapewnić ochronę przed atakami polegającymi na przesyłaniu dodatkowych danych, włącz określone właściwości, z którymi chcesz utworzyć powiązania.
         // Aby uzyskać więcej szczegółów, zobacz https://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
-        public ActionResult Create(Comments comments)
+        public async Task<ActionResult> Create(Comments comments)
         {
             if (ModelState.IsValid)
             {
@@ -63,6 +65,22 @@ namespace PROJEKT_PZ_NK_v3.Controllers
                     db.Profiles.Single(p => p.ID == comments.ProfileID).Rate = (int) average;
                 }
                 db.SaveChanges();
+
+                IAsyncSession session = db._driver.AsyncSession();
+
+                try
+                {
+                    IResultCursor cursor = await session.RunAsync(
+                        "MATCH (n:Profile {Email: '" + User.Identity.Name + "'}), (p2:Profile {Email: '" + comments.Profile.Email + "'}) " +
+                        "CREATE(n) -[r:AUTHOR]-> (p:Comment {contents: '" + comments.Contents + "', rate: " + comments.Grade + "})," +
+                        "(p) -[t:COMMENTED_PROFILE]-> (p2)"
+                    );
+                    await cursor.ConsumeAsync();
+                }
+                finally
+                {
+                    await session.CloseAsync();
+                }
             }
 
             return RedirectToAction("DetailsAnotherProfile", "Profiles", new { id = comments.ProfileID });

@@ -4,8 +4,10 @@ using System.Data;
 using System.Data.Entity;
 using System.Linq;
 using System.Net;
+using System.Threading.Tasks;
 using System.Web;
 using System.Web.Mvc;
+using Neo4j.Driver;
 using PROJEKT_PZ_NK_v3.DAL;
 using PROJEKT_PZ_NK_v3.Models;
 
@@ -85,7 +87,7 @@ namespace PROJEKT_PZ_NK_v3.Controllers
         }
 
         // GET: Applications/Create
-        public ActionResult Create(int offerID, int ownerID, Applications application)
+        public async Task<ActionResult> Create(int offerID, int ownerID, Applications application)
         {
             application.Guardian = db.Profiles.Single(p => p.Email == User.Identity.Name);
             application.GuardianID = db.Profiles.Single(p => p.Email == User.Identity.Name).ID;
@@ -96,6 +98,26 @@ namespace PROJEKT_PZ_NK_v3.Controllers
             application.Status = "Oczekuje na akceptacje";
             db.Applications.Add(application);
             db.SaveChanges();
+
+            IAsyncSession session = db._driver.AsyncSession();
+            try
+            {
+                IResultCursor cursor = await session.RunAsync("" +
+                    "MATCH (n:Profile {Email: " + User.Identity.Name + "}), " +
+                        "(n2:Profile {Email: " + application.Owner.Email + "})," +
+                        "(o:Offer {OfferID: " + application.OfferID + "})" +
+                    "CREATE(n) -[r: GUARDIAN]-> (p: Application " +
+                    "{ Status: '" + application.Status +
+                    "', Message: '" + application.Message +"'})," +
+                    "CREATE(n2) -[t: OWNER]-> (p)," +
+                    "CREATE(p) -[y: NOTIFICATION_TO_THE_OFFER]-> (o)"
+                );
+                await cursor.ConsumeAsync();
+            }
+            finally
+            {
+                await session.CloseAsync();
+            }
 
             return RedirectToAction("Details", "Offers", new { id = offerID });
         }

@@ -9,6 +9,8 @@ using System.Web.Mvc;
 using PROJEKT_PZ_NK_v3.DAL;
 using PROJEKT_PZ_NK_v3.Models;
 using PagedList;
+using Neo4j.Driver;
+using System.Threading.Tasks;
 
 namespace PROJEKT_PZ_NK_v3.Controllers
 {
@@ -71,7 +73,7 @@ namespace PROJEKT_PZ_NK_v3.Controllers
             }
             int pageSize = 12;
             int pageNumber = (page ?? 1);
-            ViewBag.SortList = new List<string>() {"tytuł malejąco", "tytuł rosnąco", "data malejąco", "data rosnąco"};
+            ViewBag.SortList = new List<string>() { "tytuł malejąco", "tytuł rosnąco", "data malejąco", "data rosnąco" };
             return View(offers.ToPagedList(pageNumber, pageSize));
         }
 
@@ -124,17 +126,39 @@ namespace PROJEKT_PZ_NK_v3.Controllers
         // Aby uzyskać więcej szczegółów, zobacz https://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Create(Offer offer)
+        public async Task<ActionResult> Create(Offer offer)
         {
             if (ModelState.IsValid)
             {
                 Profile myProfile = db.Profiles.Single(p => p.Email == User.Identity.Name);
                 offer.Profile = myProfile;
                 db.Offers.Add(offer);
+                string name = db.Animals.Where(a => a.ID == offer.AnimalID).First().Name;
                 db.SaveChanges();
                 db.Profiles.Single(p => p.Email == User.Identity.Name).Offers.Add(offer);
                 db.SaveChanges();
-                return RedirectToAction("Index");
+                IAsyncSession session = db._driver.AsyncSession();
+                try
+                {
+                    IResultCursor cursor = await session.RunAsync(
+                        "MATCH (n:Profile { Email:'" + User.Identity.Name + "'})-[rel:OWNER]->(a:Animal {Name: '" + name + "'}) " +
+                        "CREATE(n) -[r:AUTHOR]-> (p:Offer " +
+                        "{ OfferID: " + offer.ID +
+                        ", Title: '" + offer.Title +
+                        "', Description: '" + offer.Description +
+                        "', StartingDate: '" + offer.StartingDate.Date +
+                        "', EndDate: '" + offer.EndDate.Date + "'})," +
+                        "(a) -[t:ANIMAL_OFFER]-> (p)"
+                    );
+                    await cursor.ConsumeAsync();
+                    /*IResultCursor cursor = await session.RunAsync();
+                    await cursor.ConsumeAsync();*/
+                }
+                finally
+                {
+                    await session.CloseAsync();
+                }
+                return RedirectToAction("MyOffers");
             }
 
             return View(offer);

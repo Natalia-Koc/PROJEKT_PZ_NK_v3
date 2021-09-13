@@ -1,14 +1,18 @@
-﻿using PROJEKT_PZ_NK_v3.Models;
+﻿using Neo4j.Driver;
+using PROJEKT_PZ_NK_v3.Models;
 using System.Data.Entity;
 using System.Data.Entity.ModelConfiguration.Conventions;
 
 namespace PROJEKT_PZ_NK_v3.DAL
 {
-        public class OfferContext : DbContext
-        {
-            public OfferContext()
+    public class OfferContext : DbContext
+    {
+        public readonly IDriver _driver = GraphDatabase.Driver("bolt://localhost:7687", AuthTokens.Basic("neo4j", "password"));
+
+        public OfferContext()
                 : base("DefaultConnection")
             {
+                
             }
 
             public DbSet<Profile> Profiles { get; set; }
@@ -33,4 +37,4 @@ namespace PROJEKT_PZ_NK_v3.DAL
 
         public System.Data.Entity.DbSet<PROJEKT_PZ_NK_v3.Models.Applications> Applications { get; set; }
     }
-    }
+}

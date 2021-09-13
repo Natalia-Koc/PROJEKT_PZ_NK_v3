@@ -4,10 +4,14 @@ using System.Data;
 using System.Data.Entity;
 using System.Linq;
 using System.Net;
+using System.Threading.Tasks;
 using System.Web;
 using System.Web.Mvc;
+using Neo4j.Driver;
+using Neo4jClient;
 using PROJEKT_PZ_NK_v3.DAL;
 using PROJEKT_PZ_NK_v3.Models;
+using PROJEKT_PZ_NK_v3.ViewModels;
 
 namespace PROJEKT_PZ_NK_v3.Controllers
 {
@@ -20,14 +24,50 @@ namespace PROJEKT_PZ_NK_v3.Controllers
             var profiles = db.Profiles.OrderByDescending(p => p.Rate).Take(20).ToList();
             return View(profiles);
         }
-        public ActionResult Details()
+        public async Task<ActionResult> Details()
         {
             Profile profile = db.Profiles.FirstOrDefault(p => p.Email == User.Identity.Name);
             Comments comments = new Comments();
             ViewBag.comments = comments;
             ViewBag.ProgressBarCount = db.Comments.Where(m => m.Profile.Email == User.Identity.Name && m.Grade != 0).Count();
             ViewBag.FoundComment = db.Comments.Any(m => m.Author.Email == User.Identity.Name);
-            
+
+            IAsyncSession session = db._driver.AsyncSession();
+            try
+            {
+
+                await session.ReadTransactionAsync(async tx =>
+                {
+                    var cursor =
+                        await tx.RunAsync(
+                            "MATCH (a:Profile) WHERE a.Email = $email RETURN a",
+                            new { email = User.Identity.Name });
+
+                    /*ViewBag.Profile = cursor.SingleAsync().Result.Values.First().Value.As<string>();*/
+
+                    List<IRecord> Records = await cursor.ToListAsync();
+                    foreach (var item in Records)
+                    {
+                        INode node = (INode)item.Values["a"];
+                        List<string> lista = new List<string>();
+                        foreach (var a in node.Properties)
+                        {
+                            int b = a.Key.IndexOf("id");
+                            lista.Add(a.Value.As<string>());
+                        }
+                        ViewBag.Profile = lista;
+                        break;
+                    }
+
+                });
+                
+            }
+            finally
+            {
+                await session.CloseAsync();
+            }
+            await db._driver.CloseAsync();
+
             return View(profile);
         }
 
@@ -64,7 +104,8 @@ namespace PROJEKT_PZ_NK_v3.Controllers
             {
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             }
-            Profile profile = db.Profiles.Find(id);
+            var profile = db.Profiles.Find(id);
+
             if (profile == null)
             {
                 return HttpNotFound();
@@ -77,42 +118,36 @@ namespace PROJEKT_PZ_NK_v3.Controllers
         // Aby uzyskać więcej szczegółów, zobacz https://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Edit(Profile profile)
+        public async Task<ActionResult> Edit(Profile profile)
         {
             if (ModelState.IsValid)
             {
                 profile.Rate = 0;
                 db.Entry(profile).State = EntityState.Modified;
                 db.SaveChanges();
+
+                IAsyncSession session = db._driver.AsyncSession();
+
+                try
+                {
+                    IResultCursor cursor = await session.RunAsync("match (a:Profile {Email: '" + User.Identity.Name + "'})" +
+                        "SET a.Login = '" + profile.Login + "'," +
+                        "a.FirstName = '" + profile.FirstName + "'," +
+                        "a.LastName = '" + profile.LastName + "'," +
+                        "a.PhoneNumber = '" + profile.PhoneNumber + "'," +
+                        "a.City = '" + profile.City + "'," +
+                        "a.Street = '" + profile.Street + "'," +
+                        "a.HouseNumber = '" + profile.HouseNumber + "'");
+                    await cursor.ConsumeAsync();
+                }
+                finally
+                {
+                    await session.CloseAsync();
+                }
+                await db._driver.CloseAsync();
                 return RedirectToAction("Details");
             }
             return View(profile);
-        }
-
-        // GET: Profiles/Delete/5
-        public ActionResult Delete(int? id)
-        {
-            if (id == null)
-            {
-                return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
-            }
-            Profile profile = db.Profiles.Find(id);
-            if (profile == null)
-            {
-                return HttpNotFound();
-            }
-            return View(profile);
-        }
-
-        // POST: Profiles/Delete/5
-        [HttpPost, ActionName("Delete")]
-        [ValidateAntiForgeryToken]
-        public ActionResult DeleteConfirmed(int id)
-        {
-            Profile profile = db.Profiles.Find(id);
-            db.Profiles.Remove(profile);
-            db.SaveChanges();
-            return RedirectToAction("Index");
         }
 
         protected override void Dispose(bool disposing)

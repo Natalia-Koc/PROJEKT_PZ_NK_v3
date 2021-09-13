@@ -4,8 +4,10 @@ using System.Data;
 using System.Data.Entity;
 using System.Linq;
 using System.Net;
+using System.Threading.Tasks;
 using System.Web;
 using System.Web.Mvc;
+using Neo4j.Driver;
 using PROJEKT_PZ_NK_v3.DAL;
 using PROJEKT_PZ_NK_v3.Models;
 
@@ -72,7 +74,7 @@ namespace PROJEKT_PZ_NK_v3.Controllers
         // Aby uzyskać więcej szczegółów, zobacz https://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Create(Animal animal)
+        public async Task<ActionResult> Create(Animal animal)
         {
             if (ModelState.IsValid)
             {
@@ -89,6 +91,32 @@ namespace PROJEKT_PZ_NK_v3.Controllers
 
                 db.Animals.Add(animal);
                 db.SaveChanges();
+
+                IAsyncSession session = db._driver.AsyncSession();
+
+                try
+                {
+                    IResultCursor cursor = await session.RunAsync(
+                        "MATCH (a:Profile { Email:'" + User.Identity.Name + "'})" +
+                        "CREATE(a) -[r: OWNER]->(b: Animal " +
+                        "{ Name: '" + animal.Name +
+                        "', Species: '" + animal.Species +
+                        "', Race: '" + animal.Race +
+                        "', Gender: '" + animal.Gender +
+                        "', Weight: '" + animal.Weight +
+                        "', DateOfBirth: '" + animal.DateOfBirth.Date +
+                        "', Description: '" + animal.Description +
+                        "', Image: '" + animal.Image +
+                        "'})"
+                    );
+                    await cursor.ConsumeAsync();
+                }
+                finally
+                {
+                    await session.CloseAsync();
+                }
+
+                await db._driver.CloseAsync();
                 return RedirectToAction("Details", "Animals", new { id = animal.ID });
             }
 
