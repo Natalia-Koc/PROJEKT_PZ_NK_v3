@@ -10,13 +10,13 @@ using System.Web.Mvc;
 using Neo4j.Driver;
 using PROJEKT_PZ_NK_v3.DAL;
 using PROJEKT_PZ_NK_v3.Models;
+using PROJEKT_PZ_NK_v3.ViewModels;
 
 namespace PROJEKT_PZ_NK_v3.Controllers
 {
     public class AnimalsController : Controller
     {
         private OfferContext db = new OfferContext();
-
         // GET: Animals
         public ActionResult Index(int? id)
         {
@@ -143,13 +143,12 @@ namespace PROJEKT_PZ_NK_v3.Controllers
         // Aby uzyskać więcej szczegółów, zobacz https://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Edit(Animal animal)
+        public async Task<ActionResult> Edit(Animal animal)
         {
             if (ModelState.IsValid)
             {
                 db.Entry(animal).State = EntityState.Modified;
                 HttpPostedFileBase file = Request.Files["plikZObrazkiem"];
-
                 if (file != null && file.ContentLength > 0)
                 {
                     animal.Image = file.FileName;
@@ -160,6 +159,28 @@ namespace PROJEKT_PZ_NK_v3.Controllers
                     animal.Image = db.Animals.AsNoTracking().Single(a => a.ID == animal.ID).Image; ;
                 }
                 db.SaveChanges();
+                
+                IAsyncSession session = db._driver.AsyncSession();
+
+                try
+                {
+                    IResultCursor cursor = await session.RunAsync(
+                        "MATCH (a:Profile {Email:'"+ User.Identity.Name + "'})-[rel:OWNER]->(b:Animal {Name:'"+ animal.Name + "'})" +
+                        "SET b.Name = '" + animal.Name +
+                        "', b.Species = '" + animal.Species +
+                        "', b.Race = '" + animal.Race +
+                        "', b.Gender = '" + animal.Gender +
+                        "', b.Weight = '" + animal.Weight +
+                        "', b.DateOfBirth = '" + animal.DateOfBirth.Date +
+                        "', b.Description = '" + animal.Description +
+                        "', b.Image = '" + animal.Image + "'");
+                    await cursor.ConsumeAsync();
+                }
+                finally
+                {
+                    await session.CloseAsync();
+                }
+
                 return RedirectToAction("Details", "Animals", new { id = animal.ID });
             }
             return View(animal);

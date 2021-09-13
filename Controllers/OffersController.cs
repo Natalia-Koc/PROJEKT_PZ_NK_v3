@@ -184,13 +184,30 @@ namespace PROJEKT_PZ_NK_v3.Controllers
         // Aby uzyskać więcej szczegółów, zobacz https://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Edit(Offer offer)
+        public async Task<ActionResult> Edit(Offer offer)
         {
             if (ModelState.IsValid)
             {
                 db.Entry(offer).State = EntityState.Modified;
                 db.SaveChanges();
-                return RedirectToAction("Index");
+
+                IAsyncSession session = db._driver.AsyncSession();
+                try
+                {
+                    IResultCursor cursor = await session.RunAsync(
+                        "MATCH (o:Offer { OfferID:" + offer.ID + "}) " +
+                        "SET o.Title = '" + offer.Title +
+                        "', o.Description = '" + offer.Description +
+                        "', o.StartingDate = '" + offer.StartingDate.Date +
+                        "', o.EndDate = '" + offer.EndDate.Date + "'"
+                    );
+                    await cursor.ConsumeAsync();
+                }
+                finally
+                {
+                    await session.CloseAsync();
+                }
+                return RedirectToAction("MyOffers");
             }
             return View(offer);
         }

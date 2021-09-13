@@ -86,37 +86,6 @@ namespace PROJEKT_PZ_NK_v3.Controllers
             return RedirectToAction("DetailsAnotherProfile", "Profiles", new { id = comments.ProfileID });
         }
 
-        // GET: Comments/Edit/5
-        public ActionResult Edit(int? id)
-        {
-            if (id == null)
-            {
-                return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
-            }
-            Comments comments = db.Comments.Find(id);
-            if (comments == null)
-            {
-                return HttpNotFound();
-            }
-            return View(comments);
-        }
-
-        // POST: Comments/Edit/5
-        // Aby zapewnić ochronę przed atakami polegającymi na przesyłaniu dodatkowych danych, włącz określone właściwości, z którymi chcesz utworzyć powiązania.
-        // Aby uzyskać więcej szczegółów, zobacz https://go.microsoft.com/fwlink/?LinkId=317598.
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public ActionResult Edit(Comments comments)
-        {
-            if (ModelState.IsValid)
-            {
-                db.SaveChanges();
-                
-                return RedirectToAction("Index");
-            }
-            return View(comments);
-        }
-
         public ActionResult Delete(int profileID)
         {
             Comments comments = db.Comments.Single(a => a.Author.Email == User.Identity.Name && a.ProfileID == profileID);

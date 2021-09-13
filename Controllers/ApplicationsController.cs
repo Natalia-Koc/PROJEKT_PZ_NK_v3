@@ -124,43 +124,83 @@ namespace PROJEKT_PZ_NK_v3.Controllers
 
 
         // GET: Applications/Edit/5
-        public ActionResult EditResign(int? id)
+        public async Task<ActionResult> EditResign(int? id)
         {
             if (id == null)
             {
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             }
-            if (db.Applications.Find(id).Status == "Właściciel odrzucił ofertę")
+            IAsyncSession session = db._driver.AsyncSession();
+            try
             {
-                db.Applications.Find(id).Status = "Odrzucone";
+                if (db.Applications.Find(id).Status == "Właściciel odrzucił ofertę")
+                {
+                    db.Applications.Find(id).Status = "Odrzucone";
+                    IResultCursor cursor = await session.RunAsync(
+                        "match (k:Profile {Email: '"+ User.Identity.Name + "'})-[rk:GUARDIAN]->(app:Application)" +
+                            "-[ro:NOTIFICATION_TO_THE_OFFER]->(o:Offer {OfferID:"+ db.Applications.Find(id).OfferID + "})" +
+                        "SET app.Status = 'Odrzucone'"
+                    );
+                    await cursor.ConsumeAsync();
+                }
+                else
+                {
+                    db.Applications.Find(id).Status = "Opiekun zrezygnował z oferty";
+                    IResultCursor cursor = await session.RunAsync(
+                        "match (k:Profile {Email: '" + User.Identity.Name + "'})-[rk:GUARDIAN]->(app:Application)" +
+                            "-[ro:NOTIFICATION_TO_THE_OFFER]->(o:Offer {OfferID:" + db.Applications.Find(id).OfferID + "})" +
+                        "SET app.Status = 'Opiekun zrezygnował z oferty'"
+                    );
+                    await cursor.ConsumeAsync();
+                }
             }
-            else
+            finally
             {
-                db.Applications.Find(id).Status = "Opiekun zrezygnował z oferty";
+                await session.CloseAsync();
             }
             db.SaveChanges();
             return RedirectToAction("MyApplications");
         }
 
-        public ActionResult EditDiscard(int? id)
+        public async Task<ActionResult> EditDiscard(int? id)
         {
             if (id == null)
             {
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             }
-            if (db.Applications.Find(id).Status == "Opiekun zrezygnował z oferty")
+            IAsyncSession session = db._driver.AsyncSession();
+            try
             {
-                db.Applications.Find(id).Status = "Odrzucone";
+                if (db.Applications.Find(id).Status == "Opiekun zrezygnował z oferty")
+                {
+                    db.Applications.Find(id).Status = "Odrzucone";
+                    IResultCursor cursor = await session.RunAsync(
+                        "match (k:Profile {Email: '" + User.Identity.Name + "'})-[rk:OWNER]->(app:Application)" +
+                            "-[ro:NOTIFICATION_TO_THE_OFFER]->(o:Offer {OfferID:" + db.Applications.Find(id).OfferID + "})" +
+                        "SET app.Status = 'Odrzucone'"
+                    );
+                    await cursor.ConsumeAsync();
+                }
+                else
+                {
+                    db.Applications.Find(id).Status = "Właściciel odrzucił ofertę";
+                    IResultCursor cursor = await session.RunAsync(
+                        "match (k:Profile {Email: '" + User.Identity.Name + "'})-[rk:OWNER]->(app:Application)" +
+                            "-[ro:NOTIFICATION_TO_THE_OFFER]->(o:Offer {OfferID:" + db.Applications.Find(id).OfferID + "})" +
+                        "SET app.Status = 'Właściciel odrzucił ofertę'"
+                    );
+                    await cursor.ConsumeAsync();
+                }
             }
-            else
+            finally
             {
-                db.Applications.Find(id).Status = "Właściciel odrzucił ofertę";
+                await session.CloseAsync();
             }
             db.SaveChanges();
             return RedirectToAction("ApplicationsToMyOffers");
         }
 
-        public ActionResult EditAccept(int? id)
+        public async Task<ActionResult> EditAccept(int? id)
         {
             if (id == null)
             {
@@ -168,6 +208,20 @@ namespace PROJEKT_PZ_NK_v3.Controllers
             }
             db.Applications.Find(id).Status = "Zaakceptowane!";
             db.SaveChanges();
+            IAsyncSession session = db._driver.AsyncSession();
+            try
+            {
+                IResultCursor cursor = await session.RunAsync(
+                    "match (k:Profile {Email: '" + User.Identity.Name + "'})-[rk:OWNER]->(app:Application)" +
+                        "-[ro:NOTIFICATION_TO_THE_OFFER]->(o:Offer {OfferID:" + db.Applications.Find(id).OfferID + "})" +
+                    "SET app.Status = 'Zaakceptowane'"
+                );
+                await cursor.ConsumeAsync();
+            }
+            finally
+            {
+                await session.CloseAsync();
+            }
             return RedirectToAction("ApplicationsToMyOffers");
         }
 
