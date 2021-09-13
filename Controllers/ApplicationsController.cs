@@ -103,14 +103,14 @@ namespace PROJEKT_PZ_NK_v3.Controllers
             try
             {
                 IResultCursor cursor = await session.RunAsync("" +
-                    "MATCH (n:Profile {Email: " + User.Identity.Name + "}), " +
-                        "(n2:Profile {Email: " + application.Owner.Email + "})," +
+                    "MATCH (n:Profile {Email: '" + User.Identity.Name + "'}), " +
+                        "(n2:Profile {Email: '" + application.Owner.Email + "'})," +
                         "(o:Offer {OfferID: " + application.OfferID + "})" +
                     "CREATE(n) -[r: GUARDIAN]-> (p: Application " +
                     "{ Status: '" + application.Status +
                     "', Message: '" + application.Message +"'})," +
-                    "CREATE(n2) -[t: OWNER]-> (p)," +
-                    "CREATE(p) -[y: NOTIFICATION_TO_THE_OFFER]-> (o)"
+                    "(n2) -[t: OWNER]-> (p)," +
+                    "(p) -[y: NOTIFICATION_TO_THE_OFFER]-> (o)"
                 );
                 await cursor.ConsumeAsync();
             }

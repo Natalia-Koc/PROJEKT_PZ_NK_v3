@@ -131,9 +131,9 @@ namespace PROJEKT_PZ_NK_v3.Controllers
             if (ModelState.IsValid)
             {
                 Profile myProfile = db.Profiles.Single(p => p.Email == User.Identity.Name);
+                offer.AnimalID = db.Animals.Where(a => a.Name == offer.AnimalName).First().ID;
                 offer.Profile = myProfile;
                 db.Offers.Add(offer);
-                string name = db.Animals.Where(a => a.ID == offer.AnimalID).First().Name;
                 db.SaveChanges();
                 db.Profiles.Single(p => p.Email == User.Identity.Name).Offers.Add(offer);
                 db.SaveChanges();
@@ -141,7 +141,7 @@ namespace PROJEKT_PZ_NK_v3.Controllers
                 try
                 {
                     IResultCursor cursor = await session.RunAsync(
-                        "MATCH (n:Profile { Email:'" + User.Identity.Name + "'})-[rel:OWNER]->(a:Animal {Name: '" + name + "'}) " +
+                        "MATCH (n:Profile { Email:'" + User.Identity.Name + "'})-[rel:OWNER]->(a:Animal {Name: '" + offer.AnimalName + "'}) " +
                         "CREATE(n) -[r:AUTHOR]-> (p:Offer " +
                         "{ OfferID: " + offer.ID +
                         ", Title: '" + offer.Title +
