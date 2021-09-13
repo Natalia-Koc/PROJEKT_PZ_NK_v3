@@ -166,8 +166,7 @@ namespace PROJEKT_PZ_NK_v3.Controllers
                 {
                     IResultCursor cursor = await session.RunAsync(
                         "MATCH (a:Profile {Email:'"+ User.Identity.Name + "'})-[rel:OWNER]->(b:Animal {Name:'"+ animal.Name + "'})" +
-                        "SET b.Name = '" + animal.Name +
-                        "', b.Species = '" + animal.Species +
+                        "SET b.Species = '" + animal.Species +
                         "', b.Race = '" + animal.Race +
                         "', b.Gender = '" + animal.Gender +
                         "', b.Weight = '" + animal.Weight +
