@@ -28,10 +28,10 @@ namespace PROJEKT_PZ_NK_v3.DAL
                 //usuniecie cyklicznego usuwania 
                 //ręczne definiowanie relacji i niecykliczne usuwanie 
 
-                modelBuilder.Entity<Applications>().HasRequired<Profile>(application => application.Owner)
+                /*modelBuilder.Entity<Applications>().HasRequired<Profile>(application => application.Owner)
                     .WithMany(profile => profile.Applications).HasForeignKey(application => application.OwnerID)
                     .WillCascadeOnDelete(false);
-
+*/
                 modelBuilder.Conventions.Remove<PluralizingTableNameConvention>();
             }
 

@@ -463,12 +463,8 @@ namespace PROJEKT_PZ_NK_v3.Controllers
         }
 
         // GET: Offers/Delete/5
-        public async Task<ActionResult> Delete(int? offerID)
+        public async Task<ActionResult> Delete(int offerID)
         {
-            if (id == null)
-            {
-                return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
-            }
             Offer offer;
             IAsyncSession session = db._driver.AsyncSession();
             try
