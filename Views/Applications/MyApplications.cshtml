@@ -27,22 +27,22 @@
         {
     <tr>
         <td>
-            <b>@Html.ActionLink(item.Offer.Title, "Details", "Offers", new { id = item.Offer.ID }, null)</b><br />
+            <b>@Html.ActionLink(item.Offer.Title, "Details", "Offers", new { offerID = item.Offer.ID }, null)</b><br />
             <ins>Początek</ins>: @Html.DisplayFor(modelItem => item.Offer.StartingDate)<br />
             <ins>Koniec</ins>: @Html.DisplayFor(modelItem => item.Offer.EndDate)
         </td>
         <td>
-            <b>@Html.ActionLink(item.Owner.Login, "DetailsAnotherProfile", "Profiles", new { id = item.OwnerID }, null)</b><br />
+            <b>@Html.ActionLink(item.Owner.Login, "DetailsAnotherProfile", "Profiles", new { email = item.Owner.Email }, null)</b><br />
             <ins>Imię i nazwisko</ins>: @Html.DisplayFor(modelItem => item.Owner.FirstName) @Html.DisplayFor(modelItem => item.Owner.LastName)<br />
             <ins>Adres</ins>: @Html.DisplayFor(modelItem => item.Owner.City), @Html.DisplayFor(modelItem => item.Owner.Street) <br />
             <ins>tel.</ins>: @Html.DisplayFor(modelItem => item.Owner.PhoneNumber)
         </td>
-        <td>
+        @*<td>
             <b>@Html.ActionLink(item.Offer.Animal.Name, "Details", "Animals", new { id = item.Offer.AnimalID }, null)</b><br />
             <ins>Gatunek</ins>: @Html.DisplayFor(modelItem => item.Offer.Animal.Species)<br />
             <ins>Rasa</ins>: @Html.DisplayFor(modelItem => item.Offer.Animal.Race)<br />
             <ins>Waga</ins>: @Html.DisplayFor(modelItem => item.Offer.Animal.Weight)
-        </td>
+        </td>*@
         <td>
             @Html.DisplayFor(modelItem => item.Message)
         </td>
@@ -68,7 +68,7 @@
         <td>
             @if (item.Offer.StartingDate > DateTime.Now)
             {
-                <a href='@Url.Action("EditResign", new { id = item.ID })'>
+                <a href='@Url.Action("EditResign", new { offerID = item.Offer.ID })'>
                     <img src="~/Images/resign.png" width="70px" alt="Rezygnuj">
                 </a>
             }
