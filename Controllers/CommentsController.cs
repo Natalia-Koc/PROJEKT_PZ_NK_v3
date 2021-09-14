@@ -25,26 +25,11 @@ namespace PROJEKT_PZ_NK_v3.Controllers
         {
             if (ModelState.IsValid)
             {
-                Profile myProfile = db.Profiles.Single(p => p.Email == User.Identity.Name);
-                /*comments.AuthorID = myProfile.ID;
-                comments.Profile = db.Profiles.Single(a => a.ID == comments.ProfileID);
-                db.Comments.Add(comments);
-                db.SaveChanges();
-                if (comments.Grade != 0)
-                {
-                    int id = db.Profiles.Single(p => p.ID == comments.ProfileID).ID;
-                    var average = db.Comments.Where(a => a.ProfileID == id && a.Grade != 0).Select(a => a.Grade).Average() * 20;
-                    db.Profiles.Single(p => p.ID == comments.ProfileID).Rate = (int) average;
-                }
-                db.SaveChanges();*/
-
                 IAsyncSession session = db._driver.AsyncSession();
-
                 try
                 {
-
                     IResultCursor cursorCom = await session.RunAsync(
-                        "MATCH (n:Profile {Email: '" + User.Identity.Name + "'}), (p2:Profile {Email: '" + comments.AuthorEmail + "'}) " +
+                        "MATCH (n:Profile {Email: '" + User.Identity.Name + "'}), (p2:Profile {Email: '" + comments.ProfilEmail + "'}) " +
                         "CREATE(n) -[r:AUTHOR]-> (p:Comment {contents: '" + comments.Contents + "', rate: " + comments.Grade + "})," +
                         "(p) -[t:COMMENTED_PROFILE]-> (p2)"
                     );
@@ -53,10 +38,11 @@ namespace PROJEKT_PZ_NK_v3.Controllers
                     {
                         var cursor =
                             await session.RunAsync(
-                                "match (c:Comment)-[rel:COMMENTED_PROFILE]->(p:Profile {Email: 'Nowy-70@o2.pl'}) return avg(c.rate)");
+                                "match (c:Comment)-[rel:COMMENTED_PROFILE]->(p:Profile {Email: '"+ comments.ProfilEmail + "'}) return avg(c.rate)");
                             
-                        IResultCursor cursorProfile = await session.RunAsync("match (a:Profile {Email: '" + User.Identity.Name + "'})" +
+                        IResultCursor cursorProfile = await session.RunAsync("match (a:Profile {Email: '" + comments.ProfilEmail + "'})" +
                             "SET a.Rate = " + cursor.SingleAsync().Result.Values.First().Value.As<int>());
+                        await cursor.ConsumeAsync();
                         await cursorProfile.ConsumeAsync();
                     }
                         
@@ -67,52 +53,25 @@ namespace PROJEKT_PZ_NK_v3.Controllers
                 }
             }
 
-            return RedirectToAction("DetailsAnotherProfile", "Profiles", new { id = 2 });
+            return RedirectToAction("DetailsAnotherProfile", "Profiles", new { email = comments.ProfilEmail });
         }
 
-        public async Task<ActionResult> Delete(int profileID)
+        public async Task<ActionResult> Delete(string email)
         {
-            //Comments comments = db.Comments.Where(a => a.Author.Email == User.Identity.Name && a.ProfileID == profileID).First();
-            /*if (comments == null)
-            {
-                return HttpNotFound();
-            }
-            db.Comments.Remove(comments);
-            db.SaveChanges();
-
-            if (db.Profiles.Single(p => p.ID == profileID).Comments.Where(a => a.Grade > 0).Count() > 0)
-            {
-                db.Profiles.
-                    Single(p => p.ID == profileID)
-                    .Rate = (int)db.Comments
-                    .Where(a => a.ProfileID == profileID && a.Grade != 0)
-                    .Select(a => a.Grade)
-                    .Average() * 20;
-            }
-            else
-            {
-                db.Profiles
-                    .Single(p => p.ID == profileID)
-                    .Rate = 0;
-            }
-            db.SaveChanges();*/
-
-            //--------------------------------------------------------------------TU WSZYSTKO OGARNIETE 
-
             IAsyncSession session = db._driver.AsyncSession();
             try
             {
                 IResultCursor cursorCom = await session.RunAsync(
                     "match (p:Profile {Email: '"+ User.Identity.Name +"'})" +
                         "-[rel:AUTHOR]->(c:Comment)" +
-                        "-[rell:COMMENTED_PROFILE]->(p2:Profile {Email: '" + db.Profiles.Single(p => p.ID == profileID).Email + "'})" +
+                        "-[rell:COMMENTED_PROFILE]->(p2:Profile {Email: '" + email + "'})" +
                         " with c limit 1 detach delete c"
                 );
                 await cursorCom.ConsumeAsync();
 
                 IResultCursor cursorAllCom = await session.RunAsync(
                     "match (c:Comment)" +
-                        "-[rel:COMMENTED_PROFILE]->(p2:Profile {Email: '" + db.Profiles.Single(p => p.ID == profileID).Email + "'})" +
+                        "-[rel:COMMENTED_PROFILE]->(p2:Profile {Email: '" + email + "'})" +
                         " return count(c)"
                 );
 
@@ -120,15 +79,15 @@ namespace PROJEKT_PZ_NK_v3.Controllers
                 {
                     var cursor =
                         await session.RunAsync(
-                            "match (c:Comment)-[rel:COMMENTED_PROFILE]->(p:Profile {Email: 'Nowy-70@o2.pl'}) return avg(c.rate)");
+                            "match (c:Comment)-[rel:COMMENTED_PROFILE]->(p:Profile {Email: '"+ email +"'}) return avg(c.rate)");
 
-                    IResultCursor cursorProfile = await session.RunAsync("match (a:Profile {Email: '" + User.Identity.Name + "'})" +
+                    IResultCursor cursorProfile = await session.RunAsync("match (a:Profile {Email: '" + email + "'})" +
                         "SET a.Rate = " + cursor.SingleAsync().Result.Values.First().Value.As<int>());
                     await cursorProfile.ConsumeAsync();
                 }
                 else
                 {
-                    IResultCursor cursorProfile = await session.RunAsync("match (a:Profile {Email: '" + User.Identity.Name + "'})" +
+                    IResultCursor cursorProfile = await session.RunAsync("match (a:Profile {Email: '" + email + "'})" +
                         "SET a.Rate = 0");
                     await cursorProfile.ConsumeAsync();
                 }
@@ -139,7 +98,7 @@ namespace PROJEKT_PZ_NK_v3.Controllers
             }
 
 
-            return RedirectToAction("DetailsAnotherProfile", "Profiles", new { id = profileID});
+            return RedirectToAction("DetailsAnotherProfile", "Profiles", new { email });
         }
 
         protected override void Dispose(bool disposing)
