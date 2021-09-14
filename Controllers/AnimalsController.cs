@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Data;
 using System.Data.Entity;
 using System.Linq;
 using System.Net;
@@ -10,7 +9,6 @@ using System.Web.Mvc;
 using Neo4j.Driver;
 using PROJEKT_PZ_NK_v3.DAL;
 using PROJEKT_PZ_NK_v3.Models;
-using PROJEKT_PZ_NK_v3.ViewModels;
 
 namespace PROJEKT_PZ_NK_v3.Controllers
 {
@@ -121,7 +119,6 @@ namespace PROJEKT_PZ_NK_v3.Controllers
                     await session.CloseAsync();
                 }
 
-                await db._driver.CloseAsync();
                 return RedirectToAction("Details", "Animals", new { email = User.Identity.Name, name = animal.Name });
             }
 
@@ -129,9 +126,9 @@ namespace PROJEKT_PZ_NK_v3.Controllers
         }
 
         // GET: Animals/Edit/5
-        public async Task<ActionResult> Edit(string email, string name)
+        public async Task<ActionResult> Edit(string name)
         {
-            if (email == null || name == null)
+            if (name == null)
             {
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             }
@@ -143,7 +140,7 @@ namespace PROJEKT_PZ_NK_v3.Controllers
                 {
                     var cursor =
                         await tx.RunAsync(
-                            "match (p:Profile {Email:'" + email + "'})-[rel:OWNER]->(a:Animal {Name:'" + name + "'}) return a,p");
+                            "match (p:Profile {Email:'" + User.Identity.Name + "'})-[rel:OWNER]->(a:Animal {Name:'" + name + "'}) return a,p");
 
                     IRecord Record = await cursor.SingleAsync();
                     INode nodeAnimal = (INode)Record.Values["a"];
@@ -180,21 +177,14 @@ namespace PROJEKT_PZ_NK_v3.Controllers
         {
             if (ModelState.IsValid)
             {
-                db.Entry(animal).State = EntityState.Modified;
                 HttpPostedFileBase file = Request.Files["plikZObrazkiem"];
                 if (file != null && file.ContentLength > 0)
                 {
                     animal.Image = file.FileName;
                     file.SaveAs(HttpContext.Server.MapPath("~/ImagesAnimals/") + animal.Image);
                 }
-                else
-                {
-                    animal.Image = db.Animals.AsNoTracking().Single(a => a.ID == animal.ID).Image; ;
-                }
-                db.SaveChanges();
                 
                 IAsyncSession session = db._driver.AsyncSession();
-
                 try
                 {
                     IResultCursor cursor = await session.RunAsync(
@@ -213,15 +203,15 @@ namespace PROJEKT_PZ_NK_v3.Controllers
                     await session.CloseAsync();
                 }
 
-                return RedirectToAction("Details", "Animals", new { id = animal.ID });
+                return RedirectToAction("Details", "Animals", new { email = User.Identity.Name, name = animal.Name });
             }
             return View(animal);
         }
 
         // GET: Animals/Delete/5
-        public async Task<ActionResult> Delete(string email, string name)
+        public async Task<ActionResult> Delete(string name)
         {
-            if (email == null || name == null)
+            if (name == null)
             {
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             }
@@ -233,7 +223,7 @@ namespace PROJEKT_PZ_NK_v3.Controllers
                 {
                     var cursor =
                         await tx.RunAsync(
-                            "match (p:Profile {Email:'" + email + "'})-[rel:OWNER]->(a:Animal {Name:'" + name + "'}) return a,p");
+                            "match (p:Profile {Email:'" + User.Identity.Name + "'})-[rel:OWNER]->(a:Animal {Name:'" + name + "'}) return a,p");
 
                     IRecord Record = await cursor.SingleAsync();
                     INode nodeAnimal = (INode)Record.Values["a"];
@@ -264,17 +254,14 @@ namespace PROJEKT_PZ_NK_v3.Controllers
         // POST: Animals/Delete/5
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
-        public async Task<ActionResult> DeleteConfirmed(int id)
+        public async Task<ActionResult> DeleteConfirmed(string name)
         {
-            Animal animal = db.Animals.Find(id);
-            db.Animals.Remove(animal);
-            db.SaveChanges();
             IAsyncSession session = db._driver.AsyncSession();
             try
             {
                 IResultCursor cursor = await session.RunAsync(
                     "match (p:Profile {Email:'"+ User.Identity.Name +"'})" +
-                        "-[rel:OWNER]->(a:Animal {Name:'"+ animal.Name +"'})" +
+                        "-[rel:OWNER]->(a:Animal {Name:'"+ name +"'})" +
                         "-[rell:ANIMAL_OFFER]->(o:Offer)" +
                         "<-[relll:NOTIFICATION_TO_THE_OFFER]-(app:Application)" +
                         "DETACH delete a,o,app");
