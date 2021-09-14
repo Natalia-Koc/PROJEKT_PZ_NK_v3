@@ -17,50 +17,63 @@ namespace PROJEKT_PZ_NK_v3.Controllers
     public class AnimalsController : Controller
     {
         private OfferContext db = new OfferContext();
-        // GET: Animals
-        public ActionResult Index(int? id)
-        {
-            if (id == null)
-            {
-                return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
-            }
-            List<Animal> animals = db.Animals.
-                Where(animal => animal.Profiles.ID == id).
-                ToList();
-            if (animals == null)
-            {
-                return HttpNotFound();
-            }
-            return View(animals);
-        }
 
         // GET: Animals/Details/5
-        public ActionResult Details(int? id)
+        public async Task<ActionResult> Details(string email, string name)
         {
-            if (id == null)
+            Animal animal = new Animal();
+
+            IAsyncSession session = db._driver.AsyncSession();
+            try
             {
-                return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
+                await session.ReadTransactionAsync(async tx =>
+                {
+                    var cursor =
+                        await tx.RunAsync(
+                            "match (p:Profile {Email:'"+ email +"'})-[rel:OWNER]->(a:Animal {Name:'"+ name +"'}) return a,p");
+
+                    List<IRecord> Records = await cursor.ToListAsync();
+                    foreach (var item in Records)
+                    {
+                        INode nodeAnimal = (INode)item.Values["a"];
+                        INode nodeProfile = (INode)item.Values["p"];
+
+                        Profile profile = new Profile();
+                        profile.HouseNumber = nodeProfile.Properties.Values.First().As<string>();
+                        profile.Email = nodeProfile.Properties.Values.Skip(1).First().As<string>();
+                        profile.Rate = nodeProfile.Properties.Values.Skip(2).First().As<int>();
+                        profile.FirstName = nodeProfile.Properties.Values.Skip(3).First().As<string>();
+                        profile.Street = nodeProfile.Properties.Values.Skip(4).First().As<string>();
+                        profile.PhoneNumber = nodeProfile.Properties.Values.Skip(5).First().As<string>();
+                        profile.City = nodeProfile.Properties.Values.Skip(6).First().As<string>();
+                        profile.Login = nodeProfile.Properties.Values.Skip(7).First().As<string>();
+                        profile.LastName = nodeProfile.Properties.Values.Skip(8).First().As<string>();
+                        ViewBag.profile = profile;
+
+                        animal.DateOfBirth = nodeAnimal.Properties.Values.First().As<DateTime>();
+                        animal.Description = nodeAnimal.Properties.Values.Skip(1).First().As<string>();
+                        animal.Race = nodeAnimal.Properties.Values.Skip(2).First().As<string>();
+                        animal.Gender = nodeAnimal.Properties.Values.Skip(3).First().As<string>();
+                        animal.Image = nodeAnimal.Properties.Values.Skip(4).First().As<string>();
+                        animal.Species = nodeAnimal.Properties.Values.Skip(5).First().As<string>();
+                        animal.Weight = nodeAnimal.Properties.Values.Skip(6).First().As<string>();
+                        animal.Name = nodeAnimal.Properties.Values.Skip(7).First().As<string>();
+
+                        break;
+                    }
+
+                });
+
             }
-            Animal animal = db.Animals.Find(id);
+            finally
+            {
+                await session.CloseAsync();
+            }
             if (animal == null)
             {
                 return HttpNotFound();
             }
             return View(animal);
-        }
-
-        public ActionResult DetailsAnotherAnimal(int? id)
-        {
-            if (id == null)
-            {
-                return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
-            }
-            Animal animal = db.Animals.Find(id);
-            if (animal == null)
-            {
-                return HttpNotFound();
-            }
-            return View("Details", animal);
         }
 
         // GET: Animals/Create
@@ -78,22 +91,14 @@ namespace PROJEKT_PZ_NK_v3.Controllers
         {
             if (ModelState.IsValid)
             {
-                Profile pa = db.Profiles.Single(p => p.Email == User.Identity.Name);
-                animal.Profiles = pa;
-
                 HttpPostedFileBase file = Request.Files["plikZObrazkiem"];
-
                 if (file != null && file.ContentLength > 0)
                 {
                     animal.Image = file.FileName;
                     file.SaveAs(HttpContext.Server.MapPath("~/ImagesAnimals/") + animal.Image);
                 }
 
-                db.Animals.Add(animal);
-                db.SaveChanges();
-
                 IAsyncSession session = db._driver.AsyncSession();
-
                 try
                 {
                     IResultCursor cursor = await session.RunAsync(
@@ -117,20 +122,48 @@ namespace PROJEKT_PZ_NK_v3.Controllers
                 }
 
                 await db._driver.CloseAsync();
-                return RedirectToAction("Details", "Animals", new { id = animal.ID });
+                return RedirectToAction("Details", "Animals", new { email = User.Identity.Name, name = animal.Name });
             }
 
             return View("Details", "Profiles");
         }
 
         // GET: Animals/Edit/5
-        public ActionResult Edit(int? id)
+        public async Task<ActionResult> Edit(string email, string name)
         {
-            if (id == null)
+            if (email == null || name == null)
             {
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             }
-            Animal animal = db.Animals.Find(id);
+            Animal animal = new Animal();
+            IAsyncSession session = db._driver.AsyncSession();
+            try
+            {
+                await session.ReadTransactionAsync(async tx =>
+                {
+                    var cursor =
+                        await tx.RunAsync(
+                            "match (p:Profile {Email:'" + email + "'})-[rel:OWNER]->(a:Animal {Name:'" + name + "'}) return a,p");
+
+                    IRecord Record = await cursor.SingleAsync();
+                    INode nodeAnimal = (INode)Record.Values["a"];
+
+                    animal.DateOfBirth = nodeAnimal.Properties.Values.First().As<DateTime>();
+                    animal.Description = nodeAnimal.Properties.Values.Skip(1).First().As<string>();
+                    animal.Race = nodeAnimal.Properties.Values.Skip(2).First().As<string>();
+                    animal.Gender = nodeAnimal.Properties.Values.Skip(3).First().As<string>();
+                    animal.Image = nodeAnimal.Properties.Values.Skip(4).First().As<string>();
+                    animal.Species = nodeAnimal.Properties.Values.Skip(5).First().As<string>();
+                    animal.Weight = nodeAnimal.Properties.Values.Skip(6).First().As<string>();
+                    animal.Name = nodeAnimal.Properties.Values.Skip(7).First().As<string>();
+
+                });
+
+            }
+            finally
+            {
+                await session.CloseAsync();
+            }
             if (animal == null)
             {
                 return HttpNotFound();
@@ -186,13 +219,41 @@ namespace PROJEKT_PZ_NK_v3.Controllers
         }
 
         // GET: Animals/Delete/5
-        public ActionResult Delete(int? id)
+        public async Task<ActionResult> Delete(string email, string name)
         {
-            if (id == null)
+            if (email == null || name == null)
             {
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             }
-            Animal animal = db.Animals.Find(id);
+            Animal animal = new Animal();
+            IAsyncSession session = db._driver.AsyncSession();
+            try
+            {
+                await session.ReadTransactionAsync(async tx =>
+                {
+                    var cursor =
+                        await tx.RunAsync(
+                            "match (p:Profile {Email:'" + email + "'})-[rel:OWNER]->(a:Animal {Name:'" + name + "'}) return a,p");
+
+                    IRecord Record = await cursor.SingleAsync();
+                    INode nodeAnimal = (INode)Record.Values["a"];
+
+                    animal.DateOfBirth = nodeAnimal.Properties.Values.First().As<DateTime>();
+                    animal.Description = nodeAnimal.Properties.Values.Skip(1).First().As<string>();
+                    animal.Race = nodeAnimal.Properties.Values.Skip(2).First().As<string>();
+                    animal.Gender = nodeAnimal.Properties.Values.Skip(3).First().As<string>();
+                    animal.Image = nodeAnimal.Properties.Values.Skip(4).First().As<string>();
+                    animal.Species = nodeAnimal.Properties.Values.Skip(5).First().As<string>();
+                    animal.Weight = nodeAnimal.Properties.Values.Skip(6).First().As<string>();
+                    animal.Name = nodeAnimal.Properties.Values.Skip(7).First().As<string>();
+
+                });
+
+            }
+            finally
+            {
+                await session.CloseAsync();
+            }
             if (animal == null)
             {
                 return HttpNotFound();

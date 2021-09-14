@@ -71,23 +71,23 @@
         <dd>
             @Html.DisplayFor(model => model.Description)
         </dd>
-        @if (Model.Profiles.Email != User.Identity.Name)
+        @if (ViewBag.profile.Email != User.Identity.Name)
         {
             <dt>
                 Właściciel
             </dt>
 
             <dd>
-                @Html.ActionLink(Model.Profiles.Login, "DetailsAnotherProfile", "Profiles", new { id = Model.Profiles.ID }, null)
+                <a href="@Url.Action("DetailsAnotherProfile", "Profiles", new { email = ViewBag.profile.Email })">ViewBag.profile.Login</a>
             </dd>
         }
     </dl>
 </div>
-@if (Model.Profiles.Email == User.Identity.Name)
+@if (ViewBag.profile.Email == User.Identity.Name)
 {
 <p>
-    @Html.ActionLink("Edytuj", "Edit", new { id = Model.ID }, new { @class = "btn btn-primary" })
-    @Html.ActionLink("Usuń", "Delete", new { id = Model.ID }, new { @class = "btn btn-danger" })
+    @Html.ActionLink("Edytuj", "Edit", new { email = ViewBag.profile.Email, name = Model.Name }, new { @class = "btn btn-primary" })
+    @Html.ActionLink("Usuń", "Delete", new { email = ViewBag.profile.Email, name = Model.Name }, new { @class = "btn btn-danger" })
 </p>
 }
 
