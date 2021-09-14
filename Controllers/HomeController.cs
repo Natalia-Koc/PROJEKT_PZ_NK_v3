@@ -19,13 +19,13 @@ namespace PROJEKT_PZ_NK_v3.Controllers
             Profile profile = db.Profiles.FirstOrDefault(p => p.Email == User.Identity.Name);
             ViewBag.Profil = profile;
 
-            var offers = db.Offers
+            /*var offers = db.Offers
                 .Where(a => a.Profile.Email != User.Identity.Name && a.Profile.Comments
                     .Where(b => ((b.Author.Email == User.Identity.Name || b.Profile.Email == User.Identity.Name)
                         && (b.Grade > 2 || b.Grade == 0)))
-                .Count() >= 0);
+                .Count() >= 0);*/
 
-            if (db.Applications.Any(a => a.Guardian.Email == User.Identity.Name))
+           /* if (db.Applications.Any(a => a.Guardian.Email == User.Identity.Name))
             {
                 int hours = db.Applications.Where(a => a.Guardian.Email == User.Identity.Name && DbFunctions.DiffDays(a.Offer.EndDate, a.Offer.StartingDate) == 0).Count();
                 int days = db.Applications.Where(a => a.Guardian.Email == User.Identity.Name && DbFunctions.DiffDays(a.Offer.EndDate, a.Offer.StartingDate) > 0).Count();
@@ -62,7 +62,7 @@ namespace PROJEKT_PZ_NK_v3.Controllers
                 ViewBag.Offers2 = offers
                     .OrderByDescending(a => a.Profile.Rate)
                     .Skip(4).Take(4).ToList();
-            }
+            }*/
             return View();
         }
 

@@ -22,9 +22,9 @@ namespace PROJEKT_PZ_NK_v3.DAL
 
             protected override void OnModelCreating(DbModelBuilder modelBuilder)
             {
-                modelBuilder.Entity<Comments>().HasRequired<Profile>(comment => comment.Profile)
+                /*modelBuilder.Entity<Comments>().HasRequired<Profile>(comment => comment.Profile)
                     .WithMany(profile => profile.Comments).HasForeignKey(comment => comment.ProfileID)
-                    .WillCascadeOnDelete(false);
+                    .WillCascadeOnDelete(false);*/
                 //usuniecie cyklicznego usuwania 
                 //ręczne definiowanie relacji i niecykliczne usuwanie 
 

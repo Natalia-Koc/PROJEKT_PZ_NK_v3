@@ -27,10 +27,10 @@ namespace PROJEKT_PZ_NK_v3.Controllers
         public async Task<ActionResult> Details()
         {
             Profile profile = db.Profiles.FirstOrDefault(p => p.Email == User.Identity.Name);
-            Comments comments = new Comments();
+            /*Comments comments = new Comments();
             ViewBag.comments = comments;
             ViewBag.ProgressBarCount = db.Comments.Where(m => m.Profile.Email == User.Identity.Name && m.Grade != 0).Count();
-            ViewBag.FoundComment = db.Comments.Any(m => m.Author.Email == User.Identity.Name);
+            ViewBag.FoundComment = db.Comments.Any(m => m.Author.Email == User.Identity.Name);*/
 
             IAsyncSession session = db._driver.AsyncSession();
             try
@@ -40,24 +40,25 @@ namespace PROJEKT_PZ_NK_v3.Controllers
                 {
                     var cursor =
                         await tx.RunAsync(
-                            "MATCH (a:Profile) WHERE a.Email = $email RETURN a",
-                            new { email = User.Identity.Name });
+                            "match (p:Profile)-[rell:AUTHOR]->(c:Comment)-[rel:COMMENTED_PROFILE]->(p2:Profile {Email: '" + User.Identity.Name + "'}) return c, p");
 
                     /*ViewBag.Profile = cursor.SingleAsync().Result.Values.First().Value.As<string>();*/
 
                     List<IRecord> Records = await cursor.ToListAsync();
+                    List<Comments> lista = new List<Comments>();
                     foreach (var item in Records)
                     {
-                        INode node = (INode)item.Values["a"];
-                        List<string> lista = new List<string>();
-                        foreach (var a in node.Properties)
-                        {
-                            int b = a.Key.IndexOf("id");
-                            lista.Add(a.Value.As<string>());
-                        }
-                        ViewBag.Profile = lista;
-                        break;
+                        INode node = (INode)item.Values["c"];
+                        INode nodeProfile = (INode)item.Values["p"];
+                        Comments comm = new Comments();
+                        comm.Contents = node.Properties.Values.First().As<string>();
+                        comm.Grade = node.Properties.Values.Skip(1).First().As<int>();
+                        comm.AuthorEmail = nodeProfile.Properties.Values.Skip(1).First().As<string>();
+                        comm.AuthorLogin = nodeProfile.Properties.Values.Skip(7).First().As<string>();
+
+                        lista.Add(comm);
                     }
+                    ViewBag.Comments = lista;
 
                 });
                 
@@ -66,20 +67,18 @@ namespace PROJEKT_PZ_NK_v3.Controllers
             {
                 await session.CloseAsync();
             }
-            await db._driver.CloseAsync();
 
             return View(profile);
         }
 
-        public ActionResult DetailsAnotherProfile(int? id)
+        public async Task<ActionResult> DetailsAnotherProfile(int? id)
         {
             if (id == null)
             {
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             }
-            Profile 
-            profile = db.Profiles.Find(id); 
-            ViewBag.ProgressBarCount = db.Comments.Where(m => m.ProfileID == id && m.Grade != 0).Count();
+            Profile profile = db.Profiles.Find(id); 
+            /*ViewBag.ProgressBarCount = db.Comments.Where(m => m.ProfileID == id && m.Grade != 0).Count();
             ViewBag.FoundComment = db.Comments.Any(m => m.Author.Email == User.Identity.Name && m.ProfileID == id);
             if (!ViewBag.FoundComment)
             {
@@ -88,6 +87,44 @@ namespace PROJEKT_PZ_NK_v3.Controllers
             else
             {
                 ViewBag.MyComment = db.Comments.First(m => m.Author.Email == User.Identity.Name);
+            }*/
+
+            IAsyncSession session = db._driver.AsyncSession();
+            try
+            {
+
+                await session.ReadTransactionAsync(async tx =>
+                {
+                    var cursor =
+                        await tx.RunAsync(
+                            "match (p:Profile)-[rell:AUTHOR]->(c:Comment)" +
+                                "-[rel:COMMENTED_PROFILE]->" +
+                                "(p2:Profile {Email: '" + db.Profiles.Where(m => m.ID == id).First().Email + "'}) return c, p");
+
+                    /*ViewBag.Profile = cursor.SingleAsync().Result.Values.First().Value.As<string>();*/
+
+                    List<IRecord> Records = await cursor.ToListAsync();
+                    List<Comments> lista = new List<Comments>();
+                    foreach (var item in Records)
+                    {
+                        INode node = (INode)item.Values["c"];
+                        INode nodeProfile = (INode)item.Values["p"];
+                        Comments comm = new Comments();
+                        comm.Contents = node.Properties.Values.First().As<string>();
+                        comm.Grade = node.Properties.Values.Skip(1).First().As<int>();
+                        comm.AuthorEmail = nodeProfile.Properties.Values.Skip(1).First().As<string>();
+                        comm.AuthorLogin = nodeProfile.Properties.Values.Skip(7).First().As<string>();
+
+                        lista.Add(comm);
+                    }
+                    ViewBag.Comments = lista;
+
+                });
+
+            }
+            finally
+            {
+                await session.CloseAsync();
             }
 
             if (profile == null)
