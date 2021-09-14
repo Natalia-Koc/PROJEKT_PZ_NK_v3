@@ -30,5 +30,9 @@ namespace PROJEKT_PZ_NK_v3.Models
         [DataType(DataType.DateTime)]
         [DisplayFormat(DataFormatString = "{0:yyyy-MM-dd HH:mm}", ApplyFormatInEditMode = true)]
         public DateTime EndDate { get; set; }
+        public string AnimalName { get; set; }
+
+        public Profile Profile { get; set; }
+        public Animal Animal { get; set; }
     }
 }
