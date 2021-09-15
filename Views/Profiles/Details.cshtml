@@ -118,7 +118,7 @@
     <div>
         <h2>Komentarze</h2>
 
-        @*@using (Html.BeginForm("Create", "Comments"))
+        @using (Html.BeginForm("Create", "Comments"))
         {
             if (Model.Email != User.Identity.Name)
             {
@@ -157,7 +157,7 @@
                 }
 
             }
-        }*@
+        }
         <hr />
         <table class="table table-striped">
             <tr>
@@ -165,7 +165,7 @@
                 <th>Komentarz</th>
                 <th>Ocena</th>
             </tr>
- @*           @if (@ViewBag.MyComment != null)
+            @if (@ViewBag.MyComment != null)
             {
                 <tr>
                     <td>@ViewBag.MyComment.Author.Login</td>
@@ -186,12 +186,12 @@
                     </td>
 
                 </tr>
-            }*@
+            }
 
             @foreach (var item in ViewBag.Comments)
             {
                 <tr>
-                    <td><a href="@Url.Action("DetailsAnotherProfile", "Profiles", new { id = item.AuthorEmail })"><b>@item.AuthorLogin</b></a></td>
+                    <td><a href="@Url.Action("DetailsAnotherProfile", "Profiles", new { email = item.AuthorEmail })"><b>@item.AuthorLogin</b></a></td>
                     <td>@item.Contents</td>
                     <td>
                         @if (item.Grade == 0)
