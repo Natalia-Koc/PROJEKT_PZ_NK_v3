@@ -216,30 +216,38 @@ namespace PROJEKT_PZ_NK_v3.Controllers
 
         public async Task<ActionResult> DetailsAnotherProfile(string email)
         {
-            ViewBag.Animals = null;
             Profile anotherProfile = new Profile();
             IAsyncSession session = db._driver.AsyncSession();
             try
             {
                 await session.ReadTransactionAsync(async tx =>
                 {
+                    var cursorProfile =
+                        await tx.RunAsync(
+                            "match (p:Profile {Email: '" + email + "'}) " +
+                            "return p");
+                    List<IRecord> Record2 = await cursorProfile.ToListAsync();
+                    foreach (var item in Record2)
+                    {
+                        INode nodeProfile = (INode)item.Values["p"];
+
+                        anotherProfile.HouseNumber = nodeProfile.Properties.Values.First().As<string>();
+                        anotherProfile.Email = nodeProfile.Properties.Values.Skip(1).First().As<string>();
+                        anotherProfile.Rate = nodeProfile.Properties.Values.Skip(2).First().As<int>();
+                        anotherProfile.FirstName = nodeProfile.Properties.Values.Skip(3).First().As<string>();
+                        anotherProfile.Street = nodeProfile.Properties.Values.Skip(4).First().As<string>();
+                        anotherProfile.PhoneNumber = nodeProfile.Properties.Values.Skip(5).First().As<string>();
+                        anotherProfile.City = nodeProfile.Properties.Values.Skip(6).First().As<string>();
+                        anotherProfile.Login = nodeProfile.Properties.Values.Skip(7).First().As<string>();
+                        anotherProfile.LastName = nodeProfile.Properties.Values.Skip(8).First().As<string>();
+
+                        break;
+                    }
+
                     var cursor =
                         await tx.RunAsync(
                             "match (p:Profile {Email: '" + email + "'})<-[rel:COMMENTED_PROFILE]-(c:Comment)<-[a:AUTHOR]-(p2:Profile) " +
-                            "return p,c,p2");
-
-                    IRecord Record = await cursor.SingleAsync();
-                    INode nodeProfile = (INode)Record.Values["p"];
-
-                    anotherProfile.HouseNumber = nodeProfile.Properties.Values.First().As<string>();
-                    anotherProfile.Email = nodeProfile.Properties.Values.Skip(1).First().As<string>();
-                    anotherProfile.Rate = nodeProfile.Properties.Values.Skip(2).First().As<int>();
-                    anotherProfile.FirstName = nodeProfile.Properties.Values.Skip(3).First().As<string>();
-                    anotherProfile.Street = nodeProfile.Properties.Values.Skip(4).First().As<string>();
-                    anotherProfile.PhoneNumber = nodeProfile.Properties.Values.Skip(5).First().As<string>();
-                    anotherProfile.City = nodeProfile.Properties.Values.Skip(6).First().As<string>();
-                    anotherProfile.Login = nodeProfile.Properties.Values.Skip(7).First().As<string>();
-                    anotherProfile.LastName = nodeProfile.Properties.Values.Skip(8).First().As<string>();
+                            "return c,p2");
 
                     List<IRecord> records = await cursor.ToListAsync();
                     List<Comments> comments = new List<Comments>();
@@ -269,6 +277,31 @@ namespace PROJEKT_PZ_NK_v3.Controllers
                     {
                         ViewBag.MyComment = comments.First(m => m.ProfilEmail == User.Identity.Name);
                     }
+
+                    List<Animal> animals = new List<Animal>();
+                    var cursor4 =
+                        await tx.RunAsync(
+                            "match (p:Profile {Email: '" + email + "'})-[rel:OWNER]->(a:Animal) return a");
+                    List<IRecord> Records = await cursor4.ToListAsync();
+                    foreach (var item in Records)
+                    {
+                        INode nodeAnimal = (INode)item.Values["a"];
+
+                        Animal animal = new Animal
+                        {
+                            DateOfBirth = nodeAnimal.Properties.Values.First().As<DateTime>(),
+                            Description = nodeAnimal.Properties.Values.Skip(1).First().As<string>(),
+                            Race = nodeAnimal.Properties.Values.Skip(2).First().As<string>(),
+                            Gender = nodeAnimal.Properties.Values.Skip(3).First().As<string>(),
+                            Image = nodeAnimal.Properties.Values.Skip(4).First().As<string>(),
+                            Species = nodeAnimal.Properties.Values.Skip(5).First().As<string>(),
+                            Weight = nodeAnimal.Properties.Values.Skip(6).First().As<string>(),
+                            Name = nodeAnimal.Properties.Values.Skip(7).First().As<string>()
+                        };
+                        animals.Add(animal);
+                    }
+
+                    ViewBag.Animals = animals;
                 });
             }
             finally

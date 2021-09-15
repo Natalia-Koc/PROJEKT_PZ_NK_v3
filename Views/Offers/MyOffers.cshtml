@@ -11,7 +11,7 @@
     {
 
         <div class="card col-3 list-group-item-heading" style="padding:1%">
-            <a href="@Url.Action("Details", "Offers", new { id = item.ID })">
+            <a href="@Url.Action("Details", "Offers", new { offerID = item.ID })">
                 <img class="card-img-top center-block block d-block mx-auto"
                      style="max-height: 200px; object-fit: cover;"
                      src="~/ImagesAnimals/@item.Animal.Image"
@@ -21,12 +21,12 @@
                 <h4 class="card-title">@item.Title</h4>
                 <p class="card-text">@DateTime.Parse(item.StartingDate).ToString("yyyy-MM-dd HH:mm")- @DateTime.Parse(item.EndDate).ToString("yyyy-MM-dd HH:mm")</p>
                 <p class="card-text">
-                    Zwierze: @Html.ActionLink(item.Animal.Name, "Details", "Animals", new { id = item.Animal.ID }, null)
+                    Zwierze: @Html.ActionLink(item.Animal.Name, "Details", "Animals", new { email = item.Profile.Email, name = item.Animal.Name }, null)
                 </p>
                 <p class="card-text">
-                    Właściciel: @Html.ActionLink(item.Profile.Login, "DetailsAnotherProfile", "Profiles", new { id = item.Profile.ID }, null)
+                    Właściciel: @Html.ActionLink(item.Profile.Login, "DetailsAnotherProfile", "Profiles", new { email = item.Profile.Email }, null)
                 </p>
-                <p class="text-right btn-block">@Html.ActionLink("Więcej informacji", "Details", "Offers", new { id = item.ID }, null) </p>
+                <p class="text-right btn-block">@Html.ActionLink("Więcej informacji", "Details", "Offers", new { offerID = item.ID }, null) </p>
             </div>
         </div>
     }

@@ -71,13 +71,13 @@
                 <p class="card-text">@item.StartingDate- @item.EndDate</p>
                 <p class="card-text">
                     Zwierze: @Html.ActionLink(item.Animal.Name,
-"Details", "Animals", new { email = item.Profile.Email, name = item.AnimalName }, null)
+"Details", "Animals", new { email = item.Profile.Email, name = item.Animal.Name }, null)
                 </p>
                 <p class="card-text">
                     Właściciel: @Html.ActionLink(item.Profile.Login,
       "DetailsAnotherProfile", "Profiles", new { email = item.Profile.Email }, null)
                 </p>
-                <p class="text-right btn-block">@Html.ActionLink("Więcej informacji", "Details", "Offers", new { id = item.ID }, null) </p>
+                <p class="text-right btn-block">@Html.ActionLink("Więcej informacji", "Details", "Offers", new { offerID = item.ID }, null) </p>
             </div>
         </div>
     }

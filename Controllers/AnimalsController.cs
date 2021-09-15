@@ -36,17 +36,18 @@ namespace PROJEKT_PZ_NK_v3.Controllers
                         INode nodeAnimal = (INode)item.Values["a"];
                         INode nodeProfile = (INode)item.Values["p"];
 
-                        Profile profile = new Profile();
-                        profile.HouseNumber = nodeProfile.Properties.Values.First().As<string>();
-                        profile.Email = nodeProfile.Properties.Values.Skip(1).First().As<string>();
-                        profile.Rate = nodeProfile.Properties.Values.Skip(2).First().As<int>();
-                        profile.FirstName = nodeProfile.Properties.Values.Skip(3).First().As<string>();
-                        profile.Street = nodeProfile.Properties.Values.Skip(4).First().As<string>();
-                        profile.PhoneNumber = nodeProfile.Properties.Values.Skip(5).First().As<string>();
-                        profile.City = nodeProfile.Properties.Values.Skip(6).First().As<string>();
-                        profile.Login = nodeProfile.Properties.Values.Skip(7).First().As<string>();
-                        profile.LastName = nodeProfile.Properties.Values.Skip(8).First().As<string>();
-                        ViewBag.profile = profile;
+                        ViewBag.profile = new Profile
+                        {
+                            HouseNumber = nodeProfile.Properties.Values.First().As<string>(),
+                            Email = nodeProfile.Properties.Values.Skip(1).First().As<string>(),
+                            Rate = nodeProfile.Properties.Values.Skip(2).First().As<int>(),
+                            FirstName = nodeProfile.Properties.Values.Skip(3).First().As<string>(),
+                            Street = nodeProfile.Properties.Values.Skip(4).First().As<string>(),
+                            PhoneNumber = nodeProfile.Properties.Values.Skip(5).First().As<string>(),
+                            City = nodeProfile.Properties.Values.Skip(6).First().As<string>(),
+                            Login = nodeProfile.Properties.Values.Skip(7).First().As<string>(),
+                            LastName = nodeProfile.Properties.Values.Skip(8).First().As<string>()
+                        };
 
                         animal.DateOfBirth = nodeAnimal.Properties.Values.First().As<DateTime>();
                         animal.Description = nodeAnimal.Properties.Values.Skip(1).First().As<string>();

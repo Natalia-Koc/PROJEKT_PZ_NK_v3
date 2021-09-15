@@ -194,7 +194,7 @@ namespace PROJEKT_PZ_NK_v3.Controllers
         }
 
         // GET: Offers/Details/5
-        public async Task<ActionResult> Details(int? offerID)
+        public async Task<ActionResult> Details(int offerID)
         {
             Offer offer;
             List<Applications> applications = new List<Applications>();
@@ -465,41 +465,46 @@ namespace PROJEKT_PZ_NK_v3.Controllers
         // GET: Offers/Delete/5
         public async Task<ActionResult> Delete(int offerID)
         {
-            Offer offer;
+            Offer offer = new Offer();
             IAsyncSession session = db._driver.AsyncSession();
             try
             {
                 var cursorOffer = await session.RunAsync(
-                    "match (p:Profile)-[rel:AUTHOR]->(o:Offer {OfferID: " + offerID + "})<-[rel2:ANIMAL_OFFER]-(a:Animal) " +
-                    "return o,p,a");
-                IRecord Record = await cursorOffer.SingleAsync();
-                INode nodeOffer = (INode)Record.Values["o"];
-                INode nodeAnimal = (INode)Record.Values["a"];
-                INode nodeProfile = (INode)Record.Values["p"];
-
-                Profile profile = NodeToProfile(nodeProfile);
-                Animal animal = new Animal
+                    "match (p:Profile)-[rel:AUTHOR]->(o:Offer)<-[rel2:ANIMAL_OFFER]-(a:Animal) " +
+                    "where id(o)= " + offerID +
+                    " return o,p,a");
+                List<IRecord> Records = await cursorOffer.ToListAsync();
+                foreach (var item in Records)
                 {
-                    DateOfBirth = nodeAnimal.Properties.Values.First().As<DateTime>(),
-                    Description = nodeAnimal.Properties.Values.Skip(1).First().As<string>(),
-                    Race = nodeAnimal.Properties.Values.Skip(2).First().As<string>(),
-                    Gender = nodeAnimal.Properties.Values.Skip(3).First().As<string>(),
-                    Image = nodeAnimal.Properties.Values.Skip(4).First().As<string>(),
-                    Species = nodeAnimal.Properties.Values.Skip(5).First().As<string>(),
-                    Weight = nodeAnimal.Properties.Values.Skip(6).First().As<string>(),
-                    Name = nodeAnimal.Properties.Values.Skip(7).First().As<string>()
-                };
+                    INode nodeOffer = (INode)item.Values["o"];
+                    INode nodeAnimal = (INode)item.Values["a"];
+                    INode nodeProfile = (INode)item.Values["p"];
 
-                offer = new Offer
-                {
-                    StartingDate = nodeOffer.Properties.Values.First().As<string>(),
-                    Title = nodeOffer.Properties.Values.Skip(1).First().As<string>(),
-                    ID = ((int)nodeOffer.Id),
-                    Description = nodeOffer.Properties.Values.Skip(2).First().As<string>(),
-                    EndDate = nodeOffer.Properties.Values.Skip(3).First().As<string>(),
-                    Profile = profile,
-                    Animal = animal
-                };
+                    Profile profile = NodeToProfile(nodeProfile);
+                    Animal animal = new Animal
+                    {
+                        DateOfBirth = nodeAnimal.Properties.Values.First().As<DateTime>(),
+                        Description = nodeAnimal.Properties.Values.Skip(1).First().As<string>(),
+                        Race = nodeAnimal.Properties.Values.Skip(2).First().As<string>(),
+                        Gender = nodeAnimal.Properties.Values.Skip(3).First().As<string>(),
+                        Image = nodeAnimal.Properties.Values.Skip(4).First().As<string>(),
+                        Species = nodeAnimal.Properties.Values.Skip(5).First().As<string>(),
+                        Weight = nodeAnimal.Properties.Values.Skip(6).First().As<string>(),
+                        Name = nodeAnimal.Properties.Values.Skip(7).First().As<string>()
+                    };
+
+                    offer = new Offer
+                    {
+                        StartingDate = nodeOffer.Properties.Values.First().As<string>(),
+                        Title = nodeOffer.Properties.Values.Skip(1).First().As<string>(),
+                        ID = ((int)nodeOffer.Id),
+                        Description = nodeOffer.Properties.Values.Skip(2).First().As<string>(),
+                        EndDate = nodeOffer.Properties.Values.Skip(3).First().As<string>(),
+                        Profile = profile,
+                        Animal = animal
+                    };
+                    break;
+                }
                 await cursorOffer.ConsumeAsync();
             }
             finally
@@ -516,21 +521,28 @@ namespace PROJEKT_PZ_NK_v3.Controllers
         // POST: Offers/Delete/5
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
-        public async Task<ActionResult> DeleteConfirmed(int OfferID)
+        public async Task<ActionResult> DeleteConfirmed(int offerID)
         {
             IAsyncSession session = db._driver.AsyncSession();
             try
             {
                 IResultCursor cursor = await session.RunAsync(
-                    "match (app:Application)-[rel:NOTIFICATION_TO_THE_OFFER]->(o:Offer {OfferID: "+ OfferID + "}) " +
-                    "detach delete app,o");
+                    "match (app:Application)-[rel:NOTIFICATION_TO_THE_OFFER]->(o:Offer) " +
+                    "where id(o)= " + offerID +
+                    " detach delete app,o");
+                await cursor.ConsumeAsync();
+
+                IResultCursor cursor2 = await session.RunAsync(
+                    "match (o:Offer) " +
+                    "where id(o)= " + offerID +
+                    " detach delete o");
                 await cursor.ConsumeAsync();
             }
             finally
             {
                 await session.CloseAsync();
             }
-            return RedirectToAction("Index");
+            return RedirectToAction("MyOffers");
         }
 
         protected override void Dispose(bool disposing)
