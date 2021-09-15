@@ -32,7 +32,7 @@
                                 if (item2.Profile.Email == item.Email)
                                 {
                                     <div class="card col-3 list-group-item-heading" style="padding:1%">
-                                        <a href="@Url.Action("Details", "Offers", new { id = item2.ID })">
+                                        <a href="@Url.Action("Details", "Offers", new { offerID = item2.ID })">
                                             <img class="card-img-top center-block block d-block mx-auto"
                                                  style="max-height: 150px; object-fit: cover;"
                                                  src="~/ImagesAnimals/@item2.Animal.Image"

@@ -41,27 +41,27 @@ namespace PROJEKT_PZ_NK_v3.Controllers
                         Profile profile = new Profile
                         {
                             ID = ((int)nodeProfile.Id),
-                            HouseNumber = nodeProfile.Properties.Values.First().As<string>(),
-                            Email = nodeProfile.Properties.Values.Skip(1).First().As<string>(),
-                            Rate = nodeProfile.Properties.Values.Skip(2).First().As<int>(),
-                            FirstName = nodeProfile.Properties.Values.Skip(3).First().As<string>(),
-                            Street = nodeProfile.Properties.Values.Skip(4).First().As<string>(),
-                            PhoneNumber = nodeProfile.Properties.Values.Skip(5).First().As<string>(),
-                            City = nodeProfile.Properties.Values.Skip(6).First().As<string>(),
-                            Login = nodeProfile.Properties.Values.Skip(7).First().As<string>(),
-                            LastName = nodeProfile.Properties.Values.Skip(8).First().As<string>()
+                            HouseNumber = nodeProfile.Properties.Where(a => a.Key == "HouseNumber").Select(a => a.Value).First().As<string>(),
+                            Email = nodeProfile.Properties.Where(a => a.Key == "Email").Select(a => a.Value).First().As<string>(),
+                            Rate = nodeProfile.Properties.Where(a => a.Key == "Rate").Select(a => a.Value).First().As<int>(),
+                            FirstName = nodeProfile.Properties.Where(a => a.Key == "FirstName").Select(a => a.Value).First().As<string>(),
+                            Street = nodeProfile.Properties.Where(a => a.Key == "Street").Select(a => a.Value).First().As<string>(),
+                            PhoneNumber = nodeProfile.Properties.Where(a => a.Key == "PhoneNumber").Select(a => a.Value).First().As<string>(),
+                            City = nodeProfile.Properties.Where(a => a.Key == "City").Select(a => a.Value).First().As<string>(),
+                            Login = nodeProfile.Properties.Where(a => a.Key == "Login").Select(a => a.Value).First().As<string>(),
+                            LastName = nodeProfile.Properties.Where(a => a.Key == "LastName").Select(a => a.Value).First().As<string>()
                         };
 
                         Animal animal = new Animal
                         {
-                            DateOfBirth = nodeAnimal.Properties.Values.First().As<DateTime>(),
-                            Description = nodeAnimal.Properties.Values.Skip(1).First().As<string>(),
-                            Race = nodeAnimal.Properties.Values.Skip(2).First().As<string>(),
-                            Gender = nodeAnimal.Properties.Values.Skip(3).First().As<string>(),
-                            Image = nodeAnimal.Properties.Values.Skip(4).First().As<string>(),
-                            Species = nodeAnimal.Properties.Values.Skip(5).First().As<string>(),
-                            Weight = nodeAnimal.Properties.Values.Skip(6).First().As<string>(),
-                            Name = nodeAnimal.Properties.Values.Skip(7).First().As<string>()
+                            DateOfBirth = nodeAnimal.Properties.Where(a => a.Key == "DateOfBirth").Select(a => a.Value).First().As<DateTime>(),
+                            Description = nodeAnimal.Properties.Where(a => a.Key == "Description").Select(a => a.Value).First().As<string>(),
+                            Race = nodeAnimal.Properties.Where(a => a.Key == "Race").Select(a => a.Value).First().As<string>(),
+                            Gender = nodeAnimal.Properties.Where(a => a.Key == "Gender").Select(a => a.Value).First().As<string>(),
+                            Image = nodeAnimal.Properties.Where(a => a.Key == "Image").Select(a => a.Value).First().As<string>(),
+                            Species = nodeAnimal.Properties.Where(a => a.Key == "Species").Select(a => a.Value).First().As<string>(),
+                            Weight = nodeAnimal.Properties.Where(a => a.Key == "Weight").Select(a => a.Value).First().As<string>(),
+                            Name = nodeAnimal.Properties.Where(a => a.Key == "Name").Select(a => a.Value).First().As<string>()
                         };
 
                         Offer offer = new Offer
@@ -69,11 +69,11 @@ namespace PROJEKT_PZ_NK_v3.Controllers
                             Profile = profile,
                             Animal = animal,
                             AnimalName = animal.Name,
-                            StartingDate = nodeOffer.Properties.Values.First().As<string>(),
-                            Title = nodeOffer.Properties.Values.Skip(1).First().As<string>(),
+                            StartingDate = nodeOffer.Properties.Where(a => a.Key == "StartingDate").Select(a => a.Value).First().As<string>(),
+                            Title = nodeOffer.Properties.Where(a => a.Key == "Title").Select(a => a.Value).First().As<string>(),
                             ID = ((int)nodeOffer.Id),
-                            Description = nodeOffer.Properties.Values.Skip(2).First().As<string>(),
-                            EndDate = nodeOffer.Properties.Values.Skip(3).First().As<string>(),
+                            Description = nodeOffer.Properties.Where(a => a.Key == "Description").Select(a => a.Value).First().As<string>(),
+                            EndDate = nodeOffer.Properties.Where(a => a.Key == "EndDate").Select(a => a.Value).First().As<string>()
                         };
                         offers.Add(offer);
                         if(!profiles.Any(a => a.Email == profile.Email))
@@ -110,15 +110,15 @@ namespace PROJEKT_PZ_NK_v3.Controllers
                     {
                         INode nodeProfile = (INode)item.Values["p"];
 
-                        myProfile.HouseNumber = nodeProfile.Properties.Values.First().As<string>();
-                        myProfile.Email = nodeProfile.Properties.Values.Skip(1).First().As<string>();
-                        myProfile.Rate = nodeProfile.Properties.Values.Skip(2).First().As<int>();
-                        myProfile.FirstName = nodeProfile.Properties.Values.Skip(3).First().As<string>();
-                        myProfile.Street = nodeProfile.Properties.Values.Skip(4).First().As<string>();
-                        myProfile.PhoneNumber = nodeProfile.Properties.Values.Skip(5).First().As<string>();
-                        myProfile.City = nodeProfile.Properties.Values.Skip(6).First().As<string>();
-                        myProfile.Login = nodeProfile.Properties.Values.Skip(7).First().As<string>();
-                        myProfile.LastName = nodeProfile.Properties.Values.Skip(8).First().As<string>();
+                        myProfile.HouseNumber = nodeProfile.Properties.Where(a => a.Key == "HouseNumber").Select(a => a.Value).First().As<string>();
+                        myProfile.Email = nodeProfile.Properties.Where(a=>a.Key == "Email").Select(a => a.Value).First().As<string>();
+                        myProfile.FirstName = nodeProfile.Properties.Where(a => a.Key == "FirstName").Select(a => a.Value).First().As<string>();
+                        myProfile.Rate = nodeProfile.Properties.Where(a => a.Key == "Rate").Select(a => a.Value).First().As<int>();
+                        myProfile.PhoneNumber = nodeProfile.Properties.Where(a => a.Key == "PhoneNumber").Select(a => a.Value).First().As<string>();
+                        myProfile.Street = nodeProfile.Properties.Where(a => a.Key == "Street").Select(a => a.Value).First().As<string>();
+                        myProfile.City = nodeProfile.Properties.Where(a => a.Key == "City").Select(a => a.Value).First().As<string>();
+                        myProfile.Login = nodeProfile.Properties.Where(a => a.Key == "Login").Select(a => a.Value).First().As<string>();
+                        myProfile.LastName = nodeProfile.Properties.Where(a => a.Key == "LastName").Select(a => a.Value).First().As<string>();
 
                         break;
                     }
@@ -136,8 +136,8 @@ namespace PROJEKT_PZ_NK_v3.Controllers
                             INode nodeComment = (INode)item.Values["c"];
                             Comments comm = new Comments
                             {
-                                Contents = nodeComment.Properties.Values.First().As<string>(),
-                                Grade = nodeComment.Properties.Values.Skip(1).First().As<int>(),
+                                Contents = nodeComment.Properties.Where(a => a.Key == "Contents").Select(a => a.Value).First().As<string>(),
+                                Grade = nodeComment.Properties.Where(a => a.Key == "Grade").Select(a => a.Value).First().As<int>(),
                                 ProfilEmail = myProfile.Email,
                                 ProfilLogin = myProfile.Login
                             };
@@ -170,15 +170,15 @@ namespace PROJEKT_PZ_NK_v3.Controllers
                             INode node = (INode)item.Values["c"];
                             INode nodeProfile = (INode)item.Values["p"];
                             Comments comm = new Comments();
-                            comm.Contents = node.Properties.Values.First().As<string>();
-                            comm.Grade = node.Properties.Values.Skip(1).First().As<int>();
-                            comm.ProfilEmail = nodeProfile.Properties.Values.Skip(1).First().As<string>();
-                            comm.ProfilLogin = nodeProfile.Properties.Values.Skip(7).First().As<string>();
+                            comm.Contents = node.Properties.Where(a => a.Key == "Contents").Select(a => a.Value).First().As<string>();
+                            comm.Grade = node.Properties.Where(a => a.Key == "Grade").Select(a => a.Value).First().As<int>();
+                            comm.ProfilEmail = nodeProfile.Properties.Where(a => a.Key == "Email").Select(a => a.Value).First().As<string>();
+                            comm.ProfilLogin = nodeProfile.Properties.Where(a => a.Key == "Login").Select(a => a.Value).First().As<string>();
 
                             lista.Add(comm);
                         }
                     } 
-                        ViewBag.Comments = lista;
+                    ViewBag.Comments = lista;
 
                     List<Animal> animals = new List<Animal>();
                     var cursor4 =
@@ -191,14 +191,14 @@ namespace PROJEKT_PZ_NK_v3.Controllers
 
                         Animal animal = new Animal
                         {
-                            DateOfBirth = nodeAnimal.Properties.Values.First().As<DateTime>(),
-                            Description = nodeAnimal.Properties.Values.Skip(1).First().As<string>(),
-                            Race = nodeAnimal.Properties.Values.Skip(2).First().As<string>(),
-                            Gender = nodeAnimal.Properties.Values.Skip(3).First().As<string>(),
-                            Image = nodeAnimal.Properties.Values.Skip(4).First().As<string>(),
-                            Species = nodeAnimal.Properties.Values.Skip(5).First().As<string>(),
-                            Weight = nodeAnimal.Properties.Values.Skip(6).First().As<string>(),
-                            Name = nodeAnimal.Properties.Values.Skip(7).First().As<string>()
+                            DateOfBirth = nodeAnimal.Properties.Where(a => a.Key == "DateOfBirth").Select(a => a.Value).First().As<DateTime>(),
+                            Description = nodeAnimal.Properties.Where(a => a.Key == "Description").Select(a => a.Value).First().As<string>(),
+                            Race = nodeAnimal.Properties.Where(a => a.Key == "Race").Select(a => a.Value).First().As<string>(),
+                            Gender = nodeAnimal.Properties.Where(a => a.Key == "Gender").Select(a => a.Value).First().As<string>(),
+                            Image = nodeAnimal.Properties.Where(a => a.Key == "Image").Select(a => a.Value).First().As<string>(),
+                            Species = nodeAnimal.Properties.Where(a => a.Key == "Species").Select(a => a.Value).First().As<string>(),
+                            Weight = nodeAnimal.Properties.Where(a => a.Key == "Weight").Select(a => a.Value).First().As<string>(),
+                            Name = nodeAnimal.Properties.Where(a => a.Key == "Name").Select(a => a.Value).First().As<string>()
                         };
                         animals.Add(animal);
                     }
@@ -231,15 +231,15 @@ namespace PROJEKT_PZ_NK_v3.Controllers
                     {
                         INode nodeProfile = (INode)item.Values["p"];
 
-                        anotherProfile.HouseNumber = nodeProfile.Properties.Values.First().As<string>();
-                        anotherProfile.Email = nodeProfile.Properties.Values.Skip(1).First().As<string>();
-                        anotherProfile.Rate = nodeProfile.Properties.Values.Skip(2).First().As<int>();
-                        anotherProfile.FirstName = nodeProfile.Properties.Values.Skip(3).First().As<string>();
-                        anotherProfile.Street = nodeProfile.Properties.Values.Skip(4).First().As<string>();
-                        anotherProfile.PhoneNumber = nodeProfile.Properties.Values.Skip(5).First().As<string>();
-                        anotherProfile.City = nodeProfile.Properties.Values.Skip(6).First().As<string>();
-                        anotherProfile.Login = nodeProfile.Properties.Values.Skip(7).First().As<string>();
-                        anotherProfile.LastName = nodeProfile.Properties.Values.Skip(8).First().As<string>();
+                        anotherProfile.HouseNumber = nodeProfile.Properties.Where(a => a.Key == "HouseNumber").Select(a => a.Value).First().As<string>();
+                        anotherProfile.Email = nodeProfile.Properties.Where(a => a.Key == "Email").Select(a => a.Value).First().As<string>();
+                        anotherProfile.FirstName = nodeProfile.Properties.Where(a => a.Key == "FirstName").Select(a => a.Value).First().As<string>();
+                        anotherProfile.Rate = nodeProfile.Properties.Where(a => a.Key == "Rate").Select(a => a.Value).First().As<int>();
+                        anotherProfile.PhoneNumber = nodeProfile.Properties.Where(a => a.Key == "PhoneNumber").Select(a => a.Value).First().As<string>();
+                        anotherProfile.Street = nodeProfile.Properties.Where(a => a.Key == "Street").Select(a => a.Value).First().As<string>();
+                        anotherProfile.City = nodeProfile.Properties.Where(a => a.Key == "City").Select(a => a.Value).First().As<string>();
+                        anotherProfile.Login = nodeProfile.Properties.Where(a => a.Key == "Login").Select(a => a.Value).First().As<string>();
+                        anotherProfile.LastName = nodeProfile.Properties.Where(a => a.Key == "LastName").Select(a => a.Value).First().As<string>();
 
                         break;
                     }
@@ -257,10 +257,10 @@ namespace PROJEKT_PZ_NK_v3.Controllers
                         INode nodeAuthor = (INode)item.Values["p2"];
                         Comments comm = new Comments
                         {
-                            Contents = nodeComment.Properties.Values.First().As<string>(),
-                            Grade = nodeComment.Properties.Values.Skip(1).First().As<int>(),
-                            ProfilEmail = nodeAuthor.Properties.Values.Skip(1).First().As<string>(),
-                            ProfilLogin = nodeAuthor.Properties.Values.Skip(7).First().As<string>()
+                            Contents = nodeComment.Properties.Where(a => a.Key == "Contents").Select(a => a.Value).First().As<string>(),
+                            Grade = nodeComment.Properties.Where(a => a.Key == "Grade").Select(a => a.Value).First().As<int>(),
+                            ProfilEmail = nodeAuthor.Properties.Where(a => a.Key == "Email").Select(a => a.Value).First().As<string>(),
+                            ProfilLogin = nodeAuthor.Properties.Where(a => a.Key == "Login").Select(a => a.Value).First().As<string>()
                         };
 
                         comments.Add(comm);
@@ -289,14 +289,14 @@ namespace PROJEKT_PZ_NK_v3.Controllers
 
                         Animal animal = new Animal
                         {
-                            DateOfBirth = nodeAnimal.Properties.Values.First().As<DateTime>(),
-                            Description = nodeAnimal.Properties.Values.Skip(1).First().As<string>(),
-                            Race = nodeAnimal.Properties.Values.Skip(2).First().As<string>(),
-                            Gender = nodeAnimal.Properties.Values.Skip(3).First().As<string>(),
-                            Image = nodeAnimal.Properties.Values.Skip(4).First().As<string>(),
-                            Species = nodeAnimal.Properties.Values.Skip(5).First().As<string>(),
-                            Weight = nodeAnimal.Properties.Values.Skip(6).First().As<string>(),
-                            Name = nodeAnimal.Properties.Values.Skip(7).First().As<string>()
+                            DateOfBirth = nodeAnimal.Properties.Where(a => a.Key == "DateOfBirth").Select(a => a.Value).First().As<DateTime>(),
+                            Description = nodeAnimal.Properties.Where(a => a.Key == "Description").Select(a => a.Value).First().As<string>(),
+                            Race = nodeAnimal.Properties.Where(a => a.Key == "Race").Select(a => a.Value).First().As<string>(),
+                            Gender = nodeAnimal.Properties.Where(a => a.Key == "Gender").Select(a => a.Value).First().As<string>(),
+                            Image = nodeAnimal.Properties.Where(a => a.Key == "Image").Select(a => a.Value).First().As<string>(),
+                            Species = nodeAnimal.Properties.Where(a => a.Key == "Species").Select(a => a.Value).First().As<string>(),
+                            Weight = nodeAnimal.Properties.Where(a => a.Key == "Weight").Select(a => a.Value).First().As<string>(),
+                            Name = nodeAnimal.Properties.Where(a => a.Key == "Name").Select(a => a.Value).First().As<string>()
                         };
                         animals.Add(animal);
                     }
@@ -332,15 +332,15 @@ namespace PROJEKT_PZ_NK_v3.Controllers
                     IRecord Record = await cursor.SingleAsync();
                     INode nodeProfile = (INode)Record.Values["p"];
 
-                    myProfile.HouseNumber = nodeProfile.Properties.Values.First().As<string>();
-                    myProfile.Email = nodeProfile.Properties.Values.Skip(1).First().As<string>();
-                    myProfile.Rate = nodeProfile.Properties.Values.Skip(2).First().As<int>();
-                    myProfile.FirstName = nodeProfile.Properties.Values.Skip(3).First().As<string>();
-                    myProfile.Street = nodeProfile.Properties.Values.Skip(4).First().As<string>();
-                    myProfile.PhoneNumber = nodeProfile.Properties.Values.Skip(5).First().As<string>();
-                    myProfile.City = nodeProfile.Properties.Values.Skip(6).First().As<string>();
-                    myProfile.Login = nodeProfile.Properties.Values.Skip(7).First().As<string>();
-                    myProfile.LastName = nodeProfile.Properties.Values.Skip(8).First().As<string>();
+                    myProfile.HouseNumber = nodeProfile.Properties.Where(a => a.Key == "HouseNumber").Select(a => a.Value).First().As<string>();
+                    myProfile.Email = nodeProfile.Properties.Where(a => a.Key == "Email").Select(a => a.Value).First().As<string>();
+                    myProfile.FirstName = nodeProfile.Properties.Where(a => a.Key == "FirstName").Select(a => a.Value).First().As<string>();
+                    myProfile.Rate = nodeProfile.Properties.Where(a => a.Key == "Rate").Select(a => a.Value).First().As<int>();
+                    myProfile.PhoneNumber = nodeProfile.Properties.Where(a => a.Key == "PhoneNumber").Select(a => a.Value).First().As<string>();
+                    myProfile.Street = nodeProfile.Properties.Where(a => a.Key == "Street").Select(a => a.Value).First().As<string>();
+                    myProfile.City = nodeProfile.Properties.Where(a => a.Key == "City").Select(a => a.Value).First().As<string>();
+                    myProfile.Login = nodeProfile.Properties.Where(a => a.Key == "Login").Select(a => a.Value).First().As<string>();
+                    myProfile.LastName = nodeProfile.Properties.Where(a => a.Key == "LastName").Select(a => a.Value).First().As<string>();
                 });
 
             }

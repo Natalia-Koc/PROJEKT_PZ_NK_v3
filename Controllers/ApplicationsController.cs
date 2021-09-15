@@ -46,17 +46,17 @@ namespace PROJEKT_PZ_NK_v3.Controllers
 
                         Offer offer = new Offer
                         {
-                            StartingDate = nodeOffer.Properties.Values.First().As<string>(),
-                            Title = nodeOffer.Properties.Values.Skip(1).First().As<string>(),
+                            StartingDate = nodeOffer.Properties.Where(a => a.Key == "StartingDate").Select(a => a.Value).First().As<string>(),
+                            Title = nodeOffer.Properties.Where(a => a.Key == "Title").Select(a => a.Value).First().As<string>(),
                             ID = ((int)nodeOffer.Id),
-                            Description = nodeOffer.Properties.Values.Skip(2).First().As<string>(),
-                            EndDate = nodeOffer.Properties.Values.Skip(3).First().As<string>(),
+                            Description = nodeOffer.Properties.Where(a => a.Key == "Description").Select(a => a.Value).First().As<string>(),
+                            EndDate = nodeOffer.Properties.Where(a => a.Key == "EndDate").Select(a => a.Value).First().As<string>()
                         };
 
                         Applications application = new Applications
                         {
-                            Message = nodeApplication.Properties.Values.First().As<string>(),
-                            Status = nodeApplication.Properties.Values.Skip(1).First().As<string>(),
+                            Message = nodeApplication.Properties.Where(a => a.Key == "Message").Select(a => a.Value).First().As<string>(),
+                            Status = nodeApplication.Properties.Where(a => a.Key == "Status").Select(a => a.Value).First().As<string>(),
                             Guardian = guardian,
                             Owner = owner,
                             Offer = offer
@@ -80,15 +80,16 @@ namespace PROJEKT_PZ_NK_v3.Controllers
         {
             Profile profile = new Profile
             {
-                HouseNumber = nodeProfile.Properties.Values.First().As<string>(),
-                Email = nodeProfile.Properties.Values.Skip(1).First().As<string>(),
-                Rate = nodeProfile.Properties.Values.Skip(2).First().As<int>(),
-                FirstName = nodeProfile.Properties.Values.Skip(3).First().As<string>(),
-                Street = nodeProfile.Properties.Values.Skip(4).First().As<string>(),
-                PhoneNumber = nodeProfile.Properties.Values.Skip(5).First().As<string>(),
-                City = nodeProfile.Properties.Values.Skip(6).First().As<string>(),
-                Login = nodeProfile.Properties.Values.Skip(7).First().As<string>(),
-                LastName = nodeProfile.Properties.Values.Skip(8).First().As<string>()
+                ID = ((int)nodeProfile.Id),
+                HouseNumber = nodeProfile.Properties.Where(a => a.Key == "HouseNumber").Select(a => a.Value).First().As<string>(),
+                Email = nodeProfile.Properties.Where(a => a.Key == "Email").Select(a => a.Value).First().As<string>(),
+                Rate = nodeProfile.Properties.Where(a => a.Key == "Rate").Select(a => a.Value).First().As<int>(),
+                FirstName = nodeProfile.Properties.Where(a => a.Key == "FirstName").Select(a => a.Value).First().As<string>(),
+                Street = nodeProfile.Properties.Where(a => a.Key == "Street").Select(a => a.Value).First().As<string>(),
+                PhoneNumber = nodeProfile.Properties.Where(a => a.Key == "PhoneNumber").Select(a => a.Value).First().As<string>(),
+                City = nodeProfile.Properties.Where(a => a.Key == "City").Select(a => a.Value).First().As<string>(),
+                Login = nodeProfile.Properties.Where(a => a.Key == "Login").Select(a => a.Value).First().As<string>(),
+                LastName = nodeProfile.Properties.Where(a => a.Key == "LastName").Select(a => a.Value).First().As<string>()
             };
             return profile;
         }
@@ -121,17 +122,17 @@ namespace PROJEKT_PZ_NK_v3.Controllers
 
                         Offer offer = new Offer
                         {
-                            StartingDate = nodeOffer.Properties.Values.First().As<string>(),
-                            Title = nodeOffer.Properties.Values.Skip(1).First().As<string>(),
+                            StartingDate = nodeOffer.Properties.Where(a => a.Key == "StartingDate").Select(a => a.Value).First().As<string>(),
+                            Title = nodeOffer.Properties.Where(a => a.Key == "Title").Select(a => a.Value).First().As<string>(),
                             ID = ((int)nodeOffer.Id),
-                            Description = nodeOffer.Properties.Values.Skip(2).First().As<string>(),
-                            EndDate = nodeOffer.Properties.Values.Skip(3).First().As<string>(),
+                            Description = nodeOffer.Properties.Where(a => a.Key == "Description").Select(a => a.Value).First().As<string>(),
+                            EndDate = nodeOffer.Properties.Where(a => a.Key == "EndDate").Select(a => a.Value).First().As<string>()
                         };
 
                         Applications application = new Applications
                         {
-                            Message = nodeApplication.Properties.Values.First().As<string>(),
-                            Status = nodeApplication.Properties.Values.Skip(1).First().As<string>(),
+                            Message = nodeApplication.Properties.Where(a => a.Key == "Message").Select(a => a.Value).First().As<string>(),
+                            Status = nodeApplication.Properties.Where(a => a.Key == "Status").Select(a => a.Value).First().As<string>(),
                             Guardian = guardian,
                             Owner = owner,
                             Offer = offer
@@ -182,17 +183,17 @@ namespace PROJEKT_PZ_NK_v3.Controllers
 
                         Offer offer = new Offer
                         {
-                            StartingDate = nodeOffer.Properties.Values.First().As<string>(),
-                            Title = nodeOffer.Properties.Values.Skip(1).First().As<string>(),
+                            StartingDate = nodeOffer.Properties.Where(a => a.Key == "StartingDate").Select(a => a.Value).First().As<string>(),
+                            Title = nodeOffer.Properties.Where(a => a.Key == "Title").Select(a => a.Value).First().As<string>(),
                             ID = ((int)nodeOffer.Id),
-                            Description = nodeOffer.Properties.Values.Skip(2).First().As<string>(),
-                            EndDate = nodeOffer.Properties.Values.Skip(3).First().As<string>(),
+                            Description = nodeOffer.Properties.Where(a => a.Key == "Description").Select(a => a.Value).First().As<string>(),
+                            EndDate = nodeOffer.Properties.Where(a => a.Key == "EndDate").Select(a => a.Value).First().As<string>()
                         };
 
                         Applications application = new Applications
                         {
-                            Message = nodeApplication.Properties.Values.First().As<string>(),
-                            Status = nodeApplication.Properties.Values.Skip(1).First().As<string>(),
+                            Message = nodeApplication.Properties.Where(a => a.Key == "Message").Select(a => a.Value).First().As<string>(),
+                            Status = nodeApplication.Properties.Where(a => a.Key == "Status").Select(a => a.Value).First().As<string>(),
                             Guardian = guardian,
                             Owner = owner,
                             Offer = offer
@@ -246,22 +247,30 @@ namespace PROJEKT_PZ_NK_v3.Controllers
             IAsyncSession session = db._driver.AsyncSession();
             try
             {
+                string status = null;
+
                 var cursor =
                         await session.RunAsync(
                             "match (p:Profile {Email: '" + User.Identity.Name + "'})-[rel1:GUARDIAN]->(app:Application)<-[rel2:OWNER]-(p2:Profile)," +
-                            "(app)-[rel3:NOTIFICATION_TO_THE_OFFER]->(o:Offer {OfferID:" + offerID + "}) " +
-                            "return app");
+                            "(app)-[rel3:NOTIFICATION_TO_THE_OFFER]->(o:Offer) " +
+                            "where id(o) = "+ offerID +
+                            " return app");
 
-                IRecord Record = await cursor.SingleAsync();
-                INode nodeApplication = (INode)Record.Values["app"];
-                string status = nodeApplication.Properties.Values.Skip(1).First().As<string>();
+                List<IRecord> Records = await cursor.ToListAsync();
+                foreach (var item in Records)
+                {
+                    INode nodeApplication = (INode)item.Values["app"];
+                    status = nodeApplication.Properties.Where(a => a.Key == "Status").Select(a => a.Value).First().As<string>();
+                    break;
+                }
 
                 if (status == "Właściciel odrzucił ofertę")
                 {
                     IResultCursor cursor1 = await session.RunAsync(
                         "match (k:Profile {Email: '"+ User.Identity.Name + "'})-[rk:GUARDIAN]->(app:Application)" +
-                            "-[ro:NOTIFICATION_TO_THE_OFFER]->(o:Offer {OfferID:"+ offerID + "})" +
-                        "SET app.Status = 'Odrzucone'"
+                            "-[ro:NOTIFICATION_TO_THE_OFFER]->(o:Offer) " +
+                            "where id(o) = " + offerID +
+                        " SET app.Status = 'Odrzucone'"
                     );
                     await cursor1.ConsumeAsync();
                 }
@@ -269,8 +278,9 @@ namespace PROJEKT_PZ_NK_v3.Controllers
                 {
                     IResultCursor cursor2 = await session.RunAsync(
                         "match (k:Profile {Email: '" + User.Identity.Name + "'})-[rk:GUARDIAN]->(app:Application)" +
-                            "-[ro:NOTIFICATION_TO_THE_OFFER]->(o:Offer {OfferID:" + offerID + "})" +
-                        "SET app.Status = 'Opiekun zrezygnował z oferty'"
+                            "-[ro:NOTIFICATION_TO_THE_OFFER]->(o:Offer) " +
+                            "where id(o) = " + offerID +
+                        " SET app.Status = 'Opiekun zrezygnował z oferty'"
                     );
                     await cursor2.ConsumeAsync();
                 }
@@ -288,22 +298,29 @@ namespace PROJEKT_PZ_NK_v3.Controllers
             IAsyncSession session = db._driver.AsyncSession();
             try
             {
+                string status=null;
                 var cursor =
                         await session.RunAsync(
                             "match (p:Profile {Email: '" + User.Identity.Name + "'})-[rel1:GUARDIAN]->(app:Application)<-[rel2:OWNER]-(p2:Profile)," +
-                            "(app)-[rel3:NOTIFICATION_TO_THE_OFFER]->(o:Offer {OfferID:" + offerID + "}) " +
-                            "return app");
+                            "(app)-[rel3:NOTIFICATION_TO_THE_OFFER]->(o:Offer) " +
+                            "where id(o) = " + offerID +
+                            " return app");
 
-                IRecord Record = await cursor.SingleAsync();
-                INode nodeApplication = (INode)Record.Values["app"];
-                string status = nodeApplication.Properties.Values.Skip(1).First().As<string>();
+                List<IRecord> Records = await cursor.ToListAsync();
+                foreach (var item in Records)
+                {
+                    INode nodeApplication = (INode)item.Values["app"];
+                    status = nodeApplication.Properties.Where(a => a.Key == "Status").Select(a => a.Value).First().As<string>();
+                    break;
+                }
 
                 if (status == "Opiekun zrezygnował z oferty")
                 {
                     IResultCursor cursor1 = await session.RunAsync(
                         "match (k:Profile {Email: '" + User.Identity.Name + "'})-[rk:OWNER]->(app:Application)" +
-                            "-[ro:NOTIFICATION_TO_THE_OFFER]->(o:Offer {OfferID:" + offerID + "})" +
-                        "SET app.Status = 'Odrzucone'"
+                            "-[ro:NOTIFICATION_TO_THE_OFFER]->(o:Offer) " +
+                            "where id(o) = " + offerID +
+                        " SET app.Status = 'Odrzucone'"
                     );
                     await cursor1.ConsumeAsync();
                 }
@@ -311,8 +328,9 @@ namespace PROJEKT_PZ_NK_v3.Controllers
                 {
                     IResultCursor cursor2 = await session.RunAsync(
                         "match (k:Profile {Email: '" + User.Identity.Name + "'})-[rk:OWNER]->(app:Application)" +
-                            "-[ro:NOTIFICATION_TO_THE_OFFER]->(o:Offer {OfferID:" + offerID + "})" +
-                        "SET app.Status = 'Właściciel odrzucił ofertę'"
+                            "-[ro:NOTIFICATION_TO_THE_OFFER]->(o:Offer) " +
+                            "where id(o) = " + offerID +
+                        " SET app.Status = 'Właściciel odrzucił ofertę'"
                     );
                     await cursor2.ConsumeAsync();
                 }
@@ -331,8 +349,9 @@ namespace PROJEKT_PZ_NK_v3.Controllers
             {
                 IResultCursor cursor = await session.RunAsync(
                     "match (k:Profile {Email: '" + User.Identity.Name + "'})-[rk:OWNER]->(app:Application)" +
-                        "-[ro:NOTIFICATION_TO_THE_OFFER]->(o:Offer {OfferID:" + offerID + "})" +
-                    "SET app.Status = 'Zaakceptowane'"
+                        "-[ro:NOTIFICATION_TO_THE_OFFER]->(o:Offer) " +
+                            "where id(o) = " + offerID +
+                    " SET app.Status = 'Zaakceptowane'"
                 );
                 await cursor.ConsumeAsync();
             }
@@ -349,29 +368,36 @@ namespace PROJEKT_PZ_NK_v3.Controllers
             IAsyncSession session = db._driver.AsyncSession();
             try
             {
+                string status = null;
                 var cursorStatus =
                         await session.RunAsync(
                             "match (p:Profile {Email: '" + User.Identity.Name + "'})-[rel1:GUARDIAN]->(app:Application)<-[rel2:OWNER]-(p2:Profile)," +
-                            "(app)-[rel3:NOTIFICATION_TO_THE_OFFER]->(o:Offer {OfferID:" + offerID + "}) " +
-                            "return app");
+                            "(app)-[rel3:NOTIFICATION_TO_THE_OFFER]->(o:Offer) " +
+                            "where id(o) = " + offerID +
+                            " return app");
 
-                IRecord Record = await cursorStatus.SingleAsync();
-                INode nodeApplication = (INode)Record.Values["app"];
-                string status = nodeApplication.Properties.Values.Skip(1).First().As<string>();
-
+                List<IRecord> Records = await cursorStatus.ToListAsync();
+                foreach (var item in Records)
+                {
+                    INode nodeApplication = (INode)item.Values["app"];
+                    status = nodeApplication.Properties.Where(a => a.Key == "Status").Select(a => a.Value).First().As<string>();
+                    break;
+                }
                 if (status.Contains("Usunieta"))
                 {
                     IResultCursor cursor = await session.RunAsync(
-                        "match (app:Application)-[ro:NOTIFICATION_TO_THE_OFFER]->(o:Offer {OfferID:" + offerID + "})" +
-                        "SET app.Status = 'Usunieta'"
+                        "match (app:Application)-[ro:NOTIFICATION_TO_THE_OFFER]->(o:Offer) " +
+                            "where id(o) = " + offerID +
+                        " SET app.Status = 'Usunieta'"
                     );
                     await cursor.ConsumeAsync();
                 }
                 else
                 {
                     IResultCursor cursor = await session.RunAsync(
-                        "match (app:Application)-[ro:NOTIFICATION_TO_THE_OFFER]->(o:Offer {OfferID:" + offerID + "})" +
-                        "SET app.Status = 'Usunieta przez " + User.Identity.Name +"'"
+                        "match (app:Application)-[ro:NOTIFICATION_TO_THE_OFFER]->(o:Offer) " +
+                            "where id(o) = " + offerID +
+                        " SET app.Status = 'Usunieta przez " + User.Identity.Name +"'"
                     );
                     await cursor.ConsumeAsync();
                 }

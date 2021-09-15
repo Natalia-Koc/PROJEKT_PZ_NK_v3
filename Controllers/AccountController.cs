@@ -174,7 +174,7 @@ namespace PROJEKT_PZ_NK_v3.Controllers
                             "Email: '" + model.Email + "'," +
                             "FirstName: ' '," +
                             "LastName: ' '," +
-                            "PhoneNumber: ' '," +
+                            "PhoneNumber: ''," +
                             "City: ' '," +
                             "Street: ' '," +
                             "HouseNumber: ' '," +

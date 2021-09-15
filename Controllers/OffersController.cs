@@ -54,23 +54,23 @@ namespace PROJEKT_PZ_NK_v3.Controllers
                     Profile profile = NodeToProfile(nodeProfile);
                     Animal animal = new Animal
                     {
-                        DateOfBirth = nodeAnimal.Properties.Values.First().As<DateTime>(),
-                        Description = nodeAnimal.Properties.Values.Skip(1).First().As<string>(),
-                        Race = nodeAnimal.Properties.Values.Skip(2).First().As<string>(),
-                        Gender = nodeAnimal.Properties.Values.Skip(3).First().As<string>(),
-                        Image = nodeAnimal.Properties.Values.Skip(4).First().As<string>(),
-                        Species = nodeAnimal.Properties.Values.Skip(5).First().As<string>(),
-                        Weight = nodeAnimal.Properties.Values.Skip(6).First().As<string>(),
-                        Name = nodeAnimal.Properties.Values.Skip(7).First().As<string>()
+                        DateOfBirth = nodeAnimal.Properties.Where(a => a.Key == "DateOfBirth").Select(a => a.Value).First().As<DateTime>(),
+                        Description = nodeAnimal.Properties.Where(a => a.Key == "Description").Select(a => a.Value).First().As<string>(),
+                        Race = nodeAnimal.Properties.Where(a => a.Key == "Race").Select(a => a.Value).First().As<string>(),
+                        Gender = nodeAnimal.Properties.Where(a => a.Key == "Gender").Select(a => a.Value).First().As<string>(),
+                        Image = nodeAnimal.Properties.Where(a => a.Key == "Image").Select(a => a.Value).First().As<string>(),
+                        Species = nodeAnimal.Properties.Where(a => a.Key == "Species").Select(a => a.Value).First().As<string>(),
+                        Weight = nodeAnimal.Properties.Where(a => a.Key == "Weight").Select(a => a.Value).First().As<string>(),
+                        Name = nodeAnimal.Properties.Where(a => a.Key == "Name").Select(a => a.Value).First().As<string>()
                     };
 
                     Offer offer = new Offer
                     {
-                        StartingDate = nodeOffer.Properties.Values.First().As<string>(),
-                        Title = nodeOffer.Properties.Values.Skip(1).First().As<string>(),
+                        StartingDate = nodeOffer.Properties.Where(a => a.Key == "StartingDate").Select(a => a.Value).First().As<string>(),
+                        Title = nodeOffer.Properties.Where(a => a.Key == "Title").Select(a => a.Value).First().As<string>(),
                         ID = ((int)nodeOffer.Id),
-                        Description = nodeOffer.Properties.Values.Skip(2).First().As<string>(),
-                        EndDate = nodeOffer.Properties.Values.Skip(3).First().As<string>(),
+                        Description = nodeOffer.Properties.Where(a => a.Key == "Description").Select(a => a.Value).First().As<string>(),
+                        EndDate = nodeOffer.Properties.Where(a => a.Key == "EndDate").Select(a => a.Value).First().As<string>(),
                         Profile = profile,
                         Animal = animal
                     };
@@ -142,23 +142,23 @@ namespace PROJEKT_PZ_NK_v3.Controllers
                     Profile profile = NodeToProfile(nodeProfile);
                     Animal animal = new Animal
                     {
-                        DateOfBirth = nodeAnimal.Properties.Values.First().As<DateTime>(),
-                        Description = nodeAnimal.Properties.Values.Skip(1).First().As<string>(),
-                        Race = nodeAnimal.Properties.Values.Skip(2).First().As<string>(),
-                        Gender = nodeAnimal.Properties.Values.Skip(3).First().As<string>(),
-                        Image = nodeAnimal.Properties.Values.Skip(4).First().As<string>(),
-                        Species = nodeAnimal.Properties.Values.Skip(5).First().As<string>(),
-                        Weight = nodeAnimal.Properties.Values.Skip(6).First().As<string>(),
-                        Name = nodeAnimal.Properties.Values.Skip(7).First().As<string>()
+                        DateOfBirth = nodeAnimal.Properties.Where(a => a.Key == "DateOfBirth").Select(a => a.Value).First().As<DateTime>(),
+                        Description = nodeAnimal.Properties.Where(a => a.Key == "Description").Select(a => a.Value).First().As<string>(),
+                        Race = nodeAnimal.Properties.Where(a => a.Key == "Race").Select(a => a.Value).First().As<string>(),
+                        Gender = nodeAnimal.Properties.Where(a => a.Key == "Gender").Select(a => a.Value).First().As<string>(),
+                        Image = nodeAnimal.Properties.Where(a => a.Key == "Image").Select(a => a.Value).First().As<string>(),
+                        Species = nodeAnimal.Properties.Where(a => a.Key == "Species").Select(a => a.Value).First().As<string>(),
+                        Weight = nodeAnimal.Properties.Where(a => a.Key == "Weight").Select(a => a.Value).First().As<string>(),
+                        Name = nodeAnimal.Properties.Where(a => a.Key == "Name").Select(a => a.Value).First().As<string>()
                     };
 
                     Offer offer = new Offer
                     {
-                        StartingDate = nodeOffer.Properties.Values.First().As<string>(),
-                        Title = nodeOffer.Properties.Values.Skip(1).First().As<string>(),
+                        StartingDate = nodeOffer.Properties.Where(a => a.Key == "StartingDate").Select(a => a.Value).First().As<string>(),
+                        Title = nodeOffer.Properties.Where(a => a.Key == "Title").Select(a => a.Value).First().As<string>(),
                         ID = ((int)nodeOffer.Id),
-                        Description = nodeOffer.Properties.Values.Skip(2).First().As<string>(),
-                        EndDate = nodeOffer.Properties.Values.Skip(3).First().As<string>(),
+                        Description = nodeOffer.Properties.Where(a => a.Key == "Description").Select(a => a.Value).First().As<string>(),
+                        EndDate = nodeOffer.Properties.Where(a => a.Key == "EndDate").Select(a => a.Value).First().As<string>(),
                         Profile = profile,
                         Animal = animal
                     };
@@ -180,15 +180,16 @@ namespace PROJEKT_PZ_NK_v3.Controllers
         {
             Profile profile = new Profile
             {
-                HouseNumber = nodeProfile.Properties.Values.First().As<string>(),
-                Email = nodeProfile.Properties.Values.Skip(1).First().As<string>(),
-                Rate = nodeProfile.Properties.Values.Skip(2).First().As<int>(),
-                FirstName = nodeProfile.Properties.Values.Skip(3).First().As<string>(),
-                Street = nodeProfile.Properties.Values.Skip(4).First().As<string>(),
-                PhoneNumber = nodeProfile.Properties.Values.Skip(5).First().As<string>(),
-                City = nodeProfile.Properties.Values.Skip(6).First().As<string>(),
-                Login = nodeProfile.Properties.Values.Skip(7).First().As<string>(),
-                LastName = nodeProfile.Properties.Values.Skip(8).First().As<string>()
+                ID = ((int)nodeProfile.Id),
+                HouseNumber = nodeProfile.Properties.Where(a => a.Key == "HouseNumber").Select(a => a.Value).First().As<string>(),
+                Email = nodeProfile.Properties.Where(a => a.Key == "Email").Select(a => a.Value).First().As<string>(),
+                Rate = nodeProfile.Properties.Where(a => a.Key == "Rate").Select(a => a.Value).First().As<int>(),
+                FirstName = nodeProfile.Properties.Where(a => a.Key == "FirstName").Select(a => a.Value).First().As<string>(),
+                Street = nodeProfile.Properties.Where(a => a.Key == "Street").Select(a => a.Value).First().As<string>(),
+                PhoneNumber = nodeProfile.Properties.Where(a => a.Key == "PhoneNumber").Select(a => a.Value).First().As<string>(),
+                City = nodeProfile.Properties.Where(a => a.Key == "City").Select(a => a.Value).First().As<string>(),
+                Login = nodeProfile.Properties.Where(a => a.Key == "Login").Select(a => a.Value).First().As<string>(),
+                LastName = nodeProfile.Properties.Where(a => a.Key == "LastName").Select(a => a.Value).First().As<string>()
             };
             return profile;
         }
@@ -213,23 +214,23 @@ namespace PROJEKT_PZ_NK_v3.Controllers
                 Profile profile = NodeToProfile(nodeProfile);
                 Animal animal = new Animal
                 {
-                    DateOfBirth = nodeAnimal.Properties.Values.First().As<DateTime>(),
-                    Description = nodeAnimal.Properties.Values.Skip(1).First().As<string>(),
-                    Race = nodeAnimal.Properties.Values.Skip(2).First().As<string>(),
-                    Gender = nodeAnimal.Properties.Values.Skip(3).First().As<string>(),
-                    Image = nodeAnimal.Properties.Values.Skip(4).First().As<string>(),
-                    Species = nodeAnimal.Properties.Values.Skip(5).First().As<string>(),
-                    Weight = nodeAnimal.Properties.Values.Skip(6).First().As<string>(),
-                    Name = nodeAnimal.Properties.Values.Skip(7).First().As<string>()
+                    DateOfBirth = nodeAnimal.Properties.Where(a => a.Key == "DateOfBirth").Select(a => a.Value).First().As<DateTime>(),
+                    Description = nodeAnimal.Properties.Where(a => a.Key == "Description").Select(a => a.Value).First().As<string>(),
+                    Race = nodeAnimal.Properties.Where(a => a.Key == "Race").Select(a => a.Value).First().As<string>(),
+                    Gender = nodeAnimal.Properties.Where(a => a.Key == "Gender").Select(a => a.Value).First().As<string>(),
+                    Image = nodeAnimal.Properties.Where(a => a.Key == "Image").Select(a => a.Value).First().As<string>(),
+                    Species = nodeAnimal.Properties.Where(a => a.Key == "Species").Select(a => a.Value).First().As<string>(),
+                    Weight = nodeAnimal.Properties.Where(a => a.Key == "Weight").Select(a => a.Value).First().As<string>(),
+                    Name = nodeAnimal.Properties.Where(a => a.Key == "Name").Select(a => a.Value).First().As<string>()
                 };
 
                 offer = new Offer
                 {
-                    StartingDate = nodeOffer.Properties.Values.First().As<string>(),
-                    Title = nodeOffer.Properties.Values.Skip(1).First().As<string>(),
+                    StartingDate = nodeOffer.Properties.Where(a => a.Key == "StartingDate").Select(a => a.Value).First().As<string>(),
+                    Title = nodeOffer.Properties.Where(a => a.Key == "Title").Select(a => a.Value).First().As<string>(),
                     ID = ((int)nodeOffer.Id),
-                    Description = nodeOffer.Properties.Values.Skip(2).First().As<string>(),
-                    EndDate = nodeOffer.Properties.Values.Skip(3).First().As<string>(),
+                    Description = nodeOffer.Properties.Where(a => a.Key == "Description").Select(a => a.Value).First().As<string>(),
+                    EndDate = nodeOffer.Properties.Where(a => a.Key == "EndDate").Select(a => a.Value).First().As<string>(),
                     Profile = profile,
                     Animal = animal
                 };
@@ -263,17 +264,17 @@ namespace PROJEKT_PZ_NK_v3.Controllers
 
                         Offer offer2 = new Offer
                         {
-                            StartingDate = nodeOffer.Properties.Values.First().As<string>(),
-                            Title = nodeOffer.Properties.Values.Skip(1).First().As<string>(),
-                            ID = ((int)nodeOffer.Id),
-                            Description = nodeOffer.Properties.Values.Skip(2).First().As<string>(),
-                            EndDate = nodeOffer.Properties.Values.Skip(3).First().As<string>(),
+                            StartingDate = nodeOffer2.Properties.Where(a => a.Key == "StartingDate").Select(a => a.Value).First().As<string>(),
+                            Title = nodeOffer2.Properties.Where(a => a.Key == "Title").Select(a => a.Value).First().As<string>(),
+                            ID = ((int)nodeOffer2.Id),
+                            Description = nodeOffer2.Properties.Where(a => a.Key == "Description").Select(a => a.Value).First().As<string>(),
+                            EndDate = nodeOffer2.Properties.Where(a => a.Key == "EndDate").Select(a => a.Value).First().As<string>()
                         };
 
                         Applications application = new Applications
                         {
-                            Message = nodeApplication.Properties.Values.First().As<string>(),
-                            Status = nodeApplication.Properties.Values.Skip(1).First().As<string>(),
+                            Message = nodeApplication.Properties.Where(a => a.Key == "Message").Select(a => a.Value).First().As<string>(),
+                            Status = nodeApplication.Properties.Where(a => a.Key == "Status").Select(a => a.Value).First().As<string>(),
                             Guardian = guardian,
                             Owner = owner,
                             Offer = offer2
@@ -320,14 +321,14 @@ namespace PROJEKT_PZ_NK_v3.Controllers
                         INode nodeAnimal = (INode)item.Values["a"];
                         Animal animal = new Animal
                         {
-                            DateOfBirth = nodeAnimal.Properties.Values.First().As<DateTime>(),
-                            Description = nodeAnimal.Properties.Values.Skip(1).First().As<string>(),
-                            Race = nodeAnimal.Properties.Values.Skip(2).First().As<string>(),
-                            Gender = nodeAnimal.Properties.Values.Skip(3).First().As<string>(),
-                            Image = nodeAnimal.Properties.Values.Skip(4).First().As<string>(),
-                            Species = nodeAnimal.Properties.Values.Skip(5).First().As<string>(),
-                            Weight = nodeAnimal.Properties.Values.Skip(6).First().As<string>(),
-                            Name = nodeAnimal.Properties.Values.Skip(7).First().As<string>()
+                            DateOfBirth = nodeAnimal.Properties.Where(a => a.Key == "DateOfBirth").Select(a => a.Value).First().As<DateTime>(),
+                            Description = nodeAnimal.Properties.Where(a => a.Key == "Description").Select(a => a.Value).First().As<string>(),
+                            Race = nodeAnimal.Properties.Where(a => a.Key == "Race").Select(a => a.Value).First().As<string>(),
+                            Gender = nodeAnimal.Properties.Where(a => a.Key == "Gender").Select(a => a.Value).First().As<string>(),
+                            Image = nodeAnimal.Properties.Where(a => a.Key == "Image").Select(a => a.Value).First().As<string>(),
+                            Species = nodeAnimal.Properties.Where(a => a.Key == "Species").Select(a => a.Value).First().As<string>(),
+                            Weight = nodeAnimal.Properties.Where(a => a.Key == "Weight").Select(a => a.Value).First().As<string>(),
+                            Name = nodeAnimal.Properties.Where(a => a.Key == "Name").Select(a => a.Value).First().As<string>()
                         };
 
                         animals.Add(animal);
@@ -400,23 +401,23 @@ namespace PROJEKT_PZ_NK_v3.Controllers
                 Profile profile = NodeToProfile(nodeProfile);
                 Animal animal = new Animal
                 {
-                    DateOfBirth = nodeAnimal.Properties.Values.First().As<DateTime>(),
-                    Description = nodeAnimal.Properties.Values.Skip(1).First().As<string>(),
-                    Race = nodeAnimal.Properties.Values.Skip(2).First().As<string>(),
-                    Gender = nodeAnimal.Properties.Values.Skip(3).First().As<string>(),
-                    Image = nodeAnimal.Properties.Values.Skip(4).First().As<string>(),
-                    Species = nodeAnimal.Properties.Values.Skip(5).First().As<string>(),
-                    Weight = nodeAnimal.Properties.Values.Skip(6).First().As<string>(),
-                    Name = nodeAnimal.Properties.Values.Skip(7).First().As<string>()
+                    DateOfBirth = nodeAnimal.Properties.Where(a => a.Key == "DateOfBirth").Select(a => a.Value).First().As<DateTime>(),
+                    Description = nodeAnimal.Properties.Where(a => a.Key == "Description").Select(a => a.Value).First().As<string>(),
+                    Race = nodeAnimal.Properties.Where(a => a.Key == "Race").Select(a => a.Value).First().As<string>(),
+                    Gender = nodeAnimal.Properties.Where(a => a.Key == "Gender").Select(a => a.Value).First().As<string>(),
+                    Image = nodeAnimal.Properties.Where(a => a.Key == "Image").Select(a => a.Value).First().As<string>(),
+                    Species = nodeAnimal.Properties.Where(a => a.Key == "Species").Select(a => a.Value).First().As<string>(),
+                    Weight = nodeAnimal.Properties.Where(a => a.Key == "Weight").Select(a => a.Value).First().As<string>(),
+                    Name = nodeAnimal.Properties.Where(a => a.Key == "Name").Select(a => a.Value).First().As<string>()
                 };
 
                 offer = new Offer
                 {
-                    StartingDate = nodeOffer.Properties.Values.First().As<string>(),
-                    Title = nodeOffer.Properties.Values.Skip(1).First().As<string>(),
+                    StartingDate = nodeOffer.Properties.Where(a => a.Key == "StartingDate").Select(a => a.Value).First().As<string>(),
+                    Title = nodeOffer.Properties.Where(a => a.Key == "Title").Select(a => a.Value).First().As<string>(),
                     ID = ((int)nodeOffer.Id),
-                    Description = nodeOffer.Properties.Values.Skip(2).First().As<string>(),
-                    EndDate = nodeOffer.Properties.Values.Skip(3).First().As<string>(),
+                    Description = nodeOffer.Properties.Where(a => a.Key == "Description").Select(a => a.Value).First().As<string>(),
+                    EndDate = nodeOffer.Properties.Where(a => a.Key == "EndDate").Select(a => a.Value).First().As<string>(),
                     Profile = profile,
                     Animal = animal
                 };
@@ -484,23 +485,23 @@ namespace PROJEKT_PZ_NK_v3.Controllers
                     Profile profile = NodeToProfile(nodeProfile);
                     Animal animal = new Animal
                     {
-                        DateOfBirth = nodeAnimal.Properties.Values.First().As<DateTime>(),
-                        Description = nodeAnimal.Properties.Values.Skip(1).First().As<string>(),
-                        Race = nodeAnimal.Properties.Values.Skip(2).First().As<string>(),
-                        Gender = nodeAnimal.Properties.Values.Skip(3).First().As<string>(),
-                        Image = nodeAnimal.Properties.Values.Skip(4).First().As<string>(),
-                        Species = nodeAnimal.Properties.Values.Skip(5).First().As<string>(),
-                        Weight = nodeAnimal.Properties.Values.Skip(6).First().As<string>(),
-                        Name = nodeAnimal.Properties.Values.Skip(7).First().As<string>()
+                        DateOfBirth = nodeAnimal.Properties.Where(a => a.Key == "DateOfBirth").Select(a => a.Value).First().As<DateTime>(),
+                        Description = nodeAnimal.Properties.Where(a => a.Key == "Description").Select(a => a.Value).First().As<string>(),
+                        Race = nodeAnimal.Properties.Where(a => a.Key == "Race").Select(a => a.Value).First().As<string>(),
+                        Gender = nodeAnimal.Properties.Where(a => a.Key == "Gender").Select(a => a.Value).First().As<string>(),
+                        Image = nodeAnimal.Properties.Where(a => a.Key == "Image").Select(a => a.Value).First().As<string>(),
+                        Species = nodeAnimal.Properties.Where(a => a.Key == "Species").Select(a => a.Value).First().As<string>(),
+                        Weight = nodeAnimal.Properties.Where(a => a.Key == "Weight").Select(a => a.Value).First().As<string>(),
+                        Name = nodeAnimal.Properties.Where(a => a.Key == "Name").Select(a => a.Value).First().As<string>()
                     };
 
                     offer = new Offer
                     {
-                        StartingDate = nodeOffer.Properties.Values.First().As<string>(),
-                        Title = nodeOffer.Properties.Values.Skip(1).First().As<string>(),
+                        StartingDate = nodeOffer.Properties.Where(a => a.Key == "StartingDate").Select(a => a.Value).First().As<string>(),
+                        Title = nodeOffer.Properties.Where(a => a.Key == "Title").Select(a => a.Value).First().As<string>(),
                         ID = ((int)nodeOffer.Id),
-                        Description = nodeOffer.Properties.Values.Skip(2).First().As<string>(),
-                        EndDate = nodeOffer.Properties.Values.Skip(3).First().As<string>(),
+                        Description = nodeOffer.Properties.Where(a => a.Key == "Description").Select(a => a.Value).First().As<string>(),
+                        EndDate = nodeOffer.Properties.Where(a => a.Key == "EndDate").Select(a => a.Value).First().As<string>(),
                         Profile = profile,
                         Animal = animal
                     };

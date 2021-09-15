@@ -35,11 +35,11 @@ namespace PROJEKT_PZ_NK_v3.Controllers
 
                     Offer offer = new Offer
                     {
-                        StartingDate = nodeOffer.Properties.Values.First().As<string>(),
-                        Title = nodeOffer.Properties.Values.Skip(1).First().As<string>(),
+                        StartingDate = nodeOffer.Properties.Where(a => a.Key == "StartingDate").Select(a => a.Value).First().As<string>(),
+                        Title = nodeOffer.Properties.Where(a => a.Key == "Title").Select(a => a.Value).First().As<string>(),
                         ID = ((int)nodeOffer.Id),
-                        Description = nodeOffer.Properties.Values.Skip(2).First().As<string>(),
-                        EndDate = nodeOffer.Properties.Values.Skip(3).First().As<string>(),
+                        Description = nodeOffer.Properties.Where(a => a.Key == "Description").Select(a => a.Value).First().As<string>(),
+                        EndDate = nodeOffer.Properties.Where(a => a.Key == "EndDate").Select(a => a.Value).First().As<string>()
                     };
                     offers.Add(offer);
                 }
@@ -48,19 +48,64 @@ namespace PROJEKT_PZ_NK_v3.Controllers
 
                 var cursorApp =
                         await session.RunAsync(
-                            "match (p:Profile {Email: '"+ User.Identity.Name + "'})-[rel:GUARDIAN]->(app:Application)<-[rel2:OWNER]-(p2:Profile) " +
-                            "return app");
+                            "match (p:Profile {Email: '"+ User.Identity.Name + "'})-[rel:GUARDIAN]->(app:Application)<-[rel2:OWNER]-(p2:Profile)," +
+                            "(app)-[rel3:NOTIFICATION_TO_THE_OFFER]->(o:Offer) " +
+                            "return app,p,p2,o");
 
                 List<Applications> applications = new List<Applications>();
                 List<IRecord> Records2 = await cursorApp.ToListAsync();
                 foreach (var item in Records2)
                 {
                     INode nodeApplication = (INode)item.Values["app"];
+                    INode nodeProfile = (INode)item.Values["p"];
+                    INode nodeProfile2 = (INode)item.Values["p2"];
+                    INode nodeOffer = (INode)item.Values["o"];
+
+                    Profile guardian = new Profile
+                    {
+                        ID = ((int)nodeProfile.Id),
+                        HouseNumber = nodeProfile.Properties.Where(a => a.Key == "HouseNumber").Select(a => a.Value).First().As<string>(),
+                        Email = nodeProfile.Properties.Where(a => a.Key == "Email").Select(a => a.Value).First().As<string>(),
+                        Rate = nodeProfile.Properties.Where(a => a.Key == "Rate").Select(a => a.Value).First().As<int>(),
+                        FirstName = nodeProfile.Properties.Where(a => a.Key == "FirstName").Select(a => a.Value).First().As<string>(),
+                        Street = nodeProfile.Properties.Where(a => a.Key == "Street").Select(a => a.Value).First().As<string>(),
+                        PhoneNumber = nodeProfile.Properties.Where(a => a.Key == "PhoneNumber").Select(a => a.Value).First().As<string>(),
+                        City = nodeProfile.Properties.Where(a => a.Key == "City").Select(a => a.Value).First().As<string>(),
+                        Login = nodeProfile.Properties.Where(a => a.Key == "Login").Select(a => a.Value).First().As<string>(),
+                        LastName = nodeProfile.Properties.Where(a => a.Key == "LastName").Select(a => a.Value).First().As<string>()
+                    };
+
+                    Profile owner = new Profile
+                    {
+                        ID = ((int)nodeProfile2.Id),
+                        HouseNumber = nodeProfile2.Properties.Where(a => a.Key == "HouseNumber").Select(a => a.Value).First().As<string>(),
+                        Email = nodeProfile2.Properties.Where(a => a.Key == "Email").Select(a => a.Value).First().As<string>(),
+                        Rate = nodeProfile2.Properties.Where(a => a.Key == "Rate").Select(a => a.Value).First().As<int>(),
+                        FirstName = nodeProfile2.Properties.Where(a => a.Key == "FirstName").Select(a => a.Value).First().As<string>(),
+                        Street = nodeProfile2.Properties.Where(a => a.Key == "Street").Select(a => a.Value).First().As<string>(),
+                        PhoneNumber = nodeProfile2.Properties.Where(a => a.Key == "PhoneNumber").Select(a => a.Value).First().As<string>(),
+                        City = nodeProfile2.Properties.Where(a => a.Key == "City").Select(a => a.Value).First().As<string>(),
+                        Login = nodeProfile2.Properties.Where(a => a.Key == "Login").Select(a => a.Value).First().As<string>(),
+                        LastName = nodeProfile2.Properties.Where(a => a.Key == "LastName").Select(a => a.Value).First().As<string>()
+                    };
+                    Offer offer = new Offer
+                    {
+                        Profile = owner,
+                        StartingDate = nodeOffer.Properties.Where(a => a.Key == "StartingDate").Select(a => a.Value).First().As<string>(),
+                        Title = nodeOffer.Properties.Where(a => a.Key == "Title").Select(a => a.Value).First().As<string>(),
+                        ID = ((int)nodeOffer.Id),
+                        Description = nodeOffer.Properties.Where(a => a.Key == "Description").Select(a => a.Value).First().As<string>(),
+                        EndDate = nodeOffer.Properties.Where(a => a.Key == "EndDate").Select(a => a.Value).First().As<string>()
+                    };
 
                     Applications application = new Applications
                     {
-                        Message = nodeApplication.Properties.Values.First().As<string>(),
-                        Status = nodeApplication.Properties.Values.Skip(1).First().As<string>()
+                        Message = nodeApplication.Properties.Where(a => a.Key == "Message").Select(a => a.Value).First().As<string>(),
+                        Status = nodeApplication.Properties.Where(a => a.Key == "Status").Select(a => a.Value).First().As<string>(),
+                        Guardian = guardian,
+                        Owner = owner,
+                        Offer = offer,
+                        ID = ((int)nodeApplication.Id)
                     };
 
                     applications.Add(application);
@@ -70,19 +115,21 @@ namespace PROJEKT_PZ_NK_v3.Controllers
                 if (applications.Count > 0)
                 {
 
-                    int hours = applications.Where(a => a.Guardian.Email == User.Identity.Name && DbFunctions.DiffDays(DateTime.Parse(a.Offer.EndDate), DateTime.Parse(a.Offer.StartingDate)) == 0).Count();
-                    int days = applications.Where(a => a.Guardian.Email == User.Identity.Name && DbFunctions.DiffDays(DateTime.Parse(a.Offer.EndDate), DateTime.Parse(a.Offer.StartingDate)) > 0).Count();
+                    int hours = applications.Where(a => (DateTime.Parse(a.Offer.EndDate) - DateTime.Parse(a.Offer.StartingDate)).TotalDays == 0).Count();
+                    int days = applications.Where(a => (DateTime.Parse(a.Offer.EndDate) - DateTime.Parse(a.Offer.StartingDate)).TotalDays > 0).Count();
                     if (hours > days)
                     {
                         ViewBag.Offers1 = offers
-                            .OrderByDescending(a => DbFunctions.DiffDays(DateTime.Parse(a.EndDate), DateTime.Parse(a.StartingDate)))
+                            .OrderByDescending(a => (DateTime.Parse(a.EndDate) - DateTime.Parse(a.StartingDate)).TotalDays)
+                            .ThenByDescending(a => a.Profile.Rate)
                         .Take(4).ToList();
 
-                        //.ThenByDescending(a => a.Profile.Rate)
+                        //
 
 
                         ViewBag.Offers2 = offers
-                            .OrderByDescending(a => DbFunctions.DiffDays(DateTime.Parse(a.EndDate), DateTime.Parse(a.StartingDate)))
+                            .OrderByDescending(a => (DateTime.Parse(a.EndDate) - DateTime.Parse(a.StartingDate)).TotalDays)
+                            .ThenByDescending(a => a.Profile.Rate)
                         .Skip(4).Take(4).ToList();
 
                         //.ThenByDescending(a => a.Profile.Rate)
@@ -90,14 +137,16 @@ namespace PROJEKT_PZ_NK_v3.Controllers
                     else
                     {
                         ViewBag.Offers1 = offers
-                            .OrderBy(a => DbFunctions.DiffDays(DateTime.Parse(a.EndDate), DateTime.Parse(a.StartingDate)))
+                            .OrderBy(a => (DateTime.Parse(a.EndDate) - DateTime.Parse(a.StartingDate)).TotalDays)
+                            .ThenByDescending(a => a.Profile.Rate)
                         .Take(4).ToList();
 
                         //.ThenByDescending(a => a.Profile.Rate)
 
 
                         ViewBag.Offers2 = offers
-                            .OrderBy(a => DbFunctions.DiffDays(DateTime.Parse(a.EndDate), DateTime.Parse(a.StartingDate)))
+                            .OrderBy(a => (DateTime.Parse(a.EndDate) - DateTime.Parse(a.StartingDate)).TotalDays)
+                            .ThenByDescending(a => a.Profile.Rate)
                         .Skip(4).Take(4).ToList();
 
                         //.ThenByDescending(a => a.Profile.Rate)
@@ -106,11 +155,13 @@ namespace PROJEKT_PZ_NK_v3.Controllers
                 else
                 {
                     ViewBag.Offers1 = offers
+                            .OrderByDescending(a => a.Profile.Rate)
                         .Take(4).ToList();
 
                     //.OrderByDescending(a => a.Profile.Rate)
 
                     ViewBag.Offers2 = offers
+                            .OrderByDescending(a => a.Profile.Rate)
                         .Skip(4).Take(4).ToList();
                     //.OrderByDescending(a => a.Profile.Rate)
                 }
@@ -126,15 +177,16 @@ namespace PROJEKT_PZ_NK_v3.Controllers
         {
             Profile profile = new Profile
             {
-                HouseNumber = nodeProfile.Properties.Values.First().As<string>(),
-                Email = nodeProfile.Properties.Values.Skip(1).First().As<string>(),
-                Rate = nodeProfile.Properties.Values.Skip(2).First().As<int>(),
-                FirstName = nodeProfile.Properties.Values.Skip(3).First().As<string>(),
-                Street = nodeProfile.Properties.Values.Skip(4).First().As<string>(),
-                PhoneNumber = nodeProfile.Properties.Values.Skip(5).First().As<string>(),
-                City = nodeProfile.Properties.Values.Skip(6).First().As<string>(),
-                Login = nodeProfile.Properties.Values.Skip(7).First().As<string>(),
-                LastName = nodeProfile.Properties.Values.Skip(8).First().As<string>()
+                ID = ((int)nodeProfile.Id),
+                HouseNumber = nodeProfile.Properties.Where(a => a.Key == "HouseNumber").Select(a => a.Value).First().As<string>(),
+                Email = nodeProfile.Properties.Where(a => a.Key == "Email").Select(a => a.Value).First().As<string>(),
+                Rate = nodeProfile.Properties.Where(a => a.Key == "Rate").Select(a => a.Value).First().As<int>(),
+                FirstName = nodeProfile.Properties.Where(a => a.Key == "FirstName").Select(a => a.Value).First().As<string>(),
+                Street = nodeProfile.Properties.Where(a => a.Key == "Street").Select(a => a.Value).First().As<string>(),
+                PhoneNumber = nodeProfile.Properties.Where(a => a.Key == "PhoneNumber").Select(a => a.Value).First().As<string>(),
+                City = nodeProfile.Properties.Where(a => a.Key == "City").Select(a => a.Value).First().As<string>(),
+                Login = nodeProfile.Properties.Where(a => a.Key == "Login").Select(a => a.Value).First().As<string>(),
+                LastName = nodeProfile.Properties.Where(a => a.Key == "LastName").Select(a => a.Value).First().As<string>()
             };
             return profile;
         }
