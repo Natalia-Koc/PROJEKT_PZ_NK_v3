@@ -145,6 +145,7 @@ namespace PROJEKT_PZ_NK_v3.Controllers
                     IRecord Record = await cursor.SingleAsync();
                     INode nodeAnimal = (INode)Record.Values["a"];
 
+                    animal.ID = nodeAnimal.Id.As<int>();
                     animal.DateOfBirth = nodeAnimal.Properties.Values.First().As<DateTime>();
                     animal.Description = nodeAnimal.Properties.Values.Skip(1).First().As<string>();
                     animal.Race = nodeAnimal.Properties.Values.Skip(2).First().As<string>();
@@ -188,8 +189,10 @@ namespace PROJEKT_PZ_NK_v3.Controllers
                 try
                 {
                     IResultCursor cursor = await session.RunAsync(
-                        "MATCH (a:Profile {Email:'"+ User.Identity.Name + "'})-[rel:OWNER]->(b:Animal {Name:'"+ animal.Name + "'})" +
-                        "SET b.Species = '" + animal.Species +
+                        "MATCH (a:Profile {Email:'"+ User.Identity.Name + "'})-[rel:OWNER]->(b:Animal)" +
+                        "WHERE id(b)="+ animal.ID+
+                        " SET b.Species = '" + animal.Species +
+                        "', b.Name = '" + animal.Name +
                         "', b.Race = '" + animal.Race +
                         "', b.Gender = '" + animal.Gender +
                         "', b.Weight = '" + animal.Weight +

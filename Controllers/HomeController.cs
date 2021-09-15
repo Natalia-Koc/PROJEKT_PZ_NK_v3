@@ -23,10 +23,16 @@ namespace PROJEKT_PZ_NK_v3.Controllers
                 var cursorProfil =
                         await session.RunAsync(
                             "match (p:Profile {Email: '"+ User.Identity.Name +"'}) return p");
-
-                IRecord Record = await cursorProfil.SingleAsync();
-                INode nodeProfil = (INode)Record.Values["p"];
-                ViewBag.Profil = NodeToProfile(nodeProfil);
+                if(cursorProfil.FetchAsync().IsCompleted)
+                {
+                    IRecord Record = await cursorProfil.SingleAsync();
+                    INode nodeProfil = (INode)Record.Values["p"];
+                    ViewBag.Profil = NodeToProfile(nodeProfil);
+                }
+                else
+                {
+                    ViewBag.Profil = null;
+                }
                 await cursorProfil.ConsumeAsync();
 
                 List<Offer> offers = new List<Offer>();
