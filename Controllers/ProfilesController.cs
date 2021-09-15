@@ -101,48 +101,48 @@ namespace PROJEKT_PZ_NK_v3.Controllers
                         await tx.RunAsync(
                             "match (p:Profile {Email: '" + User.Identity.Name + "'}) " +
                             "return p");
-                        List<IRecord> Record2 = await cursorProfile.ToListAsync();
-                        foreach (var item in Record2)
+                    List<IRecord> Record2 = await cursorProfile.ToListAsync();
+                    foreach (var item in Record2)
+                    {
+                        INode nodeProfile = (INode)item.Values["p"];
+
+                        myProfile.HouseNumber = nodeProfile.Properties.Values.First().As<string>();
+                        myProfile.Email = nodeProfile.Properties.Values.Skip(1).First().As<string>();
+                        myProfile.Rate = nodeProfile.Properties.Values.Skip(2).First().As<int>();
+                        myProfile.FirstName = nodeProfile.Properties.Values.Skip(3).First().As<string>();
+                        myProfile.Street = nodeProfile.Properties.Values.Skip(4).First().As<string>();
+                        myProfile.PhoneNumber = nodeProfile.Properties.Values.Skip(5).First().As<string>();
+                        myProfile.City = nodeProfile.Properties.Values.Skip(6).First().As<string>();
+                        myProfile.Login = nodeProfile.Properties.Values.Skip(7).First().As<string>();
+                        myProfile.LastName = nodeProfile.Properties.Values.Skip(8).First().As<string>();
+
+                        break;
+                    }
+
+                    var cursor =
+                        await tx.RunAsync(
+                            "match (p:Profile {Email: '" + User.Identity.Name + "'})<-[rel:COMMENTED_PROFILE]-(c:Comment) " +
+                            "return c");
+                    if (cursor.FetchAsync().IsCompleted)
+                    {
+                        List<IRecord> records = await cursor.ToListAsync();
+                        List<Comments> comments = new List<Comments>();
+                        foreach (var item in records)
                         {
-                            INode nodeProfile = (INode)item.Values["p"];
+                            INode nodeComment = (INode)item.Values["c"];
+                            Comments comm = new Comments
+                            {
+                                Contents = nodeComment.Properties.Values.First().As<string>(),
+                                Grade = nodeComment.Properties.Values.Skip(1).First().As<int>(),
+                                ProfilEmail = myProfile.Email,
+                                ProfilLogin = myProfile.Login
+                            };
 
-                            myProfile.HouseNumber = nodeProfile.Properties.Values.First().As<string>();
-                            myProfile.Email = nodeProfile.Properties.Values.Skip(1).First().As<string>();
-                            myProfile.Rate = nodeProfile.Properties.Values.Skip(2).First().As<int>();
-                            myProfile.FirstName = nodeProfile.Properties.Values.Skip(3).First().As<string>();
-                            myProfile.Street = nodeProfile.Properties.Values.Skip(4).First().As<string>();
-                            myProfile.PhoneNumber = nodeProfile.Properties.Values.Skip(5).First().As<string>();
-                            myProfile.City = nodeProfile.Properties.Values.Skip(6).First().As<string>();
-                            myProfile.Login = nodeProfile.Properties.Values.Skip(7).First().As<string>();
-                            myProfile.LastName = nodeProfile.Properties.Values.Skip(8).First().As<string>();
-
-                            break;
+                            comments.Add(comm);
                         }
 
-                        var cursor =
-                            await tx.RunAsync(
-                                "match (p:Profile {Email: '" + User.Identity.Name + "'})<-[rel:COMMENTED_PROFILE]-(c:Comment) " +
-                                "return c");
-                        if (cursor.FetchAsync().IsCompleted)
-                        {
-                            List<IRecord> records = await cursor.ToListAsync();
-                            List<Comments> comments = new List<Comments>();
-                            foreach (var item in records)
-                            {
-                                INode nodeComment = (INode)item.Values["c"];
-                                Comments comm = new Comments
-                                {
-                                    Contents = nodeComment.Properties.Values.First().As<string>(),
-                                    Grade = nodeComment.Properties.Values.Skip(1).First().As<int>(),
-                                    ProfilEmail = myProfile.Email,
-                                    ProfilLogin = myProfile.Login
-                                };
-
-                                comments.Add(comm);
-                            }
-
-                            ViewBag.ProgressBarCount = comments.Where(m => m.Grade != 0).Count();
-                            ViewBag.FoundComment = true;
+                        ViewBag.ProgressBarCount = comments.Where(m => m.Grade != 0).Count();
+                        ViewBag.FoundComment = true;
                     } 
                     else
                     {
@@ -150,12 +150,7 @@ namespace PROJEKT_PZ_NK_v3.Controllers
                         ViewBag.FoundComment = true;
                     }
 
-
-                });
-
-                await session.ReadTransactionAsync(async tx =>
-                {
-                    var cursor =
+                    var cursor3 =
                         await tx.RunAsync(
                             "match (p:Profile)-[rell:AUTHOR]->(c:Comment)-[rel:COMMENTED_PROFILE]->(p2:Profile {Email: '" + User.Identity.Name + "'}) " +
                             "return c, p");
@@ -165,8 +160,8 @@ namespace PROJEKT_PZ_NK_v3.Controllers
 
                     if (cursor.FetchAsync().IsCompleted)
                     {
-                        List<IRecord> Records = await cursor.ToListAsync();
-                        foreach (var item in Records)
+                        List<IRecord> Records2 = await cursor3.ToListAsync();
+                        foreach (var item in Records2)
                         {
                             INode node = (INode)item.Values["c"];
                             INode nodeProfile = (INode)item.Values["p"];
@@ -180,37 +175,28 @@ namespace PROJEKT_PZ_NK_v3.Controllers
                         }
                     } 
                         ViewBag.Comments = lista;
-                    
 
-                });
-
-                List<Animal> animals = new List<Animal>();
-                await session.ReadTransactionAsync(async tx =>
-                {
-                    var cursor =
+                    List<Animal> animals = new List<Animal>();
+                    var cursor4 =
                         await tx.RunAsync(
                             "match (p:Profile {Email: '" + User.Identity.Name + "'})-[rel:OWNER]->(a:Animal) return a");
-
-                    if(cursor.FetchAsync().IsCompleted)
+                    List<IRecord> Records = await cursor4.ToListAsync();
+                    foreach (var item in Records)
                     {
-                        List<IRecord> Records = await cursor.ToListAsync();
-                        foreach (var item in Records)
-                        {
-                            INode nodeAnimal = (INode)item.Values["a"];
+                        INode nodeAnimal = (INode)item.Values["a"];
 
-                            Animal animal = new Animal
-                            {
-                                DateOfBirth = nodeAnimal.Properties.Values.First().As<DateTime>(),
-                                Description = nodeAnimal.Properties.Values.Skip(1).First().As<string>(),
-                                Race = nodeAnimal.Properties.Values.Skip(2).First().As<string>(),
-                                Gender = nodeAnimal.Properties.Values.Skip(3).First().As<string>(),
-                                Image = nodeAnimal.Properties.Values.Skip(4).First().As<string>(),
-                                Species = nodeAnimal.Properties.Values.Skip(5).First().As<string>(),
-                                Weight = nodeAnimal.Properties.Values.Skip(6).First().As<string>(),
-                                Name = nodeAnimal.Properties.Values.Skip(7).First().As<string>()
-                            };
-                            animals.Add(animal);
-                        }
+                        Animal animal = new Animal
+                        {
+                            DateOfBirth = nodeAnimal.Properties.Values.First().As<DateTime>(),
+                            Description = nodeAnimal.Properties.Values.Skip(1).First().As<string>(),
+                            Race = nodeAnimal.Properties.Values.Skip(2).First().As<string>(),
+                            Gender = nodeAnimal.Properties.Values.Skip(3).First().As<string>(),
+                            Image = nodeAnimal.Properties.Values.Skip(4).First().As<string>(),
+                            Species = nodeAnimal.Properties.Values.Skip(5).First().As<string>(),
+                            Weight = nodeAnimal.Properties.Values.Skip(6).First().As<string>(),
+                            Name = nodeAnimal.Properties.Values.Skip(7).First().As<string>()
+                        };
+                        animals.Add(animal);
                     }
                     
                     ViewBag.Animals = animals;

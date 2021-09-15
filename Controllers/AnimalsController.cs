@@ -177,29 +177,34 @@ namespace PROJEKT_PZ_NK_v3.Controllers
         public async Task<ActionResult> Edit(Animal animal)
         {
             if (ModelState.IsValid)
-            {
-                HttpPostedFileBase file = Request.Files["plikZObrazkiem"];
-                if (file != null && file.ContentLength > 0)
-                {
-                    animal.Image = file.FileName;
-                    file.SaveAs(HttpContext.Server.MapPath("~/ImagesAnimals/") + animal.Image);
-                }
-                
+            {   
                 IAsyncSession session = db._driver.AsyncSession();
                 try
                 {
+                    HttpPostedFileBase file = Request.Files["plikZObrazkiem"];
+                    if (file != null && file.ContentLength > 0)
+                    {
+                        animal.Image = file.FileName;
+                        file.SaveAs(HttpContext.Server.MapPath("~/ImagesAnimals/") + animal.Image);
+                        IResultCursor cursor2 = await session.RunAsync(
+                            "MATCH (a:Profile {Email:'" + User.Identity.Name + "'})-[rel:OWNER]->(b:Animal)" +
+                            "WHERE id(b)=" + animal.ID +
+                            " SET b.Image = '" + animal.Image + "'");
+                        await cursor2.ConsumeAsync();
+                    }
+
                     IResultCursor cursor = await session.RunAsync(
-                        "MATCH (a:Profile {Email:'"+ User.Identity.Name + "'})-[rel:OWNER]->(b:Animal)" +
-                        "WHERE id(b)="+ animal.ID+
+                        "MATCH (a:Profile {Email:'" + User.Identity.Name + "'})-[rel:OWNER]->(b:Animal)" +
+                        "WHERE id(b)=" + animal.ID +
                         " SET b.Species = '" + animal.Species +
                         "', b.Name = '" + animal.Name +
                         "', b.Race = '" + animal.Race +
                         "', b.Gender = '" + animal.Gender +
                         "', b.Weight = '" + animal.Weight +
                         "', b.DateOfBirth = '" + animal.DateOfBirth.Date +
-                        "', b.Description = '" + animal.Description +
-                        "', b.Image = '" + animal.Image + "'");
+                        "', b.Description = '" + animal.Description +"'");
                     await cursor.ConsumeAsync();
+
                 }
                 finally
                 {
@@ -255,7 +260,7 @@ namespace PROJEKT_PZ_NK_v3.Controllers
         }
 
         // POST: Animals/Delete/5
-        [HttpPost, ActionName("Delete")]
+        [HttpPost, ActionName("DeleteConfirmed")]
         [ValidateAntiForgeryToken]
         public async Task<ActionResult> DeleteConfirmed(string name)
         {
@@ -269,6 +274,19 @@ namespace PROJEKT_PZ_NK_v3.Controllers
                         "<-[relll:NOTIFICATION_TO_THE_OFFER]-(app:Application)" +
                         "DETACH delete a,o,app");
                 await cursor.ConsumeAsync();
+
+                IResultCursor cursor2 = await session.RunAsync(
+                    "match (p:Profile {Email:'" + User.Identity.Name + "'})" +
+                        "-[rel:OWNER]->(a:Animal {Name:'" + name + "'})" +
+                        "-[rell:ANIMAL_OFFER]->(o:Offer)" +
+                        "DETACH delete a,o");
+                await cursor2.ConsumeAsync();
+
+                IResultCursor cursor3 = await session.RunAsync(
+                    "match (p:Profile {Email:'" + User.Identity.Name + "'})" +
+                        "-[rel:OWNER]->(a:Animal {Name:'" + name + "'})" +
+                        "DETACH delete a");
+                await cursor3.ConsumeAsync();
             }
             finally
             {

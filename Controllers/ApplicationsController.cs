@@ -164,7 +164,7 @@ namespace PROJEKT_PZ_NK_v3.Controllers
                             "(app)-[rel3:NOTIFICATION_TO_THE_OFFER]->(o:Offer) " +
                             "where (p.Email='"+ User.Identity.Name + "' AND app.Status='Opiekun zrezygnował z oferty')  " +
                             "OR (p2.Email='" + User.Identity.Name + "' AND app.Status='Właściciel odrzucił ofertę')" +
-                            "OR ((p.Email='" + User.Identity.Name + "' OR p2.Email='" + User.Identity.Name + "') AND" +
+                            "OR ((p.Email='" + User.Identity.Name + "' OR p2.Email='" + User.Identity.Name + "') AND " +
                             "app.Status <> 'Zaakceptowane' AND app.Status <> 'Oczekuje na akceptacje' " +
                             "AND app.Status <> 'Właściciel odrzucił ofertę' AND app.Status <> 'Opiekun zrezygnował z oferty')" +
                             "return p,app,p2,o");

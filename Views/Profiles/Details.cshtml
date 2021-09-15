@@ -101,13 +101,13 @@
         @foreach (var item in ViewBag.Animals)
         {
             <div class="card col-3 list-group-item-heading" style="padding:1%">
-                <a href="@Url.Action("Details", "Animals", new { id = item.ID })">
+                <a href="@Url.Action("Details", "Animals", new { email = Model.Email, name = item.Name })">
                     <img class="card-img-top center-block block d-block mx-auto"
                          style="max-height: 200px; object-fit: cover;"
                          src="~/ImagesAnimals/@item.Image" alt="Card image">
                 </a>
                 <div class="card-body">
-                    <a href="@Url.Action("Details", "Animals", new { id = item.ID })">
+                    <a href="@Url.Action("Details", "Animals", new { email = Model.Email, name = item.Name })">
                         <h4 class="card-title">@item.Name</h4>
                     </a>
                 </div>
