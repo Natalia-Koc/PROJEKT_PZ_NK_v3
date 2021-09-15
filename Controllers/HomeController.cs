@@ -49,11 +49,11 @@ namespace PROJEKT_PZ_NK_v3.Controllers
 
                     Offer offer = new Offer
                     {
-                        Description = nodeOffer.Properties.Values.First().As<string>(),
-                        EndDate = nodeOffer.Properties.Values.Skip(1).First().As<DateTime>(),
-                        ID = nodeOffer.Properties.Values.Skip(2).First().As<int>(),
-                        StartingDate = nodeOffer.Properties.Values.Skip(3).First().As<DateTime>(),
-                        Title = nodeOffer.Properties.Values.Skip(4).First().As<string>()
+                        StartingDate = nodeOffer.Properties.Values.First().As<string>(),
+                        Title = nodeOffer.Properties.Values.Skip(1).First().As<string>(),
+                        ID = ((int)nodeOffer.Id),
+                        Description = nodeOffer.Properties.Values.Skip(2).First().As<string>(),
+                        EndDate = nodeOffer.Properties.Values.Skip(3).First().As<string>(),
                     };
                     offers.Add(offer);
                 }
@@ -83,19 +83,19 @@ namespace PROJEKT_PZ_NK_v3.Controllers
                 if (applications.Count > 0)
                 {
 
-                    int hours = applications.Where(a => a.Guardian.Email == User.Identity.Name && DbFunctions.DiffDays(a.Offer.EndDate, a.Offer.StartingDate) == 0).Count();
-                    int days = applications.Where(a => a.Guardian.Email == User.Identity.Name && DbFunctions.DiffDays(a.Offer.EndDate, a.Offer.StartingDate) > 0).Count();
+                    int hours = applications.Where(a => a.Guardian.Email == User.Identity.Name && DbFunctions.DiffDays(DateTime.Parse(a.Offer.EndDate), DateTime.Parse(a.Offer.StartingDate)) == 0).Count();
+                    int days = applications.Where(a => a.Guardian.Email == User.Identity.Name && DbFunctions.DiffDays(DateTime.Parse(a.Offer.EndDate), DateTime.Parse(a.Offer.StartingDate)) > 0).Count();
                     if (hours > days)
                     {
                         ViewBag.Offers1 = offers
-                            .OrderByDescending(a => DbFunctions.DiffDays(a.EndDate, a.StartingDate))
+                            .OrderByDescending(a => DbFunctions.DiffDays(DateTime.Parse(a.EndDate), DateTime.Parse(a.StartingDate)))
                         .Take(4).ToList();
 
                         //.ThenByDescending(a => a.Profile.Rate)
 
 
                         ViewBag.Offers2 = offers
-                            .OrderByDescending(a => DbFunctions.DiffDays(a.EndDate, a.StartingDate))
+                            .OrderByDescending(a => DbFunctions.DiffDays(DateTime.Parse(a.EndDate), DateTime.Parse(a.StartingDate)))
                         .Skip(4).Take(4).ToList();
 
                         //.ThenByDescending(a => a.Profile.Rate)
@@ -103,14 +103,14 @@ namespace PROJEKT_PZ_NK_v3.Controllers
                     else
                     {
                         ViewBag.Offers1 = offers
-                            .OrderBy(a => DbFunctions.DiffDays(a.EndDate, a.StartingDate))
+                            .OrderBy(a => DbFunctions.DiffDays(DateTime.Parse(a.EndDate), DateTime.Parse(a.StartingDate)))
                         .Take(4).ToList();
 
                         //.ThenByDescending(a => a.Profile.Rate)
 
 
                         ViewBag.Offers2 = offers
-                            .OrderBy(a => DbFunctions.DiffDays(a.EndDate, a.StartingDate))
+                            .OrderBy(a => DbFunctions.DiffDays(DateTime.Parse(a.EndDate), DateTime.Parse(a.StartingDate)))
                         .Skip(4).Take(4).ToList();
 
                         //.ThenByDescending(a => a.Profile.Rate)

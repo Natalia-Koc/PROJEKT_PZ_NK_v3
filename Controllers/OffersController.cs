@@ -66,11 +66,11 @@ namespace PROJEKT_PZ_NK_v3.Controllers
 
                     Offer offer = new Offer
                     {
-                        Description = nodeOffer.Properties.Values.First().As<string>(),
-                        EndDate = nodeOffer.Properties.Values.Skip(1).First().As<DateTime>(),
-                        ID = nodeOffer.Properties.Values.Skip(2).First().As<int>(),
-                        StartingDate = nodeOffer.Properties.Values.Skip(3).First().As<DateTime>(),
-                        Title = nodeOffer.Properties.Values.Skip(4).First().As<string>(),
+                        StartingDate = nodeOffer.Properties.Values.First().As<string>(),
+                        Title = nodeOffer.Properties.Values.Skip(1).First().As<string>(),
+                        ID = ((int)nodeOffer.Id),
+                        Description = nodeOffer.Properties.Values.Skip(2).First().As<string>(),
+                        EndDate = nodeOffer.Properties.Values.Skip(3).First().As<string>(),
                         Profile = profile,
                         Animal = animal
                     };
@@ -85,7 +85,7 @@ namespace PROJEKT_PZ_NK_v3.Controllers
             }
 
 
-            offers = offers.Where(s => s.StartingDate > DateTime.Now).ToList();
+            offers = offers.Where(s => DateTime.Parse(s.StartingDate) > DateTime.Now).ToList();
 
             if (!String.IsNullOrEmpty(searchString))
             {
@@ -102,10 +102,10 @@ namespace PROJEKT_PZ_NK_v3.Controllers
             switch (sortOrder)
             {
                 case "StartingDateAsc":
-                    offers = offers.OrderBy(s => s.StartingDate.Year).ThenBy(s => s.StartingDate.Month).ThenBy(s => s.StartingDate.Day).ToList();
+                    offers = offers.OrderBy(s => DateTime.Parse(s.StartingDate).Year).ThenBy(s => DateTime.Parse(s.StartingDate).Month).ThenBy(s => DateTime.Parse(s.StartingDate).Day).ToList();
                     break;
                 case "StartingDateDesc":
-                    offers = offers.OrderByDescending(s => s.StartingDate.Year).ThenByDescending(s => s.StartingDate.Month).ThenByDescending(s => s.StartingDate.Day).ToList();
+                    offers = offers.OrderByDescending(s => DateTime.Parse(s.StartingDate).Year).ThenByDescending(s => DateTime.Parse(s.StartingDate).Month).ThenByDescending(s => DateTime.Parse(s.StartingDate).Day).ToList();
                     break;
                 case "Title_desc":
                     offers = offers.OrderByDescending(s => s.Title).ToList();
@@ -154,11 +154,11 @@ namespace PROJEKT_PZ_NK_v3.Controllers
 
                     Offer offer = new Offer
                     {
-                        Description = nodeOffer.Properties.Values.First().As<string>(),
-                        EndDate = nodeOffer.Properties.Values.Skip(1).First().As<DateTime>(),
-                        ID = nodeOffer.Properties.Values.Skip(2).First().As<int>(),
-                        StartingDate = nodeOffer.Properties.Values.Skip(3).First().As<DateTime>(),
-                        Title = nodeOffer.Properties.Values.Skip(4).First().As<string>(),
+                        StartingDate = nodeOffer.Properties.Values.First().As<string>(),
+                        Title = nodeOffer.Properties.Values.Skip(1).First().As<string>(),
+                        ID = ((int)nodeOffer.Id),
+                        Description = nodeOffer.Properties.Values.Skip(2).First().As<string>(),
+                        EndDate = nodeOffer.Properties.Values.Skip(3).First().As<string>(),
                         Profile = profile,
                         Animal = animal
                     };
@@ -172,7 +172,7 @@ namespace PROJEKT_PZ_NK_v3.Controllers
                 await session.CloseAsync();
             }
 
-            offers = offers.Where(s => s.StartingDate > DateTime.Now).ToList();
+            offers = offers.Where(s => DateTime.Parse(s.StartingDate) > DateTime.Now).ToList();
             return View(offers);
         }
 
@@ -224,11 +224,11 @@ namespace PROJEKT_PZ_NK_v3.Controllers
 
                 offer = new Offer
                 {
-                    Description = nodeOffer.Properties.Values.First().As<string>(),
-                    EndDate = nodeOffer.Properties.Values.Skip(1).First().As<DateTime>(),
-                    ID = nodeOffer.Properties.Values.Skip(2).First().As<int>(),
-                    StartingDate = nodeOffer.Properties.Values.Skip(3).First().As<DateTime>(),
-                    Title = nodeOffer.Properties.Values.Skip(4).First().As<string>(),
+                    StartingDate = nodeOffer.Properties.Values.First().As<string>(),
+                    Title = nodeOffer.Properties.Values.Skip(1).First().As<string>(),
+                    ID = ((int)nodeOffer.Id),
+                    Description = nodeOffer.Properties.Values.Skip(2).First().As<string>(),
+                    EndDate = nodeOffer.Properties.Values.Skip(3).First().As<string>(),
                     Profile = profile,
                     Animal = animal
                 };
@@ -261,11 +261,11 @@ namespace PROJEKT_PZ_NK_v3.Controllers
 
                         Offer offer2 = new Offer
                         {
-                            Description = nodeOffer2.Properties.Values.First().As<string>(),
-                            EndDate = nodeOffer2.Properties.Values.Skip(1).First().As<DateTime>(),
-                            ID = nodeOffer2.Properties.Values.Skip(2).First().As<int>(),
-                            StartingDate = nodeOffer2.Properties.Values.Skip(3).First().As<DateTime>(),
-                            Title = nodeOffer2.Properties.Values.Skip(4).First().As<string>()
+                            StartingDate = nodeOffer.Properties.Values.First().As<string>(),
+                            Title = nodeOffer.Properties.Values.Skip(1).First().As<string>(),
+                            ID = ((int)nodeOffer.Id),
+                            Description = nodeOffer.Properties.Values.Skip(2).First().As<string>(),
+                            EndDate = nodeOffer.Properties.Values.Skip(3).First().As<string>(),
                         };
 
                         Applications application = new Applications
@@ -291,7 +291,7 @@ namespace PROJEKT_PZ_NK_v3.Controllers
             ViewBag.IsApplied = applications.Any(app => app.Guardian.Email == User.Identity.Name);
             ViewBag.Applications = applications
                 .Where(a => a.Owner.Email == User.Identity.Name
-                && a.Offer.StartingDate > DateTime.Now
+                && DateTime.Parse(a.Offer.StartingDate) > DateTime.Now
                 && a.Status != "Właściciel odrzucił zgłoszenie"
                 && a.Status != "Odrzucone"
                 && !a.Status.Contains("Usunieta"));
@@ -358,11 +358,10 @@ namespace PROJEKT_PZ_NK_v3.Controllers
                     IResultCursor cursor = await session.RunAsync(
                         "MATCH (n:Profile { Email:'" + User.Identity.Name + "'})-[rel:OWNER]->(a:Animal {Name: '" + offer.AnimalName + "'}) " +
                         "CREATE(n) -[r:AUTHOR]-> (p:Offer " +
-                        "{ OfferID: " + offer.ID +
-                        ", Title: '" + offer.Title +
+                        "{ Title: '" + offer.Title +
                         "', Description: '" + offer.Description +
-                        "', StartingDate: '" + offer.StartingDate.Date +
-                        "', EndDate: '" + offer.EndDate.Date + "'})," +
+                        "', StartingDate: '" + DateTime.Parse(offer.StartingDate).ToString("yyyy-MM-dd HH:mm") +
+                        "', EndDate: '" + DateTime.Parse(offer.EndDate).ToString("yyyy-MM-dd HH:mm") + "'})," +
                         "(a) -[t:ANIMAL_OFFER]-> (p)"
                     );
                     await cursor.ConsumeAsync();
@@ -411,11 +410,11 @@ namespace PROJEKT_PZ_NK_v3.Controllers
 
                 offer = new Offer
                 {
-                    Description = nodeOffer.Properties.Values.First().As<string>(),
-                    EndDate = nodeOffer.Properties.Values.Skip(1).First().As<DateTime>(),
-                    ID = nodeOffer.Properties.Values.Skip(2).First().As<int>(),
-                    StartingDate = nodeOffer.Properties.Values.Skip(3).First().As<DateTime>(),
-                    Title = nodeOffer.Properties.Values.Skip(4).First().As<string>(),
+                    StartingDate = nodeOffer.Properties.Values.First().As<string>(),
+                    Title = nodeOffer.Properties.Values.Skip(1).First().As<string>(),
+                    ID = ((int)nodeOffer.Id),
+                    Description = nodeOffer.Properties.Values.Skip(2).First().As<string>(),
+                    EndDate = nodeOffer.Properties.Values.Skip(3).First().As<string>(),
                     Profile = profile,
                     Animal = animal
                 };
@@ -448,8 +447,8 @@ namespace PROJEKT_PZ_NK_v3.Controllers
                         "MATCH (o:Offer { OfferID:" + offer.ID + "}) " +
                         "SET o.Title = '" + offer.Title +
                         "', o.Description = '" + offer.Description +
-                        "', o.StartingDate = '" + offer.StartingDate.Date +
-                        "', o.EndDate = '" + offer.EndDate.Date + "'"
+                        "', o.StartingDate = '" + DateTime.Parse(offer.StartingDate).ToString("yyyy-MM-dd HH:mm") +
+                        "', o.EndDate = '" + DateTime.Parse(offer.EndDate).ToString("yyyy-MM-dd HH:mm") + "'"
                     );
                     await cursor.ConsumeAsync();
                 }
@@ -492,11 +491,11 @@ namespace PROJEKT_PZ_NK_v3.Controllers
 
                 offer = new Offer
                 {
-                    Description = nodeOffer.Properties.Values.First().As<string>(),
-                    EndDate = nodeOffer.Properties.Values.Skip(1).First().As<DateTime>(),
-                    ID = nodeOffer.Properties.Values.Skip(2).First().As<int>(),
-                    StartingDate = nodeOffer.Properties.Values.Skip(3).First().As<DateTime>(),
-                    Title = nodeOffer.Properties.Values.Skip(4).First().As<string>(),
+                    StartingDate = nodeOffer.Properties.Values.First().As<string>(),
+                    Title = nodeOffer.Properties.Values.Skip(1).First().As<string>(),
+                    ID = ((int)nodeOffer.Id),
+                    Description = nodeOffer.Properties.Values.Skip(2).First().As<string>(),
+                    EndDate = nodeOffer.Properties.Values.Skip(3).First().As<string>(),
                     Profile = profile,
                     Animal = animal
                 };

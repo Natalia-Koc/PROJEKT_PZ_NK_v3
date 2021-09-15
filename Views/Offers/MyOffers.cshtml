@@ -19,7 +19,7 @@
             </a>
             <div class="card-body">
                 <h4 class="card-title">@item.Title</h4>
-                <p class="card-text">@item.StartingDate.ToString("yyyy-MM-dd HH:mm")- @item.EndDate.ToString("yyyy-MM-dd HH:mm")</p>
+                <p class="card-text">@DateTime.Parse(item.StartingDate).ToString("yyyy-MM-dd HH:mm")- @DateTime.Parse(item.EndDate).ToString("yyyy-MM-dd HH:mm")</p>
                 <p class="card-text">
                     Zwierze: @Html.ActionLink(item.Animal.Name, "Details", "Animals", new { id = item.Animal.ID }, null)
                 </p>

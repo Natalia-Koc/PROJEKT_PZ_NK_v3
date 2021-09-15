@@ -29,7 +29,7 @@ namespace PROJEKT_PZ_NK_v3.Controllers
                 {
                     var cursor =
                         await tx.RunAsync(
-                            "match (p:Profile)-[rel:AUTHOR]->(o:Offer)<-[rel2:ANIMAL_OFFER]-(a:Animal) return p,o");
+                            "match (p:Profile)-[rel:AUTHOR]->(o:Offer)<-[rel2:ANIMAL_OFFER]-(a:Animal) return p,o,a");
 
                     List<IRecord> Records = await cursor.ToListAsync();
                     foreach (var item in Records)
@@ -40,6 +40,7 @@ namespace PROJEKT_PZ_NK_v3.Controllers
 
                         Profile profile = new Profile
                         {
+                            ID = ((int)nodeProfile.Id),
                             HouseNumber = nodeProfile.Properties.Values.First().As<string>(),
                             Email = nodeProfile.Properties.Values.Skip(1).First().As<string>(),
                             Rate = nodeProfile.Properties.Values.Skip(2).First().As<int>(),
@@ -68,14 +69,17 @@ namespace PROJEKT_PZ_NK_v3.Controllers
                             Profile = profile,
                             Animal = animal,
                             AnimalName = animal.Name,
-                            Description = nodeOffer.Properties.Values.First().As<string>(),
-                            EndDate = nodeOffer.Properties.Values.Skip(1).First().As<DateTime>(),
-                            ID = nodeOffer.Properties.Values.Skip(2).First().As<int>(),
-                            StartingDate = nodeOffer.Properties.Values.Skip(3).First().As<DateTime>(),
-                            Title = nodeOffer.Properties.Values.Skip(4).First().As<string>()
+                            StartingDate = nodeOffer.Properties.Values.First().As<string>(),
+                            Title = nodeOffer.Properties.Values.Skip(1).First().As<string>(),
+                            ID = ((int)nodeOffer.Id),
+                            Description = nodeOffer.Properties.Values.Skip(2).First().As<string>(),
+                            EndDate = nodeOffer.Properties.Values.Skip(3).First().As<string>(),
                         };
                         offers.Add(offer);
-                        profiles.Add(profile);
+                        if(!profiles.Any(a => a.Email == profile.Email))
+                        {
+                            profiles.Add(profile);
+                        }
 
                     }
                     ViewBag.Offers = offers;

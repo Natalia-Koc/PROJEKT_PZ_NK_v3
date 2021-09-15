@@ -27,24 +27,27 @@
 
                     <div id="@item.ID" class="panel-collapse collapse panel-body">
                         <div class="container row">
-                            @foreach (var item2 in item.Offers)
+                            @foreach (var item2 in ViewBag.Offers)
                             {
-                                <div class="card col-3 list-group-item-heading" style="padding:1%">
-                                    <a href="@Url.Action("Details", "Offers", new { id = item2.ID })">
-                                        <img class="card-img-top center-block block d-block mx-auto"
-                                             style="max-height: 150px; object-fit: cover;"
-                                             src="~/ImagesAnimals/@item2.Animal.Image"
-                                             alt="Card image">
-                                    </a>
-                                    <div class="card-body">
-                                        <h4 class="card-title">@item2.Title</h4>
-                                        <p class="card-text">
-                                            Zwierze: @Html.ActionLink(item2.Animal.Name, "Details", "Animals", new { id = item2.AnimalID }, null)<br />
-                                            @item2.StartingDate.Date.ToShortDateString()  -  @item2.EndDate.Date.ToShortDateString()
-                                        </p>
-                                        <p class="text-right btn-block"> </p>
+                                if (item2.Profile.Email == item.Email)
+                                {
+                                    <div class="card col-3 list-group-item-heading" style="padding:1%">
+                                        <a href="@Url.Action("Details", "Offers", new { id = item2.ID })">
+                                            <img class="card-img-top center-block block d-block mx-auto"
+                                                 style="max-height: 150px; object-fit: cover;"
+                                                 src="~/ImagesAnimals/@item2.Animal.Image"
+                                                 alt="Card image">
+                                        </a>
+                                        <div class="card-body">
+                                            <h4 class="card-title">@item2.Title</h4>
+                                            <p class="card-text">
+                                                Zwierze: <a href="@Url.Action("Details", "Animals", new { email = item2.Profile.Email, name = item2.Animal.Name })">@item2.AnimalName</a><br />
+                                                @item2.StartingDate  -  @item2.EndDate
+                                            </p>
+                                            <p class="text-right btn-block"> </p>
+                                        </div>
                                     </div>
-                                </div>
+                                }
                             }
                         </div>
                     </div>

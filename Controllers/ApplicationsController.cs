@@ -46,11 +46,11 @@ namespace PROJEKT_PZ_NK_v3.Controllers
 
                         Offer offer = new Offer
                         {
-                            Description = nodeOffer.Properties.Values.First().As<string>(),
-                            EndDate = nodeOffer.Properties.Values.Skip(1).First().As<DateTime>(),
-                            ID = nodeOffer.Properties.Values.Skip(2).First().As<int>(),
-                            StartingDate = nodeOffer.Properties.Values.Skip(3).First().As<DateTime>(),
-                            Title = nodeOffer.Properties.Values.Skip(4).First().As<string>()
+                            StartingDate = nodeOffer.Properties.Values.First().As<string>(),
+                            Title = nodeOffer.Properties.Values.Skip(1).First().As<string>(),
+                            ID = ((int)nodeOffer.Id),
+                            Description = nodeOffer.Properties.Values.Skip(2).First().As<string>(),
+                            EndDate = nodeOffer.Properties.Values.Skip(3).First().As<string>(),
                         };
 
                         Applications application = new Applications
@@ -121,11 +121,11 @@ namespace PROJEKT_PZ_NK_v3.Controllers
 
                         Offer offer = new Offer
                         {
-                            Description = nodeOffer.Properties.Values.First().As<string>(),
-                            EndDate = nodeOffer.Properties.Values.Skip(1).First().As<DateTime>(),
-                            ID = nodeOffer.Properties.Values.Skip(2).First().As<int>(),
-                            StartingDate = nodeOffer.Properties.Values.Skip(3).First().As<DateTime>(),
-                            Title = nodeOffer.Properties.Values.Skip(4).First().As<string>()
+                            StartingDate = nodeOffer.Properties.Values.First().As<string>(),
+                            Title = nodeOffer.Properties.Values.Skip(1).First().As<string>(),
+                            ID = ((int)nodeOffer.Id),
+                            Description = nodeOffer.Properties.Values.Skip(2).First().As<string>(),
+                            EndDate = nodeOffer.Properties.Values.Skip(3).First().As<string>(),
                         };
 
                         Applications application = new Applications
@@ -182,11 +182,11 @@ namespace PROJEKT_PZ_NK_v3.Controllers
 
                         Offer offer = new Offer
                         {
-                            Description = nodeOffer.Properties.Values.First().As<string>(),
-                            EndDate = nodeOffer.Properties.Values.Skip(1).First().As<DateTime>(),
-                            ID = nodeOffer.Properties.Values.Skip(2).First().As<int>(),
-                            StartingDate = nodeOffer.Properties.Values.Skip(3).First().As<DateTime>(),
-                            Title = nodeOffer.Properties.Values.Skip(4).First().As<string>()
+                            StartingDate = nodeOffer.Properties.Values.First().As<string>(),
+                            Title = nodeOffer.Properties.Values.Skip(1).First().As<string>(),
+                            ID = ((int)nodeOffer.Id),
+                            Description = nodeOffer.Properties.Values.Skip(2).First().As<string>(),
+                            EndDate = nodeOffer.Properties.Values.Skip(3).First().As<string>(),
                         };
 
                         Applications application = new Applications
