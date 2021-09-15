@@ -194,7 +194,7 @@ namespace PROJEKT_PZ_NK_v3.Controllers
         }
 
         // GET: Offers/Details/5
-        public async Task<ActionResult> Details(int offerID)
+        public async Task<ActionResult> Details(int? offerID)
         {
             Offer offer;
             List<Applications> applications = new List<Applications>();
@@ -202,8 +202,9 @@ namespace PROJEKT_PZ_NK_v3.Controllers
             try
             {
                 var cursorOffer = await session.RunAsync(
-                    "match (p:Profile)-[rel:AUTHOR]->(o:Offer {OfferID: "+ offerID +"})<-[rel2:ANIMAL_OFFER]-(a:Animal) " +
-                    "return o,p,a");
+                    "match (p:Profile)-[rel:AUTHOR]->(o:Offer)<-[rel2:ANIMAL_OFFER]-(a:Animal) " +
+                    "where id(o)=" +offerID+
+                    " return o,p,a");
                 IRecord Record = await cursorOffer.SingleAsync();
                 INode nodeOffer = (INode)Record.Values["o"];
                 INode nodeAnimal = (INode)Record.Values["a"];

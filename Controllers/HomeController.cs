@@ -20,26 +20,12 @@ namespace PROJEKT_PZ_NK_v3.Controllers
             IAsyncSession session = db._driver.AsyncSession();
             try
             {
-                var cursorProfil =
-                        await session.RunAsync(
-                            "match (p:Profile {Email: '"+ User.Identity.Name +"'}) return p");
-                if(cursorProfil.FetchAsync().IsCompleted)
-                {
-                    IRecord Record = await cursorProfil.SingleAsync();
-                    INode nodeProfil = (INode)Record.Values["p"];
-                    ViewBag.Profil = NodeToProfile(nodeProfil);
-                }
-                else
-                {
-                    ViewBag.Profil = null;
-                }
-                await cursorProfil.ConsumeAsync();
 
                 List<Offer> offers = new List<Offer>();
                 var cursorOffers =
                         await session.RunAsync(
                             "match (p:Profile)-[rel:AUTHOR]->(o:Offer)," +
-                            "(c:Comment)-->(p) where c.rate>2 OR c.rate=0 " +
+                            "(c:Comment)-->(p) where c.rate> 2 OR c.rate=0 " +
                             "return o");
 
                 List<IRecord> Records = await cursorOffers.ToListAsync();
@@ -59,9 +45,10 @@ namespace PROJEKT_PZ_NK_v3.Controllers
                 }
                 await cursorOffers.ConsumeAsync();
 
+
                 var cursorApp =
                         await session.RunAsync(
-                            "match (p:Profile {Email: 'Nowy-71@o2.pl'})-[rel:GUARDIAN]->(app:Application) " +
+                            "match (p:Profile {Email: '"+ User.Identity.Name + "'})-[rel:GUARDIAN]->(app:Application)<-[rel2:OWNER]-(p2:Profile) " +
                             "return app");
 
                 List<Applications> applications = new List<Applications>();
