@@ -221,9 +221,10 @@ namespace PROJEKT_PZ_NK_v3.Controllers
                 IResultCursor cursor = await session.RunAsync("" +
                     "MATCH (n:Profile {Email: '" + User.Identity.Name + "'}), " +
                         "(n2:Profile {Email: '" + ownerEmail + "'})," +
-                        "(o:Offer {OfferID: " + offerID + "})" +
-                    "CREATE(n) -[r: GUARDIAN]-> (p: Application " +
-                    "{ Status: 'Oczekuje na akceptacje'" +
+                        "(o:Offer)" +
+                        " where id(o)= "+offerID +
+                    " CREATE(n) -[r: GUARDIAN]-> (p: Application " +
+                    "{ Status: 'Oczekuje na akceptacje" +
                     "', Message: '" + application.Message +"'})," +
                     "(n2) -[t: OWNER]-> (p)," +
                     "(p) -[y: NOTIFICATION_TO_THE_OFFER]-> (o)"
@@ -235,7 +236,7 @@ namespace PROJEKT_PZ_NK_v3.Controllers
                 await session.CloseAsync();
             }
 
-            return RedirectToAction("Details", "Offers", new { id = offerID });
+            return RedirectToAction("Details", "Offers", new { offerID });
         }
 
 

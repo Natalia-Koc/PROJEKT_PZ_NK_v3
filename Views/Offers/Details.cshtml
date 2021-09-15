@@ -75,7 +75,7 @@
             {
                 if (!ViewBag.IsApplied)
                 {
-                    using (Html.BeginForm("Create", "Applications", new { offerID = Model.ID, ownerID = Model.Profile.ID }))
+                    using (Html.BeginForm("Create", "Applications", new { offerID = Model.ID, ownerEmail = Model.Profile.Email }))
                     {
                         @Html.AntiForgeryToken()
                         <div class="form-horizontal">

@@ -246,8 +246,9 @@ namespace PROJEKT_PZ_NK_v3.Controllers
                     var cursor =
                         await tx.RunAsync(
                             "match (p:Profile)-[rel1:GUARDIAN]->(app:Application)<-[rel2:OWNER]-(p2:Profile)," +
-                            "(app)-[rel3:NOTIFICATION_TO_THE_OFFER]->(o:Offer {OfferID: " + offerID + "}) " +
-                            "return p,app,p2,o");
+                            "(app)-[rel3:NOTIFICATION_TO_THE_OFFER]->(o:Offer) " +
+                            "where id(o)="+ offerID +
+                            " return p,app,p2,o");
 
                     List<IRecord> Records = await cursor.ToListAsync();
                     foreach (var item in Records)

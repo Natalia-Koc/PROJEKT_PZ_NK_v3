@@ -18,6 +18,9 @@
                 Zwierzak
             </th>*@
             <th>
+                Status
+            </th>
+            <th>
                 Wiadomość
             </th>
             <th></th>
@@ -28,8 +31,8 @@
     <tr>
         <td>
             <b>@Html.ActionLink(item.Offer.Title, "Details", "Offers", new { offerID = item.Offer.ID }, null)</b><br />
-            <ins>Początek</ins>: @Html.DisplayFor(modelItem => item.Offer.StartingDate)<br />
-            <ins>Koniec</ins>: @Html.DisplayFor(modelItem => item.Offer.EndDate)
+            <ins>Początek</ins>: @item.Offer.StartingDate<br />
+            <ins>Koniec</ins>: @item.Offer.EndDate
         </td>
         <td>
             <b>@Html.ActionLink(item.Owner.Login, "DetailsAnotherProfile", "Profiles", new { email = item.Owner.Email }, null)</b><br />
@@ -66,7 +69,7 @@
 
         </td>
         <td>
-            @if (item.Offer.StartingDate > DateTime.Now)
+            @if (DateTime.Parse(item.Offer.StartingDate) > DateTime.Now)
             {
                 <a href='@Url.Action("EditResign", new { offerID = item.Offer.ID })'>
                     <img src="~/Images/resign.png" width="70px" alt="Rezygnuj">
