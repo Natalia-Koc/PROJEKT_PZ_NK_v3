@@ -123,62 +123,64 @@
                 </th>
                 <th></th>
             </tr>
-            @foreach (var item in ViewBag.Applications)
+            @if (ViewBag.Applications != null)
             {
-                <tr>
-                    <td>
-                        <b>@item.Offer.Title</b><br />
-                        <ins>Początek</ins>: @item.Offer.StartingDate<br />
-                        <ins>Koniec</ins>: @item.Offer.EndDate
-                    </td>
-                    <td>
-                        <b><a href="@Url.Action("Details", "Animals", new { email = item.Offer.Profile.Email ,name = item.Offer.Animal.Name })">@item.Offer.Animal.Name</a></b><br />
-                        <ins>Gatunek</ins>: @item.Offer.Animal.Species<br />
-                        <ins>Rasa</ins>: @item.Offer.Animal.Race<br />
-                        <ins>Waga</ins>: @item.Offer.Animal.Weight
-                    </td>
-                    <td>
-                        <b><a href="@Url.Action("DetailsAnotherProfile", "Profiles", new { id = item.GuardianID })">@item.Guardian.Login</a></b><br />
-                        <ins>Imię i nazwisko</ins>: @item.Guardian.FirstName @item.Guardian.LastName<br />
-                        <ins>Adres</ins>: @item.Guardian.City, @item.Guardian.Street <br />
-                        <ins>tel.</ins>: @item.Guardian.PhoneNumber
-                    </td>
-                    <td>
-                        @item.Message
-                    </td>
-                    <td>
-                        @if (item.Status == "Zaakceptowane!")
-                        {
-                        <b style="color: limegreen">@item.Status</b>
-                        }
-                        else if (item.Status == "Opiekun zrezygnował z oferty")
-                        {
-                            <b style="color: darkred">@item.Status</b>
-                        }
-                        else if (item.Status.Contains("Usunieta"))
-                        {
-                            <b style="color: black">Odrzucone</b>
-                        }
-                        else
-                        {
-                    <b>@item.Status</b>
-                        }
-                    </td>
-                    <td>
-                        @if (item.Status != "Zaakceptowane!" && item.Status != "Opiekun zrezygnował z oferty")
-                        {
-                            <a href='@Url.Action("EditAccept", "Applications", new { id = item.ID })'>
-                                <img src="~/Images/accept.jpg" width="45px" alt="Akceptuj">
+                foreach (var item in ViewBag.Applications)
+                {
+                    <tr>
+                        <td>
+                            <b>@item.Offer.Title</b><br />
+                            <ins>Początek</ins>: @item.Offer.StartingDate<br />
+                            <ins>Koniec</ins>: @item.Offer.EndDate
+                        </td>
+                        <td>
+                            <b><a href="@Url.Action("Details", "Animals", new { email = item.Offer.Profile.Email ,name = item.Offer.Animal.Name })">@item.Offer.Animal.Name</a></b><br />
+                            <ins>Gatunek</ins>: @item.Offer.Animal.Species<br />
+                            <ins>Rasa</ins>: @item.Offer.Animal.Race<br />
+                            <ins>Waga</ins>: @item.Offer.Animal.Weight
+                        </td>
+                        <td>
+                            <b><a href="@Url.Action("DetailsAnotherProfile", "Profiles", new { email = item.Guardian.Email })">@item.Guardian.Login</a></b><br />
+                            <ins>Imię i nazwisko</ins>: @item.Guardian.FirstName @item.Guardian.LastName<br />
+                            <ins>Adres</ins>: @item.Guardian.City, @item.Guardian.Street <br />
+                            <ins>tel.</ins>: @item.Guardian.PhoneNumber
+                        </td>
+                        <td>
+                            @item.Message
+                        </td>
+                        <td>
+                            @if (item.Status == "Zaakceptowane")
+                            {
+                                <b style="color: limegreen">@item.Status</b>
+                            }
+                            else if (item.Status == "Opiekun zrezygnował z oferty")
+                            {
+                                <b style="color: darkred">@item.Status</b>
+                            }
+                            else if (item.Status.Contains("Usunieta"))
+                            {
+                                <b style="color: black">Odrzucone</b>
+                            }
+                            else
+                            {
+                                <b>@item.Status</b>
+                            }
+                        </td>
+                        <td>
+                            @if (item.Status != "Zaakceptowane" && item.Status != "Opiekun zrezygnował z oferty")
+                            {
+                                <a href='@Url.Action("EditAccept", "Applications", new { offerID = item.Offer.ID })'>
+                                    <img src="~/Images/accept.jpg" width="45px" alt="Akceptuj">
+                                </a>
+                            }
+                            <a href='@Url.Action("EditDiscard", "Applications", new { offerID = item.Offer.ID })'>
+                                <img src="~/Images/discard.jpg" width="45px" alt="Odrzuć">
                             </a>
-                        }
-                        <a href='@Url.Action("EditDiscard", "Applications", new { id = item.ID })'>
-                            <img src="~/Images/discard.jpg" width="45px" alt="Odrzuć">
-                        </a>
-                    </td>
-                </tr>
+                        </td>
+                    </tr>
+                }
             }
+
         </table>
     }
-
-
 </div>

@@ -29,7 +29,7 @@
 <tr>
     <td>
         @Html.ActionLink(item.Offer.Title, "Details", "Offers", new { offerID = item.Offer.ID}, null)<br />
-        @Html.DisplayFor(modelItem => item.Offer.StartingDate) - @Html.DisplayFor(modelItem => item.Offer.EndDate)
+        @item.Offer.StartingDate - @item.Offer.EndDate
     </td>
     <td>
         @if (item.Owner.Email == User.Identity.Name)

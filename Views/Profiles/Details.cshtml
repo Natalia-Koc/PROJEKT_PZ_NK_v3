@@ -140,6 +140,7 @@
                         </div>
                         <div class="form-group">
                             <div class="form-group">
+                                <input type="hidden" value="@Model.Email" name="ProfilEmail" />
                                 <textarea type="text" name="Contents" class="form-control" style="width:40%"></textarea>
                                 @Html.ValidationMessage("Contents", "", new { @class = "text-danger" })
                                 <input type="submit" value="Zapisz" class="btn btn-success" />
@@ -168,7 +169,7 @@
             @if (@ViewBag.MyComment != null)
             {
                 <tr>
-                    <td>@ViewBag.MyComment.Author.Login</td>
+                    <td>@ViewBag.MyComment.ProfilLogin</td>
                     <td>@ViewBag.MyComment.Contents</td>
                     <td>
                         @if (ViewBag.MyComment.Grade == 0)
@@ -181,7 +182,7 @@
                         }
                     </td>
                     <td>
-                        @Html.ActionLink(" ", "Delete", "Comments", new {profileID = Model.ID },
+                        @Html.ActionLink(" ", "Delete", "Comments", new { email = Model.Email },
                         htmlAttributes: new { @class = "btn btn-danger glyphicon glyphicon-trash" })
                     </td>
 
@@ -191,7 +192,7 @@
             @foreach (var item in ViewBag.Comments)
             {
                 <tr>
-                    <td><a href="@Url.Action("DetailsAnotherProfile", "Profiles", new { email = item.AuthorEmail })"><b>@item.AuthorLogin</b></a></td>
+                    <td><a href="@Url.Action("DetailsAnotherProfile", "Profiles", new { email = item.ProfilEmail })"><b>@item.ProfilLogin</b></a></td>
                     <td>@item.Contents</td>
                     <td>
                         @if (item.Grade == 0)

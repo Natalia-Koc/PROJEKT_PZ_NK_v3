@@ -110,6 +110,7 @@ namespace PROJEKT_PZ_NK_v3.Controllers
                             "return p,app,p2,o");
 
                     List<IRecord> Records = await cursor.ToListAsync();
+
                     foreach (var item in Records)
                     {
                         INode nodeGuardian = (INode)item.Values["p"];

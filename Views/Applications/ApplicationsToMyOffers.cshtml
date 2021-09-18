@@ -31,9 +31,9 @@
         {
             <tr>
                 <td>
-                    <b>@Html.ActionLink(item.Offer.Title, "Details", "Offers", new { id = item.Offer.ID }, null)</b><br />
-                    <ins>Początek</ins>: @Html.DisplayFor(modelItem => item.Offer.StartingDate)<br />
-                    <ins>Koniec</ins>: @Html.DisplayFor(modelItem => item.Offer.EndDate)
+                    <b>@Html.ActionLink(item.Offer.Title, "Details", "Offers", new { offerID = item.Offer.ID }, null)</b><br />
+                    <ins>Początek</ins>: @item.Offer.StartingDate<br />
+                    <ins>Koniec</ins>: @item.Offer.EndDate
                 </td>
                 <td>
                     <b>@Html.ActionLink(item.Guardian.Login, "DetailsAnotherProfile", "Profiles", new { email = item.Guardian.Email }, null)</b><br />
@@ -51,7 +51,7 @@
                     @Html.DisplayFor(modelItem => item.Message)
                 </td>
                 <td>
-                    @if (item.Status == "Zaakceptowane!")
+                    @if (item.Status == "Zaakceptowane")
                     {
                         <b style="color: limegreen">@Html.DisplayFor(modelItem => item.Status)</b>
                     }
@@ -69,7 +69,7 @@
                     }
                 </td>
                 <td>
-                    @if (item.Status != "Zaakceptowane!" && item.Status != "Opiekun zrezygnował z oferty")
+                    @if (item.Status != "Zaakceptowane" && item.Status != "Opiekun zrezygnował z oferty")
                     {
                         <a href='@Url.Action("EditAccept", new { offerID = item.Offer.ID })'>
                             <img src="~/Images/accept.jpg" width="45px" alt="Akceptuj">

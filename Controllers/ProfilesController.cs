@@ -167,13 +167,15 @@ namespace PROJEKT_PZ_NK_v3.Controllers
                         List<IRecord> Records2 = await cursor3.ToListAsync();
                         foreach (var item in Records2)
                         {
-                            INode node = (INode)item.Values["c"];
+                            INode nodeComment = (INode)item.Values["c"];
                             INode nodeProfile = (INode)item.Values["p"];
-                            Comments comm = new Comments();
-                            comm.Contents = node.Properties.Where(a => a.Key == "Contents").Select(a => a.Value).First().As<string>();
-                            comm.Grade = node.Properties.Where(a => a.Key == "Grade").Select(a => a.Value).First().As<int>();
-                            comm.ProfilEmail = nodeProfile.Properties.Where(a => a.Key == "Email").Select(a => a.Value).First().As<string>();
-                            comm.ProfilLogin = nodeProfile.Properties.Where(a => a.Key == "Login").Select(a => a.Value).First().As<string>();
+                            Comments comm = new Comments
+                            {
+                                Contents = nodeComment.Properties.Where(a => a.Key == "contents").Select(a => a.Value).First().As<string>(),
+                                Grade = nodeComment.Properties.Where(a => a.Key == "rate").Select(a => a.Value).First().As<int>(),
+                                ProfilEmail = nodeProfile.Properties.Where(a => a.Key == "Email").Select(a => a.Value).First().As<string>(),
+                                ProfilLogin = nodeProfile.Properties.Where(a => a.Key == "Login").Select(a => a.Value).First().As<string>()
+                            };
 
                             lista.Add(comm);
                         }
@@ -247,7 +249,7 @@ namespace PROJEKT_PZ_NK_v3.Controllers
                     var cursor =
                         await tx.RunAsync(
                             "match (p:Profile {Email: '" + email + "'})<-[rel:COMMENTED_PROFILE]-(c:Comment)<-[a:AUTHOR]-(p2:Profile) " +
-                            "return c,p2");
+                            " return c,p2");
 
                     List<IRecord> records = await cursor.ToListAsync();
                     List<Comments> comments = new List<Comments>();
@@ -257,25 +259,26 @@ namespace PROJEKT_PZ_NK_v3.Controllers
                         INode nodeAuthor = (INode)item.Values["p2"];
                         Comments comm = new Comments
                         {
-                            Contents = nodeComment.Properties.Where(a => a.Key == "Contents").Select(a => a.Value).First().As<string>(),
-                            Grade = nodeComment.Properties.Where(a => a.Key == "Grade").Select(a => a.Value).First().As<int>(),
+                            Contents = nodeComment.Properties.Where(a => a.Key == "contents").Select(a => a.Value).First().As<string>(),
+                            Grade = nodeComment.Properties.Where(a => a.Key == "rate").Select(a => a.Value).First().As<int>(),
                             ProfilEmail = nodeAuthor.Properties.Where(a => a.Key == "Email").Select(a => a.Value).First().As<string>(),
                             ProfilLogin = nodeAuthor.Properties.Where(a => a.Key == "Login").Select(a => a.Value).First().As<string>()
                         };
 
                         comments.Add(comm);
                     }
-                    ViewBag.Comments = comments;
 
                     ViewBag.ProgressBarCount = comments.Where(m => m.Grade != 0).Count();
                     ViewBag.FoundComment = comments.Any();
                     if (!ViewBag.FoundComment)
                     {
                         ViewBag.MyComment = null;
+                        ViewBag.Comments = comments;
                     }
                     else
                     {
                         ViewBag.MyComment = comments.First(m => m.ProfilEmail == User.Identity.Name);
+                        ViewBag.Comments = comments.Where(m => m.ProfilEmail != User.Identity.Name).ToList();
                     }
 
                     List<Animal> animals = new List<Animal>();

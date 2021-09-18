@@ -34,6 +34,7 @@ namespace PROJEKT_PZ_NK_v3.Controllers
                         "(p) -[t:COMMENTED_PROFILE]-> (p2)"
                     );
                     await cursorCom.ConsumeAsync();
+
                     if (comments.Grade != 0)
                     {
                         var cursor =
@@ -41,7 +42,7 @@ namespace PROJEKT_PZ_NK_v3.Controllers
                                 "match (c:Comment)-[rel:COMMENTED_PROFILE]->(p:Profile {Email: '"+ comments.ProfilEmail + "'}) return avg(c.rate)");
                             
                         IResultCursor cursorProfile = await session.RunAsync("match (a:Profile {Email: '" + comments.ProfilEmail + "'})" +
-                            "SET a.Rate = " + cursor.SingleAsync().Result.Values.First().Value.As<int>());
+                            "SET a.Rate = " + cursor.SingleAsync().Result.Values.First().Value.As<int>()*20);
                         await cursor.ConsumeAsync();
                         await cursorProfile.ConsumeAsync();
                     }

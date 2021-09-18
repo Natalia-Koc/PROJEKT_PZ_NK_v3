@@ -24,17 +24,46 @@ namespace PROJEKT_PZ_NK_v3.Controllers
                 List<Offer> offers = new List<Offer>();
                 var cursorOffers =
                         await session.RunAsync(
-                            "match (p:Profile)-[rel:AUTHOR]->(o:Offer)," +
-                            "(c:Comment)-->(p) where c.rate> 2 OR c.rate=0 " +
-                            "return o");
+                            "match (p:Profile)-[rel:AUTHOR]->(o:Offer)<-[rell:ANIMAL_OFFER]-(a:Animal) " +
+                            "return p,o,a");
 
                 List<IRecord> Records = await cursorOffers.ToListAsync();
                 foreach (var item in Records)
                 {
                     INode nodeOffer = (INode)item.Values["o"];
+                    INode nodeProfile = (INode)item.Values["p"];
+                    INode nodeAnimal = (INode)item.Values["a"];
 
+                    Animal animal = new Animal
+                    {
+                        ID = nodeAnimal.Id.As<int>(),
+                        DateOfBirth = nodeAnimal.Properties.Where(a => a.Key == "DateOfBirth").Select(a => a.Value).First().As<DateTime>(),
+                        Description = nodeAnimal.Properties.Where(a => a.Key == "Description").Select(a => a.Value).First().As<string>(),
+                        Race = nodeAnimal.Properties.Where(a => a.Key == "Race").Select(a => a.Value).First().As<string>(),
+                        Gender = nodeAnimal.Properties.Where(a => a.Key == "Gender").Select(a => a.Value).First().As<string>(),
+                        Image = nodeAnimal.Properties.Where(a => a.Key == "Image").Select(a => a.Value).First().As<string>(),
+                        Species = nodeAnimal.Properties.Where(a => a.Key == "Species").Select(a => a.Value).First().As<string>(),
+                        Weight = nodeAnimal.Properties.Where(a => a.Key == "Weight").Select(a => a.Value).First().As<string>(),
+                        Name = nodeAnimal.Properties.Where(a => a.Key == "Name").Select(a => a.Value).First().As<string>()
+                    };
+
+                    Profile owner = new Profile
+                    {
+                        ID = ((int)nodeProfile.Id),
+                        HouseNumber = nodeProfile.Properties.Where(a => a.Key == "HouseNumber").Select(a => a.Value).First().As<string>(),
+                        Email = nodeProfile.Properties.Where(a => a.Key == "Email").Select(a => a.Value).First().As<string>(),
+                        Rate = nodeProfile.Properties.Where(a => a.Key == "Rate").Select(a => a.Value).First().As<int>(),
+                        FirstName = nodeProfile.Properties.Where(a => a.Key == "FirstName").Select(a => a.Value).First().As<string>(),
+                        Street = nodeProfile.Properties.Where(a => a.Key == "Street").Select(a => a.Value).First().As<string>(),
+                        PhoneNumber = nodeProfile.Properties.Where(a => a.Key == "PhoneNumber").Select(a => a.Value).First().As<string>(),
+                        City = nodeProfile.Properties.Where(a => a.Key == "City").Select(a => a.Value).First().As<string>(),
+                        Login = nodeProfile.Properties.Where(a => a.Key == "Login").Select(a => a.Value).First().As<string>(),
+                        LastName = nodeProfile.Properties.Where(a => a.Key == "LastName").Select(a => a.Value).First().As<string>()
+                    };
                     Offer offer = new Offer
                     {
+                        Profile = owner,
+                        Animal = animal,
                         StartingDate = nodeOffer.Properties.Where(a => a.Key == "StartingDate").Select(a => a.Value).First().As<string>(),
                         Title = nodeOffer.Properties.Where(a => a.Key == "Title").Select(a => a.Value).First().As<string>(),
                         ID = ((int)nodeOffer.Id),
@@ -124,32 +153,22 @@ namespace PROJEKT_PZ_NK_v3.Controllers
                             .ThenByDescending(a => a.Profile.Rate)
                         .Take(4).ToList();
 
-                        //
-
-
                         ViewBag.Offers2 = offers
                             .OrderByDescending(a => (DateTime.Parse(a.EndDate) - DateTime.Parse(a.StartingDate)).TotalDays)
                             .ThenByDescending(a => a.Profile.Rate)
                         .Skip(4).Take(4).ToList();
 
-                        //.ThenByDescending(a => a.Profile.Rate)
                     }
                     else
                     {
                         ViewBag.Offers1 = offers
                             .OrderBy(a => (DateTime.Parse(a.EndDate) - DateTime.Parse(a.StartingDate)).TotalDays)
                             .ThenByDescending(a => a.Profile.Rate)
-                        .Take(4).ToList();
-
-                        //.ThenByDescending(a => a.Profile.Rate)
-
-
+                            .Take(4).ToList();
                         ViewBag.Offers2 = offers
-                            .OrderBy(a => (DateTime.Parse(a.EndDate) - DateTime.Parse(a.StartingDate)).TotalDays)
-                            .ThenByDescending(a => a.Profile.Rate)
-                        .Skip(4).Take(4).ToList();
-
-                        //.ThenByDescending(a => a.Profile.Rate)
+                                .OrderBy(a => (DateTime.Parse(a.EndDate) - DateTime.Parse(a.StartingDate)).TotalDays)
+                                .ThenByDescending(a => a.Profile.Rate)
+                                .Skip(4).Take(4).ToList();
                     }
                 }
                 else
@@ -157,13 +176,9 @@ namespace PROJEKT_PZ_NK_v3.Controllers
                     ViewBag.Offers1 = offers
                             .OrderByDescending(a => a.Profile.Rate)
                         .Take(4).ToList();
-
-                    //.OrderByDescending(a => a.Profile.Rate)
-
                     ViewBag.Offers2 = offers
-                            .OrderByDescending(a => a.Profile.Rate)
+                        .OrderByDescending(a => a.Profile.Rate)
                         .Skip(4).Take(4).ToList();
-                    //.OrderByDescending(a => a.Profile.Rate)
                 }
             }
             finally

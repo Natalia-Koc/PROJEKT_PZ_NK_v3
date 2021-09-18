@@ -224,6 +224,7 @@ namespace PROJEKT_PZ_NK_v3.Controllers
                     Name = nodeAnimal.Properties.Where(a => a.Key == "Name").Select(a => a.Value).First().As<string>()
                 };
 
+
                 offer = new Offer
                 {
                     StartingDate = nodeOffer.Properties.Where(a => a.Key == "StartingDate").Select(a => a.Value).First().As<string>(),
@@ -247,9 +248,10 @@ namespace PROJEKT_PZ_NK_v3.Controllers
                     var cursor =
                         await tx.RunAsync(
                             "match (p:Profile)-[rel1:GUARDIAN]->(app:Application)<-[rel2:OWNER]-(p2:Profile)," +
-                            "(app)-[rel3:NOTIFICATION_TO_THE_OFFER]->(o:Offer) " +
+                            "(app)-[rel3:NOTIFICATION_TO_THE_OFFER]->(o:Offer)," +
+                            "(o:Offer)<-[rel4:ANIMAL_OFFER]-(a:Animal)  " +
                             "where id(o)="+ offerID +
-                            " return p,app,p2,o");
+                            " return a,p,app,p2,o");
 
                     List<IRecord> Records = await cursor.ToListAsync();
                     foreach (var item in Records)
@@ -257,10 +259,23 @@ namespace PROJEKT_PZ_NK_v3.Controllers
                         INode nodeGuardian = (INode)item.Values["p"];
                         INode nodeOwner = (INode)item.Values["p2"];
                         INode nodeOffer2 = (INode)item.Values["o"];
+                        INode nodeAnimal2 = (INode)item.Values["a"];
                         INode nodeApplication = (INode)item.Values["app"];
 
                         Profile guardian = NodeToProfile(nodeGuardian);
                         Profile owner = NodeToProfile(nodeOwner);
+
+                        Animal animal2 = new Animal
+                        {
+                            DateOfBirth = nodeAnimal2.Properties.Where(a => a.Key == "DateOfBirth").Select(a => a.Value).First().As<DateTime>(),
+                            Description = nodeAnimal2.Properties.Where(a => a.Key == "Description").Select(a => a.Value).First().As<string>(),
+                            Race = nodeAnimal2.Properties.Where(a => a.Key == "Race").Select(a => a.Value).First().As<string>(),
+                            Gender = nodeAnimal2.Properties.Where(a => a.Key == "Gender").Select(a => a.Value).First().As<string>(),
+                            Image = nodeAnimal2.Properties.Where(a => a.Key == "Image").Select(a => a.Value).First().As<string>(),
+                            Species = nodeAnimal2.Properties.Where(a => a.Key == "Species").Select(a => a.Value).First().As<string>(),
+                            Weight = nodeAnimal2.Properties.Where(a => a.Key == "Weight").Select(a => a.Value).First().As<string>(),
+                            Name = nodeAnimal2.Properties.Where(a => a.Key == "Name").Select(a => a.Value).First().As<string>()
+                        };
 
                         Offer offer2 = new Offer
                         {
@@ -268,7 +283,9 @@ namespace PROJEKT_PZ_NK_v3.Controllers
                             Title = nodeOffer2.Properties.Where(a => a.Key == "Title").Select(a => a.Value).First().As<string>(),
                             ID = ((int)nodeOffer2.Id),
                             Description = nodeOffer2.Properties.Where(a => a.Key == "Description").Select(a => a.Value).First().As<string>(),
-                            EndDate = nodeOffer2.Properties.Where(a => a.Key == "EndDate").Select(a => a.Value).First().As<string>()
+                            EndDate = nodeOffer2.Properties.Where(a => a.Key == "EndDate").Select(a => a.Value).First().As<string>(),
+                            Animal = animal2,
+                            Profile = owner
                         };
 
                         Applications application = new Applications
