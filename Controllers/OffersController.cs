@@ -399,53 +399,11 @@ namespace PROJEKT_PZ_NK_v3.Controllers
         // GET: Offers/Edit/5
         public async Task<ActionResult> Edit(int? offerID)
         {
-            Offer offer = new Offer();
-            if (offerID == null)
+            if (id == null)
             {
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             }
-            IAsyncSession session = db._driver.AsyncSession();
-            try
-            {
-                var cursorOffer = await session.RunAsync(
-                    "match (p:Profile)-[rel:AUTHOR]->(o:Offer)<-[rel2:ANIMAL_OFFER]-(a:Animal) " +
-                    "where id(o)=" + offerID +
-                    " return o,p,a");
-                List<IRecord> Records = await cursorOffer.ToListAsync();
-                foreach (var Record in Records)
-                {
-                    INode nodeOffer = (INode)Record.Values["o"];
-                    INode nodeAnimal = (INode)Record.Values["a"];
-                    INode nodeProfile = (INode)Record.Values["p"];
-
-                    Profile profile = NodeToProfile(nodeProfile);
-                    Animal animal = new Animal
-                    {
-                        DateOfBirth = nodeAnimal.Properties.Where(a => a.Key == "DateOfBirth").Select(a => a.Value).First().As<DateTime>(),
-                        Description = nodeAnimal.Properties.Where(a => a.Key == "Description").Select(a => a.Value).First().As<string>(),
-                        Race = nodeAnimal.Properties.Where(a => a.Key == "Race").Select(a => a.Value).First().As<string>(),
-                        Gender = nodeAnimal.Properties.Where(a => a.Key == "Gender").Select(a => a.Value).First().As<string>(),
-                        Image = nodeAnimal.Properties.Where(a => a.Key == "Image").Select(a => a.Value).First().As<string>(),
-                        Species = nodeAnimal.Properties.Where(a => a.Key == "Species").Select(a => a.Value).First().As<string>(),
-                        Weight = nodeAnimal.Properties.Where(a => a.Key == "Weight").Select(a => a.Value).First().As<string>(),
-                        Name = nodeAnimal.Properties.Where(a => a.Key == "Name").Select(a => a.Value).First().As<string>()
-                    };
-
-                    offer.StartingDate = nodeOffer.Properties.Where(a => a.Key == "StartingDate").Select(a => a.Value).First().As<string>();
-                    offer.Title = nodeOffer.Properties.Where(a => a.Key == "Title").Select(a => a.Value).First().As<string>();
-                    offer.ID = ((int)nodeOffer.Id);
-                    offer.Description = nodeOffer.Properties.Where(a => a.Key == "Description").Select(a => a.Value).First().As<string>();
-                    offer.EndDate = nodeOffer.Properties.Where(a => a.Key == "EndDate").Select(a => a.Value).First().As<string>();
-                    offer.Profile = profile;
-                    offer.Animal = animal;
-                }
-                
-                await cursorOffer.ConsumeAsync();
-            }
-            finally
-            {
-                await session.CloseAsync();
-            }
+            Offer offer = db.Offers.Find(id);
             if (offer == null)
             {
                 return HttpNotFound();
