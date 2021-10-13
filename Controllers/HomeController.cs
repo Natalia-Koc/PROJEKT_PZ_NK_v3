@@ -16,6 +16,7 @@ namespace PROJEKT_PZ_NK_v3.Controllers
         OfferContext db = new OfferContext();
         public ActionResult Index()
         {
+
             Profile profile = db.Profiles.FirstOrDefault(p => p.Email == User.Identity.Name);
             ViewBag.Profil = profile;
 
