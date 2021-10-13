@@ -4,8 +4,10 @@ using System.Data;
 using System.Data.Entity;
 using System.Linq;
 using System.Net;
+using System.Threading.Tasks;
 using System.Web;
 using System.Web.Mvc;
+using Neo4j.Driver;
 using PROJEKT_PZ_NK_v3.DAL;
 using PROJEKT_PZ_NK_v3.Models;
 
@@ -16,171 +18,395 @@ namespace PROJEKT_PZ_NK_v3.Controllers
     {
         private OfferContext db = new OfferContext();
 
-        // GET: Applications
-        public ActionResult Index(int? id)
+        public async Task<ActionResult> MyApplications()
         {
-            var applications = db.Applications
-                .Include(a => a.Guardian)
-                .Include(a => a.Offer)
-                .Include(a => a.Owner);
-            return View(applications.ToList());
-        }
-
-        public ActionResult MyApplications()
-        {
-            var applications = db.Applications
-                .Include(a => a.Guardian)
-                .Include(a => a.Offer)
-                .Include(a => a.Owner)
-                .Where(a => a.Guardian.Email == User.Identity.Name 
-                && a.Offer.StartingDate > DateTime.Now
-                && a.Status != "Opiekun zrezygnował z oferty"
-                && a.Status != "Odrzucone"
-                && !a.Status.Contains("Usunieta"));
-            return View(applications.ToList());
-        }
-
-        public ActionResult ApplicationsToMyOffers()
-        {
-            var applications = db.Applications
-                .Include(a => a.Guardian)
-                .Include(a => a.Offer)
-                .Include(a => a.Owner)
-                .Where(a => a.Owner.Email == User.Identity.Name 
-                && a.Offer.StartingDate > DateTime.Now
-                && a.Status != "Właściciel odrzucił zgłoszenie"
-                && a.Status != "Odrzucone"
-                && !a.Status.Contains("Usunieta"));
-            return View(applications.ToList());
-        }
-
-        public ActionResult History()
-        {
-            var applications = db.Applications
-                .Include(a => a.Guardian)
-                .Include(a => a.Offer)
-                .Include(a => a.Owner)
-                .Where(a => (a.Offer.StartingDate < DateTime.Now || 
-                    (a.Status == "Właściciel odrzucił ofertę" && a.Owner.Email == User.Identity.Name) ||
-                    (a.Status == "Opiekun zrezygnował z oferty" && a.Guardian.Email == User.Identity.Name) ||
-                    a.Status == "Odrzucone" ||
-                    a.Status.Contains("Usunieta")) && 
-                    a.Status != "Usunieta przez " + User.Identity.Name);
-            return View(applications.ToList());
-        }
-
-        // GET: Applications/Details/5
-        public ActionResult Details(int? id)
-        {
-            if (id == null)
+            List<Applications> applications = new List<Applications>();
+            IAsyncSession session = db._driver.AsyncSession();
+            try
             {
-                return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
+                await session.ReadTransactionAsync(async tx =>
+                {
+                    var cursor =
+                        await tx.RunAsync(
+                            "match (p:Profile {Email: '"+ User.Identity.Name + "'})-[rel1:GUARDIAN]->(app:Application)<-[rel2:OWNER]-(p2:Profile)," +
+                            "(app)-[rel3:NOTIFICATION_TO_THE_OFFER]->(o:Offer) " +
+                            "where app.Status = 'Zaakceptowane' OR app.Status = 'Oczekuje na akceptacje' OR app.Status = 'Właściciel odrzucił ofertę'" +
+                            "return p,app,p2,o");
+
+                    List<IRecord> Records = await cursor.ToListAsync();
+                    foreach (var item in Records)
+                    {
+                        INode nodeGuardian = (INode)item.Values["p"];
+                        INode nodeOwner = (INode)item.Values["p2"];
+                        INode nodeOffer = (INode)item.Values["o"];
+                        INode nodeApplication = (INode)item.Values["app"];
+
+                        Profile guardian = NodeToProfile(nodeGuardian);
+                        Profile owner = NodeToProfile(nodeOwner);
+
+                        Offer offer = new Offer
+                        {
+                            StartingDate = nodeOffer.Properties.Where(a => a.Key == "StartingDate").Select(a => a.Value).First().As<string>(),
+                            Title = nodeOffer.Properties.Where(a => a.Key == "Title").Select(a => a.Value).First().As<string>(),
+                            ID = ((int)nodeOffer.Id),
+                            Description = nodeOffer.Properties.Where(a => a.Key == "Description").Select(a => a.Value).First().As<string>(),
+                            EndDate = nodeOffer.Properties.Where(a => a.Key == "EndDate").Select(a => a.Value).First().As<string>()
+                        };
+
+                        Applications application = new Applications
+                        {
+                            Message = nodeApplication.Properties.Where(a => a.Key == "Message").Select(a => a.Value).First().As<string>(),
+                            Status = nodeApplication.Properties.Where(a => a.Key == "Status").Select(a => a.Value).First().As<string>(),
+                            Guardian = guardian,
+                            Owner = owner,
+                            Offer = offer
+                        };
+
+                        applications.Add(application);
+                    }
+
+                });
+
             }
-            Applications applications = db.Applications.Find(id);
-            if (applications == null)
+            finally
             {
-                return HttpNotFound();
+                await session.CloseAsync();
+            }
+
+            return View(applications);
+        }
+
+        Profile NodeToProfile(INode nodeProfile)
+        {
+            Profile profile = new Profile
+            {
+                ID = ((int)nodeProfile.Id),
+                HouseNumber = nodeProfile.Properties.Where(a => a.Key == "HouseNumber").Select(a => a.Value).First().As<string>(),
+                Email = nodeProfile.Properties.Where(a => a.Key == "Email").Select(a => a.Value).First().As<string>(),
+                Rate = nodeProfile.Properties.Where(a => a.Key == "Rate").Select(a => a.Value).First().As<int>(),
+                FirstName = nodeProfile.Properties.Where(a => a.Key == "FirstName").Select(a => a.Value).First().As<string>(),
+                Street = nodeProfile.Properties.Where(a => a.Key == "Street").Select(a => a.Value).First().As<string>(),
+                PhoneNumber = nodeProfile.Properties.Where(a => a.Key == "PhoneNumber").Select(a => a.Value).First().As<string>(),
+                City = nodeProfile.Properties.Where(a => a.Key == "City").Select(a => a.Value).First().As<string>(),
+                Login = nodeProfile.Properties.Where(a => a.Key == "Login").Select(a => a.Value).First().As<string>(),
+                LastName = nodeProfile.Properties.Where(a => a.Key == "LastName").Select(a => a.Value).First().As<string>()
+            };
+            return profile;
+        }
+
+        public async Task<ActionResult> ApplicationsToMyOffers()
+        {
+            List<Applications> applications = new List<Applications>();
+            IAsyncSession session = db._driver.AsyncSession();
+            try
+            {
+                await session.ReadTransactionAsync(async tx =>
+                {
+                    var cursor =
+                        await tx.RunAsync(
+                            "match (p:Profile)-[rel1:GUARDIAN]->(app:Application)<-[rel2:OWNER]-(p2:Profile {Email: '" + User.Identity.Name + "'})," +
+                            "(app)-[rel3:NOTIFICATION_TO_THE_OFFER]->(o:Offer) " +
+                            "where app.Status = 'Zaakceptowane' OR app.Status = 'Oczekuje na akceptacje' OR app.Status = 'Opiekun zrezygnował z oferty'" +
+                            "return p,app,p2,o");
+
+                    List<IRecord> Records = await cursor.ToListAsync();
+
+                    foreach (var item in Records)
+                    {
+                        INode nodeGuardian = (INode)item.Values["p"];
+                        INode nodeOwner = (INode)item.Values["p2"];
+                        INode nodeOffer = (INode)item.Values["o"];
+                        INode nodeApplication = (INode)item.Values["app"];
+
+                        Profile guardian = NodeToProfile(nodeGuardian);
+                        Profile owner = NodeToProfile(nodeOwner);
+
+                        Offer offer = new Offer
+                        {
+                            StartingDate = nodeOffer.Properties.Where(a => a.Key == "StartingDate").Select(a => a.Value).First().As<string>(),
+                            Title = nodeOffer.Properties.Where(a => a.Key == "Title").Select(a => a.Value).First().As<string>(),
+                            ID = ((int)nodeOffer.Id),
+                            Description = nodeOffer.Properties.Where(a => a.Key == "Description").Select(a => a.Value).First().As<string>(),
+                            EndDate = nodeOffer.Properties.Where(a => a.Key == "EndDate").Select(a => a.Value).First().As<string>()
+                        };
+
+                        Applications application = new Applications
+                        {
+                            Message = nodeApplication.Properties.Where(a => a.Key == "Message").Select(a => a.Value).First().As<string>(),
+                            Status = nodeApplication.Properties.Where(a => a.Key == "Status").Select(a => a.Value).First().As<string>(),
+                            Guardian = guardian,
+                            Owner = owner,
+                            Offer = offer
+                        };
+
+                        applications.Add(application);
+                    }
+
+                });
+
+            }
+            finally
+            {
+                await session.CloseAsync();
+            }
+            return View(applications);
+        }
+
+        public async Task<ActionResult> History()
+        {
+            List<Applications> applications = new List<Applications>();
+            IAsyncSession session = db._driver.AsyncSession();
+            try
+            {
+                await session.ReadTransactionAsync(async tx =>
+                {
+                    var cursor =
+                        await tx.RunAsync(
+                            "match (p:Profile)-[rel1:GUARDIAN]->(app:Application)<-[rel2:OWNER]-(p2:Profile)," +
+                            "(app)-[rel3:NOTIFICATION_TO_THE_OFFER]->(o:Offer) " +
+                            "where (p.Email='"+ User.Identity.Name + "' AND app.Status='Opiekun zrezygnował z oferty')  " +
+                            "OR (p2.Email='" + User.Identity.Name + "' AND app.Status='Właściciel odrzucił ofertę')" +
+                            "OR ((p.Email='" + User.Identity.Name + "' OR p2.Email='" + User.Identity.Name + "') AND " +
+                            "app.Status <> 'Zaakceptowane' AND app.Status <> 'Oczekuje na akceptacje' " +
+                            "AND app.Status <> 'Właściciel odrzucił ofertę' AND app.Status <> 'Opiekun zrezygnował z oferty')" +
+                            "return p,app,p2,o");
+
+                    List<IRecord> Records = await cursor.ToListAsync();
+                    foreach (var item in Records)
+                    {
+                        INode nodeGuardian = (INode)item.Values["p"];
+                        INode nodeOwner = (INode)item.Values["p2"];
+                        INode nodeOffer = (INode)item.Values["o"];
+                        INode nodeApplication = (INode)item.Values["app"];
+
+                        Profile guardian = NodeToProfile(nodeGuardian);
+                        Profile owner = NodeToProfile(nodeOwner);
+
+                        Offer offer = new Offer
+                        {
+                            StartingDate = nodeOffer.Properties.Where(a => a.Key == "StartingDate").Select(a => a.Value).First().As<string>(),
+                            Title = nodeOffer.Properties.Where(a => a.Key == "Title").Select(a => a.Value).First().As<string>(),
+                            ID = ((int)nodeOffer.Id),
+                            Description = nodeOffer.Properties.Where(a => a.Key == "Description").Select(a => a.Value).First().As<string>(),
+                            EndDate = nodeOffer.Properties.Where(a => a.Key == "EndDate").Select(a => a.Value).First().As<string>()
+                        };
+
+                        Applications application = new Applications
+                        {
+                            Message = nodeApplication.Properties.Where(a => a.Key == "Message").Select(a => a.Value).First().As<string>(),
+                            Status = nodeApplication.Properties.Where(a => a.Key == "Status").Select(a => a.Value).First().As<string>(),
+                            Guardian = guardian,
+                            Owner = owner,
+                            Offer = offer
+                        };
+
+                        applications.Add(application);
+                    }
+
+                });
+
+            }
+            finally
+            {
+                await session.CloseAsync();
             }
             return View(applications);
         }
 
         // GET: Applications/Create
-        public ActionResult Create(int offerID, int ownerID, Applications application)
+        public async Task<ActionResult> Create(int offerID, string ownerEmail, Applications application)
         {
-            application.Guardian = db.Profiles.Single(p => p.Email == User.Identity.Name);
-            application.GuardianID = db.Profiles.Single(p => p.Email == User.Identity.Name).ID;
-            application.Owner = db.Profiles.Find(ownerID);
-            application.OwnerID = ownerID;
-            application.Offer = db.Offers.Find(offerID);
-            application.OfferID = offerID;
-            application.Status = "Oczekuje na akceptacje";
-            db.Applications.Add(application);
-            db.SaveChanges();
 
-            return RedirectToAction("Details", "Offers", new { id = offerID });
+            IAsyncSession session = db._driver.AsyncSession();
+            try
+            {
+                IResultCursor cursor = await session.RunAsync("" +
+                    "MATCH (n:Profile {Email: '" + User.Identity.Name + "'}), " +
+                        "(n2:Profile {Email: '" + ownerEmail + "'})," +
+                        "(o:Offer)" +
+                        " where id(o)= "+offerID +
+                    " CREATE(n) -[r: GUARDIAN]-> (p: Application " +
+                    "{ Status: 'Oczekuje na akceptacje" +
+                    "', Message: '" + application.Message +"'})," +
+                    "(n2) -[t: OWNER]-> (p)," +
+                    "(p) -[y: NOTIFICATION_TO_THE_OFFER]-> (o)"
+                );
+                await cursor.ConsumeAsync();
+            }
+            finally
+            {
+                await session.CloseAsync();
+            }
+
+            return RedirectToAction("Details", "Offers", new { offerID });
         }
 
 
         // GET: Applications/Edit/5
-        public ActionResult EditResign(int? id)
+        public async Task<ActionResult> EditResign(int offerID)
         {
-            if (id == null)
+            IAsyncSession session = db._driver.AsyncSession();
+            try
             {
-                return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
+                string status = null;
+
+                var cursor =
+                        await session.RunAsync(
+                            "match (p:Profile {Email: '" + User.Identity.Name + "'})-[rel1:GUARDIAN]->(app:Application)<-[rel2:OWNER]-(p2:Profile)," +
+                            "(app)-[rel3:NOTIFICATION_TO_THE_OFFER]->(o:Offer) " +
+                            "where id(o) = "+ offerID +
+                            " return app");
+
+                List<IRecord> Records = await cursor.ToListAsync();
+                foreach (var item in Records)
+                {
+                    INode nodeApplication = (INode)item.Values["app"];
+                    status = nodeApplication.Properties.Where(a => a.Key == "Status").Select(a => a.Value).First().As<string>();
+                    break;
+                }
+
+                if (status == "Właściciel odrzucił ofertę")
+                {
+                    IResultCursor cursor1 = await session.RunAsync(
+                        "match (k:Profile {Email: '"+ User.Identity.Name + "'})-[rk:GUARDIAN]->(app:Application)" +
+                            "-[ro:NOTIFICATION_TO_THE_OFFER]->(o:Offer) " +
+                            "where id(o) = " + offerID +
+                        " SET app.Status = 'Odrzucone'"
+                    );
+                    await cursor1.ConsumeAsync();
+                }
+                else
+                {
+                    IResultCursor cursor2 = await session.RunAsync(
+                        "match (k:Profile {Email: '" + User.Identity.Name + "'})-[rk:GUARDIAN]->(app:Application)" +
+                            "-[ro:NOTIFICATION_TO_THE_OFFER]->(o:Offer) " +
+                            "where id(o) = " + offerID +
+                        " SET app.Status = 'Opiekun zrezygnował z oferty'"
+                    );
+                    await cursor2.ConsumeAsync();
+                }
+                await cursor.ConsumeAsync();
             }
-            if (db.Applications.Find(id).Status == "Właściciel odrzucił ofertę")
+            finally
             {
-                db.Applications.Find(id).Status = "Odrzucone";
+                await session.CloseAsync();
             }
-            else
-            {
-                db.Applications.Find(id).Status = "Opiekun zrezygnował z oferty";
-            }
-            db.SaveChanges();
             return RedirectToAction("MyApplications");
         }
 
-        public ActionResult EditDiscard(int? id)
+        public async Task<ActionResult> EditDiscard(int offerID)
         {
-            if (id == null)
+            IAsyncSession session = db._driver.AsyncSession();
+            try
             {
-                return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
+                string status=null;
+                var cursor =
+                        await session.RunAsync(
+                            "match (p:Profile {Email: '" + User.Identity.Name + "'})-[rel1:GUARDIAN]->(app:Application)<-[rel2:OWNER]-(p2:Profile)," +
+                            "(app)-[rel3:NOTIFICATION_TO_THE_OFFER]->(o:Offer) " +
+                            "where id(o) = " + offerID +
+                            " return app");
+
+                List<IRecord> Records = await cursor.ToListAsync();
+                foreach (var item in Records)
+                {
+                    INode nodeApplication = (INode)item.Values["app"];
+                    status = nodeApplication.Properties.Where(a => a.Key == "Status").Select(a => a.Value).First().As<string>();
+                    break;
+                }
+
+                if (status == "Opiekun zrezygnował z oferty")
+                {
+                    IResultCursor cursor1 = await session.RunAsync(
+                        "match (k:Profile {Email: '" + User.Identity.Name + "'})-[rk:OWNER]->(app:Application)" +
+                            "-[ro:NOTIFICATION_TO_THE_OFFER]->(o:Offer) " +
+                            "where id(o) = " + offerID +
+                        " SET app.Status = 'Odrzucone'"
+                    );
+                    await cursor1.ConsumeAsync();
+                }
+                else
+                {
+                    IResultCursor cursor2 = await session.RunAsync(
+                        "match (k:Profile {Email: '" + User.Identity.Name + "'})-[rk:OWNER]->(app:Application)" +
+                            "-[ro:NOTIFICATION_TO_THE_OFFER]->(o:Offer) " +
+                            "where id(o) = " + offerID +
+                        " SET app.Status = 'Właściciel odrzucił ofertę'"
+                    );
+                    await cursor2.ConsumeAsync();
+                }
             }
-            if (db.Applications.Find(id).Status == "Opiekun zrezygnował z oferty")
+            finally
             {
-                db.Applications.Find(id).Status = "Odrzucone";
+                await session.CloseAsync();
             }
-            else
-            {
-                db.Applications.Find(id).Status = "Właściciel odrzucił ofertę";
-            }
-            db.SaveChanges();
             return RedirectToAction("ApplicationsToMyOffers");
         }
 
-        public ActionResult EditAccept(int? id)
+        public async Task<ActionResult> EditAccept(int offerID)
         {
-            if (id == null)
+            IAsyncSession session = db._driver.AsyncSession();
+            try
             {
-                return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
+                IResultCursor cursor = await session.RunAsync(
+                    "match (k:Profile {Email: '" + User.Identity.Name + "'})-[rk:OWNER]->(app:Application)" +
+                        "-[ro:NOTIFICATION_TO_THE_OFFER]->(o:Offer) " +
+                            "where id(o) = " + offerID +
+                    " SET app.Status = 'Zaakceptowane'"
+                );
+                await cursor.ConsumeAsync();
             }
-            db.Applications.Find(id).Status = "Zaakceptowane!";
-            db.SaveChanges();
+            finally
+            {
+                await session.CloseAsync();
+            }
             return RedirectToAction("ApplicationsToMyOffers");
-        }
-
-        // POST: Applications/Edit/5
-        // Aby zapewnić ochronę przed atakami polegającymi na przesyłaniu dodatkowych danych, włącz określone właściwości, z którymi chcesz utworzyć powiązania.
-        // Aby uzyskać więcej szczegółów, zobacz https://go.microsoft.com/fwlink/?LinkId=317598.
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public ActionResult Edit(Applications applications)
-        {
-            if (ModelState.IsValid)
-            {
-                db.Entry(applications).State = EntityState.Modified;
-                db.SaveChanges();
-                return RedirectToAction("Index");
-            }
-            ViewBag.GuardianID = new SelectList(db.Profiles, "ID", "Login", applications.GuardianID);
-            ViewBag.OfferID = new SelectList(db.Offers, "ID", "Title", applications.OfferID);
-            ViewBag.OwnerID = new SelectList(db.Profiles, "ID", "Login", applications.OwnerID);
-            return View(applications);
         }
 
         // GET: Applications/Delete/5
-        public ActionResult Delete(int? id)
+        public async Task<ActionResult> Delete(int offerID)
         {
-            Applications applications = db.Applications.Find(id);
-            if (applications.Status.Contains("Usunieta"))
+            IAsyncSession session = db._driver.AsyncSession();
+            try
             {
-                db.Applications.Remove(applications);
+                string status = null;
+                var cursorStatus =
+                        await session.RunAsync(
+                            "match (p:Profile {Email: '" + User.Identity.Name + "'})-[rel1:GUARDIAN]->(app:Application)<-[rel2:OWNER]-(p2:Profile)," +
+                            "(app)-[rel3:NOTIFICATION_TO_THE_OFFER]->(o:Offer) " +
+                            "where id(o) = " + offerID +
+                            " return app");
+
+                List<IRecord> Records = await cursorStatus.ToListAsync();
+                foreach (var item in Records)
+                {
+                    INode nodeApplication = (INode)item.Values["app"];
+                    status = nodeApplication.Properties.Where(a => a.Key == "Status").Select(a => a.Value).First().As<string>();
+                    break;
+                }
+                if (status.Contains("Usunieta"))
+                {
+                    IResultCursor cursor = await session.RunAsync(
+                        "match (app:Application)-[ro:NOTIFICATION_TO_THE_OFFER]->(o:Offer) " +
+                            "where id(o) = " + offerID +
+                        " SET app.Status = 'Usunieta'"
+                    );
+                    await cursor.ConsumeAsync();
+                }
+                else
+                {
+                    IResultCursor cursor = await session.RunAsync(
+                        "match (app:Application)-[ro:NOTIFICATION_TO_THE_OFFER]->(o:Offer) " +
+                            "where id(o) = " + offerID +
+                        " SET app.Status = 'Usunieta przez " + User.Identity.Name +"'"
+                    );
+                    await cursor.ConsumeAsync();
+                }
             }
-            else
+            finally
             {
-                db.Applications.Find(id).Status = "Usunieta przez " + User.Identity.Name;
+                await session.CloseAsync();
             }
-            db.SaveChanges();
             return RedirectToAction("History");
         }
 

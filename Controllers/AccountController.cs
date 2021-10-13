@@ -1,14 +1,17 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Configuration;
 using System.Globalization;
 using System.Linq;
 using System.Security.Claims;
+using System.Text;
 using System.Threading.Tasks;
 using System.Web;
 using System.Web.Mvc;
 using Microsoft.AspNet.Identity;
 using Microsoft.AspNet.Identity.Owin;
 using Microsoft.Owin.Security;
+using Neo4j.Driver;
 using PROJEKT_PZ_NK_v3.DAL;
 using PROJEKT_PZ_NK_v3.Models;
 
@@ -162,6 +165,30 @@ namespace PROJEKT_PZ_NK_v3.Controllers
                     OfferContext db = new OfferContext();
                     db.Profiles.Add(profil);
                     db.SaveChanges();
+                    IAsyncSession session = db._driver.AsyncSession();
+
+                    try
+                    {
+                        IResultCursor cursor = await session.RunAsync("CREATE (n:Profile {" +
+                            "Login: ' '," +
+                            "Email: '" + model.Email + "'," +
+                            "FirstName: ' '," +
+                            "LastName: ' '," +
+                            "PhoneNumber: ''," +
+                            "City: ' '," +
+                            "Street: ' '," +
+                            "HouseNumber: ' '," +
+                            "Rate: 0"+
+                            "})");
+                        await cursor.ConsumeAsync();
+                    }
+                    finally
+                    {
+                        await session.CloseAsync();
+                    }
+
+                    await db._driver.CloseAsync();
+
 
                     // Aby uzyskać więcej informacji o sposobie włączania potwierdzania konta i resetowaniu hasła, odwiedź stronę https://go.microsoft.com/fwlink/?LinkID=320771
                     // Wyślij wiadomość e-mail z tym łączem

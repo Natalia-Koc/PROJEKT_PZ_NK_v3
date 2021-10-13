@@ -4,8 +4,10 @@ using System.Data;
 using System.Data.Entity;
 using System.Linq;
 using System.Net;
+using System.Threading.Tasks;
 using System.Web;
 using System.Web.Mvc;
+using Neo4j.Driver;
 using PROJEKT_PZ_NK_v3.DAL;
 using PROJEKT_PZ_NK_v3.Models;
 
@@ -15,117 +17,89 @@ namespace PROJEKT_PZ_NK_v3.Controllers
     {
         private OfferContext db = new OfferContext();
 
-        // GET: Comments
-        public ActionResult Index()
-        {
-            return View(db.Comments.ToList());
-        }
-
-        // GET: Comments/Details/5
-        public ActionResult Details(int? id)
-        {
-            if (id == null)
-            {
-                return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
-            }
-            Comments comments = db.Comments.Find(id);
-            
-            if (comments == null)
-            {
-                return HttpNotFound();
-            }
-            return View(comments);
-        }
-
-        // GET: Comments/Create
-        public ActionResult Create()
-        {
-            return View();
-        }
-
         // POST: Comments/Create
         // Aby zapewnić ochronę przed atakami polegającymi na przesyłaniu dodatkowych danych, włącz określone właściwości, z którymi chcesz utworzyć powiązania.
         // Aby uzyskać więcej szczegółów, zobacz https://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
-        public ActionResult Create(Comments comments)
+        public async Task<ActionResult> Create(Comments comments)
         {
             if (ModelState.IsValid)
             {
-                Profile myProfile = db.Profiles.Single(p => p.Email == User.Identity.Name);
-                comments.AuthorID = myProfile.ID;
-                comments.Profile = db.Profiles.Single(a => a.ID == comments.ProfileID);
-                db.Comments.Add(comments);
-                db.SaveChanges();
-                if (comments.Grade != 0)
+                IAsyncSession session = db._driver.AsyncSession();
+                try
                 {
-                    int id = db.Profiles.Single(p => p.ID == comments.ProfileID).ID;
-                    var average = db.Comments.Where(a => a.ProfileID == id && a.Grade != 0).Select(a => a.Grade).Average() * 20;
-                    db.Profiles.Single(p => p.ID == comments.ProfileID).Rate = (int) average;
+                    IResultCursor cursorCom = await session.RunAsync(
+                        "MATCH (n:Profile {Email: '" + User.Identity.Name + "'}), (p2:Profile {Email: '" + comments.ProfilEmail + "'}) " +
+                        "CREATE(n) -[r:AUTHOR]-> (p:Comment {contents: '" + comments.Contents + "', rate: " + comments.Grade + "})," +
+                        "(p) -[t:COMMENTED_PROFILE]-> (p2)"
+                    );
+                    await cursorCom.ConsumeAsync();
+
+                    if (comments.Grade != 0)
+                    {
+                        var cursor =
+                            await session.RunAsync(
+                                "match (c:Comment)-[rel:COMMENTED_PROFILE]->(p:Profile {Email: '"+ comments.ProfilEmail + "'}) return avg(c.rate)");
+                            
+                        IResultCursor cursorProfile = await session.RunAsync("match (a:Profile {Email: '" + comments.ProfilEmail + "'})" +
+                            "SET a.Rate = " + cursor.SingleAsync().Result.Values.First().Value.As<int>()*20);
+                        await cursor.ConsumeAsync();
+                        await cursorProfile.ConsumeAsync();
+                    }
+                        
                 }
-                db.SaveChanges();
+                finally
+                {
+                    await session.CloseAsync();
+                }
             }
 
-            return RedirectToAction("DetailsAnotherProfile", "Profiles", new { id = comments.ProfileID });
+            return RedirectToAction("DetailsAnotherProfile", "Profiles", new { email = comments.ProfilEmail });
         }
 
-        // GET: Comments/Edit/5
-        public ActionResult Edit(int? id)
+        public async Task<ActionResult> Delete(string email)
         {
-            if (id == null)
+            IAsyncSession session = db._driver.AsyncSession();
+            try
             {
-                return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
-            }
-            Comments comments = db.Comments.Find(id);
-            if (comments == null)
-            {
-                return HttpNotFound();
-            }
-            return View(comments);
-        }
+                IResultCursor cursorCom = await session.RunAsync(
+                    "match (p:Profile {Email: '"+ User.Identity.Name +"'})" +
+                        "-[rel:AUTHOR]->(c:Comment)" +
+                        "-[rell:COMMENTED_PROFILE]->(p2:Profile {Email: '" + email + "'})" +
+                        " with c limit 1 detach delete c"
+                );
+                await cursorCom.ConsumeAsync();
 
-        // POST: Comments/Edit/5
-        // Aby zapewnić ochronę przed atakami polegającymi na przesyłaniu dodatkowych danych, włącz określone właściwości, z którymi chcesz utworzyć powiązania.
-        // Aby uzyskać więcej szczegółów, zobacz https://go.microsoft.com/fwlink/?LinkId=317598.
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public ActionResult Edit(Comments comments)
-        {
-            if (ModelState.IsValid)
-            {
-                db.SaveChanges();
-                
-                return RedirectToAction("Index");
-            }
-            return View(comments);
-        }
+                IResultCursor cursorAllCom = await session.RunAsync(
+                    "match (c:Comment)" +
+                        "-[rel:COMMENTED_PROFILE]->(p2:Profile {Email: '" + email + "'})" +
+                        " return count(c)"
+                );
 
-        public ActionResult Delete(int profileID)
-        {
-            Comments comments = db.Comments.Single(a => a.Author.Email == User.Identity.Name && a.ProfileID == profileID);
-            if (comments == null)
-            {
-                return HttpNotFound();
-            }
-            db.Comments.Remove(comments);
-            db.SaveChanges();
+                if (cursorAllCom.SingleAsync().Result.Values.First().Value.As<int>() > 0)
+                {
+                    var cursor =
+                        await session.RunAsync(
+                            "match (c:Comment)-[rel:COMMENTED_PROFILE]->(p:Profile {Email: '"+ email +"'}) return avg(c.rate)");
 
-            if (db.Profiles.Single(p => p.ID == profileID).Comments.Where(a => a.Grade > 0).Count() > 0)
-            {
-                db.Profiles.
-                    Single(p => p.ID == profileID)
-                    .Rate = (int)db.Comments
-                    .Where(a => a.ProfileID == profileID && a.Grade != 0)
-                    .Select(a => a.Grade)
-                    .Average() * 20;
+                    IResultCursor cursorProfile = await session.RunAsync("match (a:Profile {Email: '" + email + "'})" +
+                        "SET a.Rate = " + cursor.SingleAsync().Result.Values.First().Value.As<int>());
+                    await cursorProfile.ConsumeAsync();
+                }
+                else
+                {
+                    IResultCursor cursorProfile = await session.RunAsync("match (a:Profile {Email: '" + email + "'})" +
+                        "SET a.Rate = 0");
+                    await cursorProfile.ConsumeAsync();
+                }
             }
-            else
+            finally
             {
-                db.Profiles
-                    .Single(p => p.ID == profileID)
-                    .Rate = 0;
+                await session.CloseAsync();
             }
-            db.SaveChanges();
-            return RedirectToAction("DetailsAnotherProfile", "Profiles", new { id = profileID});
+
+
+            return RedirectToAction("DetailsAnotherProfile", "Profiles", new { email });
         }
 
         protected override void Dispose(bool disposing)

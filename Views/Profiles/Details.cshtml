@@ -67,10 +67,10 @@
                 <dd>
                     @Html.DisplayFor(model => model.City),
                     @Html.DisplayFor(model => model.Street)
-                    @if (Model.Email == User.Identity.Name || Model.Applications.Any(a => a.OwnerID == Model.ID && a.Status == "Zaakceptowane!"))
+                    @*@if (Model.Email == User.Identity.Name || Model.Applications.Any(a => a.OwnerID == Model.ID && a.Status == "Zaakceptowane!"))
                     {
                         @Html.DisplayFor(model => model.HouseNumber)
-                    }
+                    }*@
                 </dd>
             </dl>
         </div>
@@ -86,7 +86,7 @@
                null, new { @class = "btn btn-success btn-block" })
                 </p>
                 <p style="width: 100%">
-                    @Html.ActionLink("Edytuj profil", "Edit", new { id = Model.ID },
+                    @Html.ActionLink("Edytuj profil", "Edit", new { email = Model.Email },
                new { @class = "btn btn-info btn-block" })
                 </p>
                 <p style="width: 100%">
@@ -98,16 +98,16 @@
     </div>
 
     <div class="container row">
-        @foreach (var item in Model.Animals)
+        @foreach (var item in ViewBag.Animals)
         {
             <div class="card col-3 list-group-item-heading" style="padding:1%">
-                <a href="@Url.Action("Details", "Animals", new { id = item.ID })">
+                <a href="@Url.Action("Details", "Animals", new { email = Model.Email, name = item.Name })">
                     <img class="card-img-top center-block block d-block mx-auto"
                          style="max-height: 200px; object-fit: cover;"
                          src="~/ImagesAnimals/@item.Image" alt="Card image">
                 </a>
                 <div class="card-body">
-                    <a href="@Url.Action("Details", "Animals", new { id = item.ID })">
+                    <a href="@Url.Action("Details", "Animals", new { email = Model.Email, name = item.Name })">
                         <h4 class="card-title">@item.Name</h4>
                     </a>
                 </div>
@@ -140,6 +140,7 @@
                         </div>
                         <div class="form-group">
                             <div class="form-group">
+                                <input type="hidden" value="@Model.Email" name="ProfilEmail" />
                                 <textarea type="text" name="Contents" class="form-control" style="width:40%"></textarea>
                                 @Html.ValidationMessage("Contents", "", new { @class = "text-danger" })
                                 <input type="submit" value="Zapisz" class="btn btn-success" />
@@ -168,7 +169,7 @@
             @if (@ViewBag.MyComment != null)
             {
                 <tr>
-                    <td>@ViewBag.MyComment.Author.Login</td>
+                    <td>@ViewBag.MyComment.ProfilLogin</td>
                     <td>@ViewBag.MyComment.Contents</td>
                     <td>
                         @if (ViewBag.MyComment.Grade == 0)
@@ -181,17 +182,17 @@
                         }
                     </td>
                     <td>
-                        @Html.ActionLink(" ", "Delete", "Comments", new {profileID = Model.ID },
+                        @Html.ActionLink(" ", "Delete", "Comments", new { email = Model.Email },
                         htmlAttributes: new { @class = "btn btn-danger glyphicon glyphicon-trash" })
                     </td>
 
                 </tr>
             }
 
-            @foreach (var item in Model.Comments.Where(m => m.Author.Email != User.Identity.Name))
+            @foreach (var item in ViewBag.Comments)
             {
                 <tr>
-                    <td><a href="@Url.Action("DetailsAnotherProfile", "Profiles", new { id = item.AuthorID })"><b>@item.Author.Login</b></a></td>
+                    <td><a href="@Url.Action("DetailsAnotherProfile", "Profiles", new { email = item.ProfilEmail })"><b>@item.ProfilLogin</b></a></td>
                     <td>@item.Contents</td>
                     <td>
                         @if (item.Grade == 0)

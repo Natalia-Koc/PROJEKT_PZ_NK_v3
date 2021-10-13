@@ -4,72 +4,359 @@ using System.Data;
 using System.Data.Entity;
 using System.Linq;
 using System.Net;
+using System.Threading.Tasks;
 using System.Web;
 using System.Web.Mvc;
+using Neo4j.Driver;
+using Neo4jClient;
 using PROJEKT_PZ_NK_v3.DAL;
 using PROJEKT_PZ_NK_v3.Models;
+using PROJEKT_PZ_NK_v3.ViewModels;
 
 namespace PROJEKT_PZ_NK_v3.Controllers
 {
     public class ProfilesController : Controller
     {
         private OfferContext db = new OfferContext();
-
-        public ActionResult Ranking()
+        public async Task<ActionResult> Ranking()
         {
-            var profiles = db.Profiles.OrderByDescending(p => p.Rate).Take(20).ToList();
-            return View(profiles);
+            List<Offer> offers = new List<Offer>();
+            List<Profile> profiles = new List<Profile>();
+            IAsyncSession session = db._driver.AsyncSession();
+            try
+            {
+                await session.ReadTransactionAsync(async tx =>
+                {
+                    var cursor =
+                        await tx.RunAsync(
+                            "match (p:Profile)-[rel:AUTHOR]->(o:Offer)<-[rel2:ANIMAL_OFFER]-(a:Animal) return p,o,a");
+
+                    List<IRecord> Records = await cursor.ToListAsync();
+                    foreach (var item in Records)
+                    {
+                        INode nodeProfile = (INode)item.Values["p"];
+                        INode nodeOffer = (INode)item.Values["o"];
+                        INode nodeAnimal = (INode)item.Values["a"];
+
+                        Profile profile = new Profile
+                        {
+                            ID = ((int)nodeProfile.Id),
+                            HouseNumber = nodeProfile.Properties.Where(a => a.Key == "HouseNumber").Select(a => a.Value).First().As<string>(),
+                            Email = nodeProfile.Properties.Where(a => a.Key == "Email").Select(a => a.Value).First().As<string>(),
+                            Rate = nodeProfile.Properties.Where(a => a.Key == "Rate").Select(a => a.Value).First().As<int>(),
+                            FirstName = nodeProfile.Properties.Where(a => a.Key == "FirstName").Select(a => a.Value).First().As<string>(),
+                            Street = nodeProfile.Properties.Where(a => a.Key == "Street").Select(a => a.Value).First().As<string>(),
+                            PhoneNumber = nodeProfile.Properties.Where(a => a.Key == "PhoneNumber").Select(a => a.Value).First().As<string>(),
+                            City = nodeProfile.Properties.Where(a => a.Key == "City").Select(a => a.Value).First().As<string>(),
+                            Login = nodeProfile.Properties.Where(a => a.Key == "Login").Select(a => a.Value).First().As<string>(),
+                            LastName = nodeProfile.Properties.Where(a => a.Key == "LastName").Select(a => a.Value).First().As<string>()
+                        };
+
+                        Animal animal = new Animal
+                        {
+                            DateOfBirth = nodeAnimal.Properties.Where(a => a.Key == "DateOfBirth").Select(a => a.Value).First().As<DateTime>(),
+                            Description = nodeAnimal.Properties.Where(a => a.Key == "Description").Select(a => a.Value).First().As<string>(),
+                            Race = nodeAnimal.Properties.Where(a => a.Key == "Race").Select(a => a.Value).First().As<string>(),
+                            Gender = nodeAnimal.Properties.Where(a => a.Key == "Gender").Select(a => a.Value).First().As<string>(),
+                            Image = nodeAnimal.Properties.Where(a => a.Key == "Image").Select(a => a.Value).First().As<string>(),
+                            Species = nodeAnimal.Properties.Where(a => a.Key == "Species").Select(a => a.Value).First().As<string>(),
+                            Weight = nodeAnimal.Properties.Where(a => a.Key == "Weight").Select(a => a.Value).First().As<string>(),
+                            Name = nodeAnimal.Properties.Where(a => a.Key == "Name").Select(a => a.Value).First().As<string>()
+                        };
+
+                        Offer offer = new Offer
+                        {
+                            Profile = profile,
+                            Animal = animal,
+                            AnimalName = animal.Name,
+                            StartingDate = nodeOffer.Properties.Where(a => a.Key == "StartingDate").Select(a => a.Value).First().As<string>(),
+                            Title = nodeOffer.Properties.Where(a => a.Key == "Title").Select(a => a.Value).First().As<string>(),
+                            ID = ((int)nodeOffer.Id),
+                            Description = nodeOffer.Properties.Where(a => a.Key == "Description").Select(a => a.Value).First().As<string>(),
+                            EndDate = nodeOffer.Properties.Where(a => a.Key == "EndDate").Select(a => a.Value).First().As<string>()
+                        };
+                        offers.Add(offer);
+                        if(!profiles.Any(a => a.Email == profile.Email))
+                        {
+                            profiles.Add(profile);
+                        }
+
+                    }
+                    ViewBag.Offers = offers;
+                });
+
+            }
+            finally
+            {
+                await session.CloseAsync();
+            }
+            return View(profiles.OrderByDescending(p => p.Rate).Take(20).ToList());
         }
-        public ActionResult Details()
+        public async Task<ActionResult> Details()
         {
-            Profile profile = db.Profiles.FirstOrDefault(p => p.Email == User.Identity.Name);
-            Comments comments = new Comments();
-            ViewBag.comments = comments;
-            ViewBag.ProgressBarCount = db.Comments.Where(m => m.Profile.Email == User.Identity.Name && m.Grade != 0).Count();
-            ViewBag.FoundComment = db.Comments.Any(m => m.Author.Email == User.Identity.Name);
-            
-            return View(profile);
+            Profile myProfile = new Profile();
+            IAsyncSession session = db._driver.AsyncSession();
+            try
+            {
+                await session.ReadTransactionAsync(async tx =>
+                {
+
+                    var cursorProfile =
+                        await tx.RunAsync(
+                            "match (p:Profile {Email: '" + User.Identity.Name + "'}) " +
+                            "return p");
+                    List<IRecord> Record2 = await cursorProfile.ToListAsync();
+                    foreach (var item in Record2)
+                    {
+                        INode nodeProfile = (INode)item.Values["p"];
+
+                        myProfile.HouseNumber = nodeProfile.Properties.Where(a => a.Key == "HouseNumber").Select(a => a.Value).First().As<string>();
+                        myProfile.Email = nodeProfile.Properties.Where(a=>a.Key == "Email").Select(a => a.Value).First().As<string>();
+                        myProfile.FirstName = nodeProfile.Properties.Where(a => a.Key == "FirstName").Select(a => a.Value).First().As<string>();
+                        myProfile.Rate = nodeProfile.Properties.Where(a => a.Key == "Rate").Select(a => a.Value).First().As<int>();
+                        myProfile.PhoneNumber = nodeProfile.Properties.Where(a => a.Key == "PhoneNumber").Select(a => a.Value).First().As<string>();
+                        myProfile.Street = nodeProfile.Properties.Where(a => a.Key == "Street").Select(a => a.Value).First().As<string>();
+                        myProfile.City = nodeProfile.Properties.Where(a => a.Key == "City").Select(a => a.Value).First().As<string>();
+                        myProfile.Login = nodeProfile.Properties.Where(a => a.Key == "Login").Select(a => a.Value).First().As<string>();
+                        myProfile.LastName = nodeProfile.Properties.Where(a => a.Key == "LastName").Select(a => a.Value).First().As<string>();
+
+                        break;
+                    }
+
+                    var cursor =
+                        await tx.RunAsync(
+                            "match (p:Profile {Email: '" + User.Identity.Name + "'})<-[rel:COMMENTED_PROFILE]-(c:Comment) " +
+                            "return c");
+                    if (cursor.FetchAsync().IsCompleted)
+                    {
+                        List<IRecord> records = await cursor.ToListAsync();
+                        List<Comments> comments = new List<Comments>();
+                        foreach (var item in records)
+                        {
+                            INode nodeComment = (INode)item.Values["c"];
+                            Comments comm = new Comments
+                            {
+                                Contents = nodeComment.Properties.Where(a => a.Key == "Contents").Select(a => a.Value).First().As<string>(),
+                                Grade = nodeComment.Properties.Where(a => a.Key == "Grade").Select(a => a.Value).First().As<int>(),
+                                ProfilEmail = myProfile.Email,
+                                ProfilLogin = myProfile.Login
+                            };
+
+                            comments.Add(comm);
+                        }
+
+                        ViewBag.ProgressBarCount = comments.Where(m => m.Grade != 0).Count();
+                        ViewBag.FoundComment = true;
+                    } 
+                    else
+                    {
+                        ViewBag.ProgressBarCount = 0;
+                        ViewBag.FoundComment = true;
+                    }
+
+                    var cursor3 =
+                        await tx.RunAsync(
+                            "match (p:Profile)-[rell:AUTHOR]->(c:Comment)-[rel:COMMENTED_PROFILE]->(p2:Profile {Email: '" + User.Identity.Name + "'}) " +
+                            "return c, p");
+
+                    /*ViewBag.Profile = cursor.SingleAsync().Result.Values.First().Value.As<string>();*/
+                        List<Comments> lista = new List<Comments>();
+
+                    if (cursor.FetchAsync().IsCompleted)
+                    {
+                        List<IRecord> Records2 = await cursor3.ToListAsync();
+                        foreach (var item in Records2)
+                        {
+                            INode nodeComment = (INode)item.Values["c"];
+                            INode nodeProfile = (INode)item.Values["p"];
+                            Comments comm = new Comments
+                            {
+                                Contents = nodeComment.Properties.Where(a => a.Key == "contents").Select(a => a.Value).First().As<string>(),
+                                Grade = nodeComment.Properties.Where(a => a.Key == "rate").Select(a => a.Value).First().As<int>(),
+                                ProfilEmail = nodeProfile.Properties.Where(a => a.Key == "Email").Select(a => a.Value).First().As<string>(),
+                                ProfilLogin = nodeProfile.Properties.Where(a => a.Key == "Login").Select(a => a.Value).First().As<string>()
+                            };
+
+                            lista.Add(comm);
+                        }
+                    } 
+                    ViewBag.Comments = lista;
+
+                    List<Animal> animals = new List<Animal>();
+                    var cursor4 =
+                        await tx.RunAsync(
+                            "match (p:Profile {Email: '" + User.Identity.Name + "'})-[rel:OWNER]->(a:Animal) return a");
+                    List<IRecord> Records = await cursor4.ToListAsync();
+                    foreach (var item in Records)
+                    {
+                        INode nodeAnimal = (INode)item.Values["a"];
+
+                        Animal animal = new Animal
+                        {
+                            DateOfBirth = nodeAnimal.Properties.Where(a => a.Key == "DateOfBirth").Select(a => a.Value).First().As<DateTime>(),
+                            Description = nodeAnimal.Properties.Where(a => a.Key == "Description").Select(a => a.Value).First().As<string>(),
+                            Race = nodeAnimal.Properties.Where(a => a.Key == "Race").Select(a => a.Value).First().As<string>(),
+                            Gender = nodeAnimal.Properties.Where(a => a.Key == "Gender").Select(a => a.Value).First().As<string>(),
+                            Image = nodeAnimal.Properties.Where(a => a.Key == "Image").Select(a => a.Value).First().As<string>(),
+                            Species = nodeAnimal.Properties.Where(a => a.Key == "Species").Select(a => a.Value).First().As<string>(),
+                            Weight = nodeAnimal.Properties.Where(a => a.Key == "Weight").Select(a => a.Value).First().As<string>(),
+                            Name = nodeAnimal.Properties.Where(a => a.Key == "Name").Select(a => a.Value).First().As<string>()
+                        };
+                        animals.Add(animal);
+                    }
+                    
+                    ViewBag.Animals = animals;
+                });
+            }
+            finally
+            {
+                await session.CloseAsync();
+            }
+
+            return View(myProfile);
         }
 
-        public ActionResult DetailsAnotherProfile(int? id)
+        public async Task<ActionResult> DetailsAnotherProfile(string email)
         {
-            if (id == null)
+            Profile anotherProfile = new Profile();
+            IAsyncSession session = db._driver.AsyncSession();
+            try
             {
-                return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
+                await session.ReadTransactionAsync(async tx =>
+                {
+                    var cursorProfile =
+                        await tx.RunAsync(
+                            "match (p:Profile {Email: '" + email + "'}) " +
+                            "return p");
+                    List<IRecord> Record2 = await cursorProfile.ToListAsync();
+                    foreach (var item in Record2)
+                    {
+                        INode nodeProfile = (INode)item.Values["p"];
+
+                        anotherProfile.HouseNumber = nodeProfile.Properties.Where(a => a.Key == "HouseNumber").Select(a => a.Value).First().As<string>();
+                        anotherProfile.Email = nodeProfile.Properties.Where(a => a.Key == "Email").Select(a => a.Value).First().As<string>();
+                        anotherProfile.FirstName = nodeProfile.Properties.Where(a => a.Key == "FirstName").Select(a => a.Value).First().As<string>();
+                        anotherProfile.Rate = nodeProfile.Properties.Where(a => a.Key == "Rate").Select(a => a.Value).First().As<int>();
+                        anotherProfile.PhoneNumber = nodeProfile.Properties.Where(a => a.Key == "PhoneNumber").Select(a => a.Value).First().As<string>();
+                        anotherProfile.Street = nodeProfile.Properties.Where(a => a.Key == "Street").Select(a => a.Value).First().As<string>();
+                        anotherProfile.City = nodeProfile.Properties.Where(a => a.Key == "City").Select(a => a.Value).First().As<string>();
+                        anotherProfile.Login = nodeProfile.Properties.Where(a => a.Key == "Login").Select(a => a.Value).First().As<string>();
+                        anotherProfile.LastName = nodeProfile.Properties.Where(a => a.Key == "LastName").Select(a => a.Value).First().As<string>();
+
+                        break;
+                    }
+
+                    var cursor =
+                        await tx.RunAsync(
+                            "match (p:Profile {Email: '" + email + "'})<-[rel:COMMENTED_PROFILE]-(c:Comment)<-[a:AUTHOR]-(p2:Profile) " +
+                            " return c,p2");
+
+                    List<IRecord> records = await cursor.ToListAsync();
+                    List<Comments> comments = new List<Comments>();
+                    foreach (var item in records)
+                    {
+                        INode nodeComment = (INode)item.Values["c"];
+                        INode nodeAuthor = (INode)item.Values["p2"];
+                        Comments comm = new Comments
+                        {
+                            Contents = nodeComment.Properties.Where(a => a.Key == "contents").Select(a => a.Value).First().As<string>(),
+                            Grade = nodeComment.Properties.Where(a => a.Key == "rate").Select(a => a.Value).First().As<int>(),
+                            ProfilEmail = nodeAuthor.Properties.Where(a => a.Key == "Email").Select(a => a.Value).First().As<string>(),
+                            ProfilLogin = nodeAuthor.Properties.Where(a => a.Key == "Login").Select(a => a.Value).First().As<string>()
+                        };
+
+                        comments.Add(comm);
+                    }
+
+                    ViewBag.ProgressBarCount = comments.Where(m => m.Grade != 0).Count();
+                    ViewBag.FoundComment = comments.Any();
+                    if (!ViewBag.FoundComment)
+                    {
+                        ViewBag.MyComment = null;
+                        ViewBag.Comments = comments;
+                    }
+                    else
+                    {
+                        ViewBag.MyComment = comments.First(m => m.ProfilEmail == User.Identity.Name);
+                        ViewBag.Comments = comments.Where(m => m.ProfilEmail != User.Identity.Name).ToList();
+                    }
+
+                    List<Animal> animals = new List<Animal>();
+                    var cursor4 =
+                        await tx.RunAsync(
+                            "match (p:Profile {Email: '" + email + "'})-[rel:OWNER]->(a:Animal) return a");
+                    List<IRecord> Records = await cursor4.ToListAsync();
+                    foreach (var item in Records)
+                    {
+                        INode nodeAnimal = (INode)item.Values["a"];
+
+                        Animal animal = new Animal
+                        {
+                            DateOfBirth = nodeAnimal.Properties.Where(a => a.Key == "DateOfBirth").Select(a => a.Value).First().As<DateTime>(),
+                            Description = nodeAnimal.Properties.Where(a => a.Key == "Description").Select(a => a.Value).First().As<string>(),
+                            Race = nodeAnimal.Properties.Where(a => a.Key == "Race").Select(a => a.Value).First().As<string>(),
+                            Gender = nodeAnimal.Properties.Where(a => a.Key == "Gender").Select(a => a.Value).First().As<string>(),
+                            Image = nodeAnimal.Properties.Where(a => a.Key == "Image").Select(a => a.Value).First().As<string>(),
+                            Species = nodeAnimal.Properties.Where(a => a.Key == "Species").Select(a => a.Value).First().As<string>(),
+                            Weight = nodeAnimal.Properties.Where(a => a.Key == "Weight").Select(a => a.Value).First().As<string>(),
+                            Name = nodeAnimal.Properties.Where(a => a.Key == "Name").Select(a => a.Value).First().As<string>()
+                        };
+                        animals.Add(animal);
+                    }
+
+                    ViewBag.Animals = animals;
+                });
             }
-            Profile 
-            profile = db.Profiles.Find(id); 
-            ViewBag.ProgressBarCount = db.Comments.Where(m => m.ProfileID == id && m.Grade != 0).Count();
-            ViewBag.FoundComment = db.Comments.Any(m => m.Author.Email == User.Identity.Name && m.ProfileID == id);
-            if (!ViewBag.FoundComment)
+            finally
             {
-                ViewBag.MyComment = null;
-            }
-            else
-            {
-                ViewBag.MyComment = db.Comments.First(m => m.Author.Email == User.Identity.Name);
+                await session.CloseAsync();
             }
 
-            if (profile == null)
+            if (anotherProfile == null)
             {
                 return HttpNotFound();
             }
-            return View("Details", profile);
+            return View("Details", anotherProfile);
         }
 
         // GET: Profiles/Edit/5
-        public ActionResult Edit(int? id)
+        public async Task<ActionResult> Edit(string email)
         {
-            if (id == null)
+            Profile myProfile = new Profile();
+            IAsyncSession session = db._driver.AsyncSession();
+            try
             {
-                return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
+                await session.ReadTransactionAsync(async tx =>
+                {
+                    var cursor =
+                        await tx.RunAsync(
+                            "match (p:Profile {Email: '" + User.Identity.Name + "'}) return p");
+
+                    IRecord Record = await cursor.SingleAsync();
+                    INode nodeProfile = (INode)Record.Values["p"];
+
+                    myProfile.HouseNumber = nodeProfile.Properties.Where(a => a.Key == "HouseNumber").Select(a => a.Value).First().As<string>();
+                    myProfile.Email = nodeProfile.Properties.Where(a => a.Key == "Email").Select(a => a.Value).First().As<string>();
+                    myProfile.FirstName = nodeProfile.Properties.Where(a => a.Key == "FirstName").Select(a => a.Value).First().As<string>();
+                    myProfile.Rate = nodeProfile.Properties.Where(a => a.Key == "Rate").Select(a => a.Value).First().As<int>();
+                    myProfile.PhoneNumber = nodeProfile.Properties.Where(a => a.Key == "PhoneNumber").Select(a => a.Value).First().As<string>();
+                    myProfile.Street = nodeProfile.Properties.Where(a => a.Key == "Street").Select(a => a.Value).First().As<string>();
+                    myProfile.City = nodeProfile.Properties.Where(a => a.Key == "City").Select(a => a.Value).First().As<string>();
+                    myProfile.Login = nodeProfile.Properties.Where(a => a.Key == "Login").Select(a => a.Value).First().As<string>();
+                    myProfile.LastName = nodeProfile.Properties.Where(a => a.Key == "LastName").Select(a => a.Value).First().As<string>();
+                });
+
             }
-            Profile profile = db.Profiles.Find(id);
-            if (profile == null)
+            finally
+            {
+                await session.CloseAsync();
+            }
+
+            if (myProfile == null)
             {
                 return HttpNotFound();
             }
-            return View(profile);
+            return View(myProfile);
         }
 
         // POST: Profiles/Edit/5
@@ -77,42 +364,30 @@ namespace PROJEKT_PZ_NK_v3.Controllers
         // Aby uzyskać więcej szczegółów, zobacz https://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Edit(Profile profile)
+        public async Task<ActionResult> Edit(Profile profile)
         {
             if (ModelState.IsValid)
             {
-                profile.Rate = 0;
-                db.Entry(profile).State = EntityState.Modified;
-                db.SaveChanges();
+                IAsyncSession session = db._driver.AsyncSession();
+                try
+                {
+                    IResultCursor cursor = await session.RunAsync("match (a:Profile {Email: '" + User.Identity.Name + "'})" +
+                        "SET a.Login = '" + profile.Login + "'," +
+                        "a.FirstName = '" + profile.FirstName + "'," +
+                        "a.LastName = '" + profile.LastName + "'," +
+                        "a.PhoneNumber = '" + profile.PhoneNumber + "'," +
+                        "a.City = '" + profile.City + "'," +
+                        "a.Street = '" + profile.Street + "'," +
+                        "a.HouseNumber = '" + profile.HouseNumber + "'");
+                    await cursor.ConsumeAsync();
+                }
+                finally
+                {
+                    await session.CloseAsync();
+                }
                 return RedirectToAction("Details");
             }
             return View(profile);
-        }
-
-        // GET: Profiles/Delete/5
-        public ActionResult Delete(int? id)
-        {
-            if (id == null)
-            {
-                return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
-            }
-            Profile profile = db.Profiles.Find(id);
-            if (profile == null)
-            {
-                return HttpNotFound();
-            }
-            return View(profile);
-        }
-
-        // POST: Profiles/Delete/5
-        [HttpPost, ActionName("Delete")]
-        [ValidateAntiForgeryToken]
-        public ActionResult DeleteConfirmed(int id)
-        {
-            Profile profile = db.Profiles.Find(id);
-            db.Profiles.Remove(profile);
-            db.SaveChanges();
-            return RedirectToAction("Index");
         }
 
         protected override void Dispose(bool disposing)

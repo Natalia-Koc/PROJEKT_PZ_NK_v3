@@ -14,10 +14,10 @@
             </th>
             <th>
                 Opiekun
-            </th>
+            </th>@*
             <th>
                 Zwierzak
-            </th>
+            </th>*@
             <th>
                 Wiadomość
             </th>
@@ -31,27 +31,27 @@
         {
             <tr>
                 <td>
-                    <b>@Html.ActionLink(item.Offer.Title, "Details", "Offers", new { id = item.Offer.ID }, null)</b><br />
-                    <ins>Początek</ins>: @Html.DisplayFor(modelItem => item.Offer.StartingDate)<br />
-                    <ins>Koniec</ins>: @Html.DisplayFor(modelItem => item.Offer.EndDate)
+                    <b>@Html.ActionLink(item.Offer.Title, "Details", "Offers", new { offerID = item.Offer.ID }, null)</b><br />
+                    <ins>Początek</ins>: @item.Offer.StartingDate<br />
+                    <ins>Koniec</ins>: @item.Offer.EndDate
                 </td>
                 <td>
-                    <b>@Html.ActionLink(item.Guardian.Login, "DetailsAnotherProfile", "Profiles", new { id = item.OwnerID }, null)</b><br />
+                    <b>@Html.ActionLink(item.Guardian.Login, "DetailsAnotherProfile", "Profiles", new { email = item.Guardian.Email }, null)</b><br />
                     <ins>Imię i nazwisko</ins>: @Html.DisplayFor(modelItem => item.Guardian.FirstName) @Html.DisplayFor(modelItem => item.Guardian.LastName)<br />
                     <ins>Adres</ins>: @Html.DisplayFor(modelItem => item.Guardian.City), @Html.DisplayFor(modelItem => item.Guardian.Street) <br />
                     <ins>tel.</ins>: @Html.DisplayFor(modelItem => item.Guardian.PhoneNumber)
                 </td>
-                <td>
+                @*<td>
                     @Html.ActionLink(item.Offer.Animal.Name, "Details", "Animals", new { id = item.Offer.AnimalID }, null)<br />
                     <ins>Gatunek</ins>: @Html.DisplayFor(modelItem => item.Offer.Animal.Species)<br />
                     <ins>Rasa</ins>: @Html.DisplayFor(modelItem => item.Offer.Animal.Race)<br />
                     <ins>Waga</ins>: @Html.DisplayFor(modelItem => item.Offer.Animal.Weight)
-                </td>
+                </td>*@
                 <td>
                     @Html.DisplayFor(modelItem => item.Message)
                 </td>
                 <td>
-                    @if (item.Status == "Zaakceptowane!")
+                    @if (item.Status == "Zaakceptowane")
                     {
                         <b style="color: limegreen">@Html.DisplayFor(modelItem => item.Status)</b>
                     }
@@ -69,13 +69,13 @@
                     }
                 </td>
                 <td>
-                    @if (item.Status != "Zaakceptowane!" && item.Status != "Opiekun zrezygnował z oferty")
+                    @if (item.Status != "Zaakceptowane" && item.Status != "Opiekun zrezygnował z oferty")
                     {
-                        <a href='@Url.Action("EditAccept", new { id = item.ID })'>
+                        <a href='@Url.Action("EditAccept", new { offerID = item.Offer.ID })'>
                             <img src="~/Images/accept.jpg" width="45px" alt="Akceptuj">
                         </a>
                     }
-                    <a href='@Url.Action("EditDiscard", new { id = item.ID })'>
+                    <a href='@Url.Action("EditDiscard", new { offerID = item.Offer.ID })'>
                         <img src="~/Images/discard.jpg" width="45px" alt="Odrzuć">
                     </a>
                 </td>

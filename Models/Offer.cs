@@ -23,18 +23,14 @@ namespace PROJEKT_PZ_NK_v3.Models
         [StringLength(1500, ErrorMessage = "Description cannot be longer than 1500 characters.")]
         public String Description { get; set; }
 
-        [DataType(DataType.DateTime)]
-        [DisplayFormat(DataFormatString = "{0:yyyy-MM-dd HH:mm}", ApplyFormatInEditMode = true)]
-        public DateTime StartingDate { get; set; }
+        [DisplayFormat(DataFormatString = "{yyyy-MM-dd HH:mm}", ApplyFormatInEditMode = true)]
+        public string StartingDate { get; set; }
 
-        [DataType(DataType.DateTime)]
-        [DisplayFormat(DataFormatString = "{0:yyyy-MM-dd HH:mm}", ApplyFormatInEditMode = true)]
-        public DateTime EndDate { get; set; }
+        [DisplayFormat(DataFormatString = "{yyyy-MM-dd HH:mm}", ApplyFormatInEditMode = true)]
+        public string EndDate { get; set; }
+        public string AnimalName { get; set; }
 
-        public int AnimalID { get; set; }
-        public virtual Profile Profile { get; set; }
-        public virtual Animal Animal { get; set; }
-
-        public int MyProperty { get; set; }
+        public Profile Profile { get; set; }
+        public Animal Animal { get; set; }
     }
 }

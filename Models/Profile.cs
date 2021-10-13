@@ -29,13 +29,7 @@ namespace PROJEKT_PZ_NK_v3.Models
         public String City { get; set; }
         public String Street { get; set; }
         public String HouseNumber { get; set; }
-
         public int Rate { get; set; }
-
-        public virtual List<Animal> Animals { get; set; }
-        public virtual List<Comments> Comments { get; set; }
-        public virtual List<Applications> Applications { get; set; }
-        public virtual List<Offer> Offers { get; set; }
 
     }
 }
