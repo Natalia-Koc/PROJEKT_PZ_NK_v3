@@ -11,60 +11,67 @@
 {
     @Html.AntiForgeryToken()
 
-    <div class="form-horizontal">
-        <h4>Oferta: @Html.DisplayFor(model => model.Title) </h4>
-        <hr />
-        @Html.ValidationSummary(true, "", new { @class = "text-danger" })
-        @Html.HiddenFor(model => model.ID)
-        <div class="form-group">
-            <b class="control-label col-md-2">Tytuł</b>
-            <div class="col-md-10">
-                @Html.EditorFor(model => model.Title, new { htmlAttributes = new { @class = "form-control" } })
-                @Html.ValidationMessageFor(model => model.Title, "", new { @class = "text-danger" })
-            </div>
+<div class="form-horizontal">
+    <h4>Oferta: @Html.DisplayFor(model => model.Title) </h4>
+    <hr />
+    @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+    @Html.HiddenFor(model => model.ID)
+    <div class="form-group">
+        <b class="control-label col-md-2">Tytuł</b>
+        <div class="col-md-10">
+            @Html.EditorFor(model => model.Title, new { htmlAttributes = new { @class = "form-control" } })
+            @Html.ValidationMessageFor(model => model.Title, "", new { @class = "text-danger" })
         </div>
+    </div>
 
-        <div class="form-group">
-            <b class="control-label col-md-2">Opis</b>
-            <div class="col-md-10">
-                @Html.EditorFor(model => model.Description, new { htmlAttributes = new { @class = "form-control" } })
-                @Html.ValidationMessageFor(model => model.Description, "", new { @class = "text-danger" })
-            </div>
+    <div class="form-group">
+        <b class="control-label col-md-2">Data początkowa</b>
+        <div class="col-md-10">
+            @Html.EditorFor(model => model.StartingDate, new { htmlAttributes = new { @class = "form-control" } })
+            @Html.ValidationMessageFor(model => model.StartingDate, "", new { @class = "text-danger" })
         </div>
+    </div>
 
-        <div class="form-group">
-            <b class="control-label col-md-2">Data początkowa</b>
-            <div class="col-md-10">
-                @Html.EditorFor(model => model.StartingDate, new { htmlAttributes = new { @class = "form-control" } })
-                @Html.ValidationMessageFor(model => model.StartingDate, "", new { @class = "text-danger" })
-            </div>
+    <div class="form-group">
+        <b class="control-label col-md-2">Data końcowa</b>
+        <div class="col-md-10">
+            @Html.EditorFor(model => model.EndDate, new { htmlAttributes = new { @class = "form-control" } })
+            @Html.ValidationMessageFor(model => model.EndDate, "", new { @class = "text-danger" })
         </div>
+    </div>
 
-        <div class="form-group">
-            <b class="control-label col-md-2">Data końcowa</b>
-            <div class="col-md-10">
-                @Html.EditorFor(model => model.EndDate, new { htmlAttributes = new { @class = "form-control" } })
-                @Html.ValidationMessageFor(model => model.EndDate, "", new { @class = "text-danger" })
-            </div>
+    <div class="form-group">
+        <b class="control-label col-md-2">Opis</b>
+        <div class="col-md-10">
+            <textarea name="Description" id="Description" class="form-control w-75">@Html.DisplayFor(m => m.Description)</textarea>
+            @Html.ValidationMessageFor(model => model.Description, "", new { @class = "text-danger" })
         </div>
+    </div>
 
-        <div class="form-group">
-            <b class="control-label col-md-2">Zwierze</b>
-            @foreach (var item in Model.Profile.Animals)
+    <div class="form-group">
+        <b class="control-label col-md-2">Zwierze</b>
+        <div class="row">
+            @foreach (PROJEKT_PZ_NK_v3.Models.Animal item in Model.Profile.Animals)
             {
-                <div class="form-check col-md-10">
-                    <input type="radio" name="AnimalID" value="@item.ID" @((Model.AnimalID == item.ID) ? "checked" : "") /> @item.Name
+                <div class="col-md-3">
+                    <div class="custom-control custom-radio image-checkbox form-check form-check-inline">
+                        <input type="radio" class="custom-control-input" id="@item.ID" name="AnimalID" value="@item.ID" @((Model.AnimalID == item.ID) ? "checked" : "")>
+                        <label class="custom-control-label" for="@item.ID">
+                            <img src="~/ImagesAnimals/@item.Image" alt="#" class="img-fluid">
+                        </label>
+                    </div>
                 </div>
             }
         </div>
+    </div>
 
-        <div class="form-group">
-            <b class="control-label col-md-2"></b>
-            <div class="col-md-2">
-                <input type="submit" value="Save" class="btn btn-success btn-success" style="width: 100px" />
-            </div>
+    <div class="form-group">
+        <b class="control-label col-md-2"></b>
+        <div class="col-md-2">
+            <input type="submit" value="Save" class="btn btn-success btn-success" style="width: 100px" />
         </div>
     </div>
+</div>
 }
 
 <div>
