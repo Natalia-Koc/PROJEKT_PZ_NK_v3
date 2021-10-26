@@ -9,6 +9,7 @@ using System.Web.Mvc;
 using PROJEKT_PZ_NK_v3.DAL;
 using PROJEKT_PZ_NK_v3.Models;
 using PagedList;
+using System.Data.Entity.SqlServer;
 
 namespace PROJEKT_PZ_NK_v3.Controllers
 {
@@ -19,8 +20,10 @@ namespace PROJEKT_PZ_NK_v3.Controllers
 
         // GET: Offers
         [Authorize]
-        public ActionResult Index(string sortOrder, string searchString, string searchSpecies, string searchRace, int? page)
+        public ActionResult Index(string sortOrder, string searchString, string searchSpecies, string searchRace, 
+            string searchOwner, string searchAnimal, int? searchTime, int? page)
         {
+
             ViewBag.CurrentSort = sortOrder;
             ViewBag.TitleSortParmAsc = String.IsNullOrEmpty(sortOrder) ? "Title_asc" : "";
             ViewBag.TitleSortParmDesc = String.IsNullOrEmpty(sortOrder) ? "Title_desc" : "";
@@ -34,6 +37,9 @@ namespace PROJEKT_PZ_NK_v3.Controllers
             ViewBag.CurrentFilterT = searchString;
             ViewBag.CurrentFilterS = searchSpecies;
             ViewBag.CurrentFilterR = searchRace;
+            ViewBag.CurrentFilterO = searchOwner;
+            ViewBag.CurrentFilterA = searchAnimal;
+            ViewBag.CurrentFilterT = searchTime;
 
             var offers = from s in db.Offers
                          where s.StartingDate > DateTime.Now
@@ -50,6 +56,19 @@ namespace PROJEKT_PZ_NK_v3.Controllers
             if (!String.IsNullOrEmpty(searchRace))
             {
                 offers = offers.Where(s => s.Animal.Race.ToLower().Contains(searchRace.ToLower()));
+            }
+            if (!String.IsNullOrEmpty(searchOwner))
+            {
+                offers = offers.Where(s => s.Profile.FirstName.ToLower().Contains(searchOwner.ToLower()) 
+                    || s.Profile.Login.ToLower().Contains(searchOwner.ToLower()));
+            }
+            if (!String.IsNullOrEmpty(searchAnimal))
+            {
+                offers = offers.Where(s => s.Animal.Name.ToLower().Contains(searchAnimal.ToLower()));
+            }
+            if (searchTime != null)
+            {
+                offers = offers.Where(s => SqlFunctions.DateDiff("DD", s.StartingDate, s.EndDate) == searchTime);
             }
             switch (sortOrder)
             {
@@ -74,6 +93,7 @@ namespace PROJEKT_PZ_NK_v3.Controllers
             ViewBag.SortList = new List<string>() {"tytuł malejąco", "tytuł rosnąco", "data malejąco", "data rosnąco"};
             return View(offers.ToPagedList(pageNumber, pageSize));
         }
+
 
         public ActionResult MyOffers()
         {

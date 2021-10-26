@@ -13,25 +13,40 @@
         <div class="col-11">
             @using (Html.BeginForm("Index", "Offers", FormMethod.Get))
             {
+            <div class="form-group row">
+                <div class="col-xs-3">
+                    <label for="ex1">Tytuł:</label>
+                    @Html.TextBox("SearchString", ViewBag.CurrentFilterT as string, new { placeholder = "Tytuł", style = "height:32px", @id = "ex1", @class = "form-control" })
+                </div>
+                <div class="col-xs-3">
+                    <label for="ex4">Właściciel:</label>
+                    @Html.TextBox("SearchOwner", ViewBag.CurrentFilterO as string, new { placeholder = "Właściciel", style = "height:32px", @id = "ex4", @class = "form-control" })
+                </div>
+                <div class="col-xs-3">
+                    <label for="ex6">Czas opieki:</label>
+                    @Html.TextBox("SearchTime", ViewBag.CurrentFilterT as string, new { value=-1, style = "height:32px", @id = "ex6", @class = "form-control", type="number" })
+                </div>
+                <div class="col-xs-1">
+                    <input type="submit" class="btn btn-primary" value="Szukaj" style="margin-top: 45%; height: 32px" />
+                </div>
+                <div class="col-xs-1">
+                    @Html.ActionLink("Wyczyść", "Index", "Offers", new { sortOrder = "", searchString = "", searchSpecies = "", searchRace = "", searchOwner ="", searchAnimal = "" }, new { @class = "btn btn-warning", style = "margin-top: 45%; height: 32px" })
+                </div>
+            </div>
                 <div class="form-group row">
                     <div class="col-xs-3">
-                        <label for="ex1">Tytuł oferty:</label>
-                        @Html.TextBox("SearchString", ViewBag.CurrentFilterT as string, new { placeholder = "Tytuł", style = "height:32px", @id = "ex1", @class = "form-control" })
+                        <label for="ex5">Zwierzak:</label>
+                        @Html.TextBox("SearchAnimal", ViewBag.CurrentFilterA as string, new { placeholder = "Zwierzak", style = "height:32px", @id = "ex5", @class = "form-control" })
                     </div>
                     <div class="col-xs-3">
-                        <label for="ex2">Rasa zwierzaka:</label>
+                        <label for="ex2">Rasa:</label>
                         @Html.TextBox("SearchRace", ViewBag.CurrentFilterR as string, new { placeholder = "Rasa", style = "height:32px", @id = "ex2", @class = "form-control" })
                     </div>
                     <div class="col-xs-3">
-                        <label for="ex3">Gatunek zwierzaka:</label>
+                        <label for="ex3">Gatunek:</label>
                         @Html.TextBox("SearchSpecies", ViewBag.CurrentFilterS as string, new { placeholder = "Gatunek", style = "height:32px", @id = "ex3", @class = "form-control" })
                     </div>
-                    <div class="col-xs-1">
-                        <input type="submit" class="btn btn-primary" value="Szukaj" style="margin-top: 45%; height: 32px" />
-                    </div>
-                    <div class="col-xs-1">
-                        @Html.ActionLink("Wyczyść", "Index", "Offers", new { sortOrder = "", searchString = "", searchSpecies = "", searchRace = "" }, new { @class = "btn btn-warning", style = "margin-top: 45%; height: 32px" })
-                    </div>
+
                 </div>
             }
         </div>
@@ -75,7 +90,7 @@
                 </p>
                 <p class="card-text">
                     Właściciel: @Html.ActionLink(item.Profile.Login,
-      "DetailsAnotherProfile", "Profiles", new { id = item.Profile.ID }, null)
+"DetailsAnotherProfile", "Profiles", new { id = item.Profile.ID }, null)
                 </p>
                 <p class="text-right btn-block">@Html.ActionLink("Więcej informacji", "Details", "Offers", new { id = item.ID }, null) </p>
             </div>
