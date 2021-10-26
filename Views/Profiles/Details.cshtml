@@ -67,7 +67,7 @@
                 <dd>
                     @Html.DisplayFor(model => model.City),
                     @Html.DisplayFor(model => model.Street)
-                    @if (Model.Email == User.Identity.Name || Model.Applications.Any(a => a.OwnerID == Model.ID && a.Status == "Zaakceptowane!"))
+                    @if (Model.Email == User.Identity.Name || Model.Applications.Any(a => a.OwnerID == Model.ID && a.StatusOwner == "Zaakceptowane!"))
                     {
                         @Html.DisplayFor(model => model.HouseNumber)
                     }

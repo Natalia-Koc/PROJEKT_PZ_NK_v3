@@ -308,9 +308,7 @@
     <Content Include="Views\Animals\Index.cshtml" />
     <Content Include="Views\Applications\Create.cshtml" />
     <Content Include="Views\Applications\Delete.cshtml" />
-    <Content Include="Views\Applications\Details.cshtml" />
     <Content Include="Views\Applications\Edit.cshtml" />
-    <Content Include="Views\Applications\Index.cshtml" />
     <Content Include="Views\Applications\MyApplications.cshtml" />
     <Content Include="Views\Applications\ApplicationsToMyOffers.cshtml" />
     <Content Include="Views\Applications\History.cshtml" />

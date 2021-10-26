@@ -34,9 +34,8 @@ namespace PROJEKT_PZ_NK_v3.Controllers
                 .Include(a => a.Owner)
                 .Where(a => a.Guardian.Email == User.Identity.Name 
                 && a.Offer.StartingDate > DateTime.Now
-                && a.Status != "Opiekun zrezygnował z oferty"
-                && a.Status != "Odrzucone"
-                && !a.Status.Contains("Usunieta"));
+                && a.StatusGuardian != "Odrzucone"
+                && a.StatusGuardian != "Usuniete");
             return View(applications.ToList());
         }
 
@@ -48,9 +47,8 @@ namespace PROJEKT_PZ_NK_v3.Controllers
                 .Include(a => a.Owner)
                 .Where(a => a.Owner.Email == User.Identity.Name 
                 && a.Offer.StartingDate > DateTime.Now
-                && a.Status != "Właściciel odrzucił zgłoszenie"
-                && a.Status != "Odrzucone"
-                && !a.Status.Contains("Usunieta"));
+                && a.StatusOwner != "Odrzucone"
+                && a.StatusOwner != "Usuniete");
             return View(applications.ToList());
         }
 
@@ -61,11 +59,10 @@ namespace PROJEKT_PZ_NK_v3.Controllers
                 .Include(a => a.Offer)
                 .Include(a => a.Owner)
                 .Where(a => (a.Offer.StartingDate < DateTime.Now || 
-                    (a.Status == "Właściciel odrzucił ofertę" && a.Owner.Email == User.Identity.Name) ||
-                    (a.Status == "Opiekun zrezygnował z oferty" && a.Guardian.Email == User.Identity.Name) ||
-                    a.Status == "Odrzucone" ||
-                    a.Status.Contains("Usunieta")) && 
-                    a.Status != "Usunieta przez " + User.Identity.Name);
+                    (a.StatusOwner == "Odrzucone" ||
+                    a.StatusGuardian == "Odrzucone") &&
+                    ((a.StatusOwner != "Usuniete" && a.Owner.Email == User.Identity.Name) ||
+                    (a.StatusGuardian != "Usuniete" && a.Guardian.Email == User.Identity.Name))));
             return View(applications.ToList());
         }
 
@@ -93,7 +90,8 @@ namespace PROJEKT_PZ_NK_v3.Controllers
             application.OwnerID = ownerID;
             application.Offer = db.Offers.Find(offerID);
             application.OfferID = offerID;
-            application.Status = "Oczekuje na akceptacje";
+            application.StatusGuardian = "Oczekuje na akceptacje";
+            application.StatusOwner = "Oczekuje na akceptacje";
             db.Applications.Add(application);
             db.SaveChanges();
 
@@ -108,14 +106,7 @@ namespace PROJEKT_PZ_NK_v3.Controllers
             {
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             }
-            if (db.Applications.Find(id).Status == "Właściciel odrzucił ofertę")
-            {
-                db.Applications.Find(id).Status = "Odrzucone";
-            }
-            else
-            {
-                db.Applications.Find(id).Status = "Opiekun zrezygnował z oferty";
-            }
+            db.Applications.Find(id).StatusGuardian = "Odrzucone";
             db.SaveChanges();
             return RedirectToAction("MyApplications");
         }
@@ -126,14 +117,7 @@ namespace PROJEKT_PZ_NK_v3.Controllers
             {
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             }
-            if (db.Applications.Find(id).Status == "Opiekun zrezygnował z oferty")
-            {
-                db.Applications.Find(id).Status = "Odrzucone";
-            }
-            else
-            {
-                db.Applications.Find(id).Status = "Właściciel odrzucił ofertę";
-            }
+            db.Applications.Find(id).StatusOwner = "Odrzucone";
             db.SaveChanges();
             return RedirectToAction("ApplicationsToMyOffers");
         }
@@ -144,7 +128,8 @@ namespace PROJEKT_PZ_NK_v3.Controllers
             {
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             }
-            db.Applications.Find(id).Status = "Zaakceptowane!";
+            db.Applications.Find(id).StatusOwner = "Zaakceptowane!";
+            db.Applications.Find(id).StatusGuardian = "Zaakceptowane!";
             db.SaveChanges();
             return RedirectToAction("ApplicationsToMyOffers");
         }
@@ -171,14 +156,15 @@ namespace PROJEKT_PZ_NK_v3.Controllers
         // GET: Applications/Delete/5
         public ActionResult Delete(int? id)
         {
+
             Applications applications = db.Applications.Find(id);
-            if (applications.Status.Contains("Usunieta"))
+            if (db.Profiles.Find(applications.OwnerID).Email == User.Identity.Name)
             {
-                db.Applications.Remove(applications);
+                db.Applications.Find(id).StatusOwner = "Usuniete";
             }
             else
             {
-                db.Applications.Find(id).Status = "Usunieta przez " + User.Identity.Name;
+                db.Applications.Find(id).StatusGuardian = "Usuniete";
             }
             db.SaveChanges();
             return RedirectToAction("History");

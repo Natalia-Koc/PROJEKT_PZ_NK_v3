@@ -11,7 +11,8 @@ namespace PROJEKT_PZ_NK_v3.DAL
     {
         protected override void Seed(OfferContext context)
         {
-            
+            /*OfferContext db = new OfferContext();
+            db.Database.Delete();*/
             /*List<Animal> animals = new List<Animal>
             {
                 new Animal {Name = "Meguniuniunia", Species = "Pies", Race ="Zmieszany mieszaniec przypomnijący krótkowłosego Owczarka",

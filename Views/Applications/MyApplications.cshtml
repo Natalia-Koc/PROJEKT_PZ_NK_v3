@@ -47,21 +47,17 @@
             @Html.DisplayFor(modelItem => item.Message)
         </td>
         <td>
-            @if (item.Status == "Zaakceptowane!")
+            @if (item.StatusGuardian == "Zaakceptowane!")
             {
-                <b style="color: limegreen">@Html.DisplayFor(modelItem => item.Status)</b>
+                <b style="color: limegreen">@Html.DisplayFor(modelItem => item.StatusGuardian)</b>
             }
-            else if (item.Status == "Właściciel odrzucił ofertę")
+            else if (item.StatusOwner == "Odrzucone")
             {
-                <b style="color: darkred">@item.Status</b>
-            }
-            else if (item.Status.Contains("Usunieta"))
-            {
-                <b style="color: black">Odrzucone</b>
+                <b style="color: darkred">@Html.DisplayFor(modelItem => item.StatusOwner)</b>
             }
             else
             {
-                <b>@Html.DisplayFor(modelItem => item.Status)</b>
+                <b>@Html.DisplayFor(modelItem => item.StatusGuardian)</b>
             }
 
         </td>

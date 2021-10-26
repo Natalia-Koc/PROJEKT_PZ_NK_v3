@@ -22,7 +22,7 @@
                 Wiadomość
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.Status)
+                Status
             </th>
             <th></th>
         </tr>
@@ -51,25 +51,22 @@
                     @Html.DisplayFor(modelItem => item.Message)
                 </td>
                 <td>
-                    @if (item.Status == "Zaakceptowane!")
+                    @if (item.StatusGuardian == "Zaakceptowane!")
                     {
-                        <b style="color: limegreen">@Html.DisplayFor(modelItem => item.Status)</b>
+                        <b style="color: limegreen">@Html.DisplayFor(modelItem => item.StatusGuardian)</b>
                     }
-                    else if (item.Status == "Opiekun zrezygnował z oferty")
+                    else if (item.StatusGuardian == "Odrzucone" || item.StatusGuardian == "Usuniete")
                     {
-                        <b style="color: darkred">@item.Status</b>
+                        <b style="color: darkred">Opiekun odrzucił ofertę</b>
                     }
-                    else if (item.Status.Contains("Usunieta"))
+                    else if (item.StatusOwner != "Usuniete")
                     {
-                        <b style="color: black">Odrzucone</b>
-                    }
-                    else
-                    {
-                        <b>@Html.DisplayFor(modelItem => item.Status)</b>
+                        <b>@Html.DisplayFor(modelItem => item.StatusOwner)</b>
                     }
                 </td>
                 <td>
-                    @if (item.Status != "Zaakceptowane!" && item.Status != "Opiekun zrezygnował z oferty")
+                    @if (item.StatusGuardian != "Zaakceptowane!" && item.StatusGuardian != "Odrzucone" && 
+                        item.StatusOwner != "Odrzucone")
                     {
                         <a href='@Url.Action("EditAccept", new { id = item.ID })'>
                             <img src="~/Images/accept.jpg" width="45px" alt="Akceptuj">

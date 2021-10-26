@@ -64,23 +64,19 @@
         @Html.DisplayFor(modelItem => item.Offer.Animal.Species) - @Html.DisplayFor(modelItem => item.Offer.Animal.Race)
     </td>
     <td>
-        @if (item.Status == "Zaakceptowane!")
+        @if (item.StatusGuardian == "Zaakceptowane!")
         {
-            <b style="color: limegreen">@Html.DisplayFor(modelItem => item.Status)</b>
+            <b style="color: limegreen">@Html.DisplayFor(modelItem => item.StatusGuardian)</b>
         }
-        else if (item.Status == "Opiekun zrezygnował z oferty"
-                        || item.Status == "Odrzucone"
-                        || item.Status == "Właściciel odrzucił ofertę")
+        else if (item.StatusGuardian == "Odrzucone"
+                        || item.StatusOwner == "Odrzucone")
         {
-            <b style="color: darkred">@item.Status</b>
+            <b style="color: darkred">Odrzucone</b>
         }
-        else if (item.Status.Contains("Usunieta"))
+        else if ((item.StatusGuardian == "Usuniete" && item.Guardian.Email != User.Identity.Name)
+                       || (item.StatusOwner == "Usuniete" && item.Owner.Email != User.Identity.Name))
         {
-            <b style="color: black">Odrzucone</b>
-        }
-        else
-        {
-            <b>@Html.DisplayFor(modelItem => item.Status)</b>
+            <b style="color: darkred">Odrzucone</b>
         }
     </td>
     <td>
