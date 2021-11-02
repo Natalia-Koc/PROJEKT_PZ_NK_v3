@@ -93,7 +93,26 @@
                     @Html.ActionLink("Zmień hasło", "ChangePassword", "Manage",
                null, new { @class = "btn btn-info btn-block" })
                 </p>
+
             </div>
+        }
+        else
+        {
+            if (ViewBag.Favourite != null)
+            {
+                <p style="width: 100%">
+                    @Html.ActionLink("Dodaj do ulubionych", "NewFavourite", "SavedProfiles",
+                    new { id = Model.ID }, new { @class = "btn btn-info btn-block" })
+                </p>
+            }
+            else
+            {
+                <p style="width: 100%">
+                    @Html.ActionLink("Usuń z ulubionych", "DeleteFavourite", "SavedProfiles",
+                   new { id = Model.ID }, new { @class = "btn btn-dark btn-block" })
+                </p>
+            }
+
         }
     </div>
 
@@ -181,7 +200,7 @@
                         }
                     </td>
                     <td>
-                        @Html.ActionLink(" ", "Delete", "Comments", new {profileID = Model.ID },
+                        @Html.ActionLink(" ", "Delete", "Comments", new { profileID = Model.ID },
                         htmlAttributes: new { @class = "btn btn-danger glyphicon glyphicon-trash" })
                     </td>
 

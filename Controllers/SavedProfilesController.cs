@@ -36,28 +36,22 @@ namespace PROJEKT_PZ_NK_v3.Controllers
             return View(savedProfiles);
         }
 
-        // GET: SavedProfiles/Create
-        public ActionResult Create()
+        public ActionResult NewFavourite(int? id)
         {
-            return View();
-        }
-
-        // POST: SavedProfiles/Create
-        // Aby zapewnić ochronę przed atakami polegającymi na przesyłaniu dodatkowych danych, włącz określone właściwości, z którymi chcesz utworzyć powiązania.
-        // Aby uzyskać więcej szczegółów, zobacz https://go.microsoft.com/fwlink/?LinkId=317598.
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public ActionResult Create([Bind(Include = "ID,SavedAs")] SavedProfiles savedProfiles)
-        {
-            if (ModelState.IsValid)
+            if(id != null)
             {
+                SavedProfiles savedProfiles = new SavedProfiles
+                {
+                    MyProfile = db.Profiles.Single(a => a.Email == User.Identity.Name),
+                    SavedProfile = db.Profiles.Single(a => a.ID == id),
+                    SavedAs = (Saved)2
+                };
                 db.SavedProfiles.Add(savedProfiles);
                 db.SaveChanges();
-                return RedirectToAction("Index");
             }
-
-            return View(savedProfiles);
+            return RedirectToAction("DetailsAnotherProfile", "Profiles", new { id = id });
         }
+
 
         // GET: SavedProfiles/Edit/5
         public ActionResult Edit(int? id)
@@ -91,7 +85,7 @@ namespace PROJEKT_PZ_NK_v3.Controllers
         }
 
         // GET: SavedProfiles/Delete/5
-        public ActionResult Delete(int? id)
+        public ActionResult DeleteFavourite(int? id)
         {
             if (id == null)
             {
@@ -102,7 +96,12 @@ namespace PROJEKT_PZ_NK_v3.Controllers
             {
                 return HttpNotFound();
             }
-            return View(savedProfiles);
+            else
+            {
+                db.SavedProfiles.Remove(savedProfiles);
+                db.SaveChanges();
+            }
+            return RedirectToAction("DetailsAnotherProfile", "Profiles", new { id = id });
         }
 
         // POST: SavedProfiles/Delete/5
