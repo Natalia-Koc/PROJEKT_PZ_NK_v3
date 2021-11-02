@@ -34,8 +34,7 @@ namespace PROJEKT_PZ_NK_v3.Controllers
                 .Include(a => a.Owner)
                 .Where(a => a.Guardian.Email == User.Identity.Name 
                 && a.Offer.StartingDate > DateTime.Now
-                && a.StatusGuardian != "Odrzucone"
-                && a.StatusGuardian != "Usuniete");
+                && a.StatusGuardian != "Odrzucone");
             return View(applications.ToList());
         }
 
@@ -47,8 +46,7 @@ namespace PROJEKT_PZ_NK_v3.Controllers
                 .Include(a => a.Owner)
                 .Where(a => a.Owner.Email == User.Identity.Name 
                 && a.Offer.StartingDate > DateTime.Now
-                && a.StatusOwner != "Odrzucone"
-                && a.StatusOwner != "Usuniete");
+                && a.StatusOwner != "Odrzucone");
             return View(applications.ToList());
         }
 
@@ -58,11 +56,9 @@ namespace PROJEKT_PZ_NK_v3.Controllers
                 .Include(a => a.Guardian)
                 .Include(a => a.Offer)
                 .Include(a => a.Owner)
-                .Where(a => (a.Offer.StartingDate < DateTime.Now || 
-                    (a.StatusOwner == "Odrzucone" ||
-                    a.StatusGuardian == "Odrzucone") &&
-                    ((a.StatusOwner != "Usuniete" && a.Owner.Email == User.Identity.Name) ||
-                    (a.StatusGuardian != "Usuniete" && a.Guardian.Email == User.Identity.Name))));
+                .Where(a => a.Offer.StartingDate < DateTime.Now || 
+                    ((a.StatusOwner == "Odrzucone" && a.Owner.Email == User.Identity.Name) ||
+                    (a.StatusGuardian == "Odrzucone" && a.Guardian.Email == User.Identity.Name)));
             return View(applications.ToList());
         }
 
@@ -151,23 +147,6 @@ namespace PROJEKT_PZ_NK_v3.Controllers
             ViewBag.OfferID = new SelectList(db.Offers, "ID", "Title", applications.OfferID);
             ViewBag.OwnerID = new SelectList(db.Profiles, "ID", "Login", applications.OwnerID);
             return View(applications);
-        }
-
-        // GET: Applications/Delete/5
-        public ActionResult Delete(int? id)
-        {
-
-            Applications applications = db.Applications.Find(id);
-            if (db.Profiles.Find(applications.OwnerID).Email == User.Identity.Name)
-            {
-                db.Applications.Find(id).StatusOwner = "Usuniete";
-            }
-            else
-            {
-                db.Applications.Find(id).StatusGuardian = "Usuniete";
-            }
-            db.SaveChanges();
-            return RedirectToAction("History");
         }
 
         protected override void Dispose(bool disposing)
