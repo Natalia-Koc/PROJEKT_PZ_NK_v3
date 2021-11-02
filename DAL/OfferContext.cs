@@ -32,5 +32,7 @@ namespace PROJEKT_PZ_NK_v3.DAL
             }
 
         public System.Data.Entity.DbSet<PROJEKT_PZ_NK_v3.Models.Applications> Applications { get; set; }
+
+        public System.Data.Entity.DbSet<PROJEKT_PZ_NK_v3.Models.SavedProfiles> SavedProfiles { get; set; }
     }
     }
