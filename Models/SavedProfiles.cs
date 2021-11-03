@@ -17,5 +17,7 @@ namespace PROJEKT_PZ_NK_v3.Models
         public Profile SavedProfile { get; set; }
         public Saved SavedAs { get; set; }
 
+
+
     }
 }

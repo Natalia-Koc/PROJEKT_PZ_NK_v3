@@ -41,7 +41,12 @@ namespace PROJEKT_PZ_NK_v3.Controllers
             profile = db.Profiles.Find(id); 
             ViewBag.ProgressBarCount = db.Comments.Where(m => m.ProfileID == id && m.Grade != 0).Count();
             ViewBag.FoundComment = db.Comments.Any(m => m.Author.Email == User.Identity.Name && m.ProfileID == id);
-            ViewBag.Favourite = db.SavedProfiles.Single(m => m.SavedProfile.ID == id && m.MyProfile.Email == User.Identity.Name);
+            ViewBag.Favourite = db.SavedProfiles
+                .Where(m => m.SavedProfile.ID == id && m.MyProfile.Email == User.Identity.Name && m.SavedAs == Saved.favourite)
+                .Count();
+            ViewBag.Blocked = db.SavedProfiles
+                .Where(m => m.SavedProfile.ID == id && m.MyProfile.Email == User.Identity.Name && m.SavedAs == Saved.blocked)
+                .Count();
             if (!ViewBag.FoundComment)
             {
                 ViewBag.MyComment = null;

@@ -74,9 +74,10 @@
                 </dd>
             </dl>
         </div>
-        @if (Model.Email == User.Identity.Name)
-        {
-            <div class="col-4 list-group-item-heading" style="margin-top: 0.7%">
+        <div class="col-4 list-group-item-heading" style="margin-top: 0.7%">
+            @if (Model.Email == User.Identity.Name)
+            {
+
                 <p style="width: 100%">
                     @Html.ActionLink("Dodaj nowego zwierzaka", "Create", "Animals",
                null, new { @class = "btn btn-success btn-block" })
@@ -94,27 +95,42 @@
                null, new { @class = "btn btn-info btn-block" })
                 </p>
 
-            </div>
-        }
-        else
-        {
-            if (ViewBag.Favourite != null)
-            {
-                <p style="width: 100%">
-                    @Html.ActionLink("Dodaj do ulubionych", "NewFavourite", "SavedProfiles",
-                    new { id = Model.ID }, new { @class = "btn btn-info btn-block" })
-                </p>
             }
             else
             {
-                <p style="width: 100%">
-                    @Html.ActionLink("Usuń z ulubionych", "DeleteFavourite", "SavedProfiles",
-                   new { id = Model.ID }, new { @class = "btn btn-dark btn-block" })
-                </p>
-            }
+                if (ViewBag.Favourite == 0)
+                {
+                    <p style="width: 100%">
+                        @Html.ActionLink("Dodaj do ulubionych", "NewFavourite", "SavedProfiles",
+                        new { id = Model.ID }, new { @class = "btn btn-default btn-block" })
+                    </p>
+                    if (ViewBag.Blocked == 0)
+                    {
+                        <p style="width: 100%">
+                            @Html.ActionLink("Zablokuj", "NewBlocked", "SavedProfiles",
+                            new { id = Model.ID }, new { @class = "btn btn-default btn-block" })
+                        </p>
+                    }
+                    else
+                    {
+                        <p style="width: 100%">
+                            @Html.ActionLink("Odblokuj", "DeleteBlocked", "SavedProfiles",
+                           new { id = Model.ID }, new { @class = "btn btn-dark btn-block" })
+                        </p>
+                    }
+                }
+                else
+                {
+                    <p style="width: 100%">
+                        @Html.ActionLink("Usuń z ulubionych", "DeleteFavourite", "SavedProfiles",
+                       new { id = Model.ID }, new { @class = "btn btn-success btn-block" })
+                    </p>
+                }
 
-        }
-    </div>
+
+            }
+        </div>
+        </div>
 
     <div class="container row">
         @foreach (var item in Model.Animals)

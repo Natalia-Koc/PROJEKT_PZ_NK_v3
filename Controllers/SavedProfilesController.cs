@@ -44,7 +44,23 @@ namespace PROJEKT_PZ_NK_v3.Controllers
                 {
                     MyProfile = db.Profiles.Single(a => a.Email == User.Identity.Name),
                     SavedProfile = db.Profiles.Single(a => a.ID == id),
-                    SavedAs = (Saved)2
+                    SavedAs = Saved.favourite
+                };
+                db.SavedProfiles.Add(savedProfiles);
+                db.SaveChanges();
+            }
+            return RedirectToAction("DetailsAnotherProfile", "Profiles", new { id = id });
+        }
+
+        public ActionResult NewBlocked(int? id)
+        {
+            if (id != null)
+            {
+                SavedProfiles savedProfiles = new SavedProfiles
+                {
+                    MyProfile = db.Profiles.Single(a => a.Email == User.Identity.Name),
+                    SavedProfile = db.Profiles.Single(a => a.ID == id),
+                    SavedAs = Saved.blocked
                 };
                 db.SavedProfiles.Add(savedProfiles);
                 db.SaveChanges();
@@ -91,7 +107,7 @@ namespace PROJEKT_PZ_NK_v3.Controllers
             {
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             }
-            SavedProfiles savedProfiles = db.SavedProfiles.Find(id);
+            SavedProfiles savedProfiles = db.SavedProfiles.Single(a => a.SavedProfile.ID == id && a.SavedAs == Saved.favourite);
             if (savedProfiles == null)
             {
                 return HttpNotFound();
@@ -101,18 +117,26 @@ namespace PROJEKT_PZ_NK_v3.Controllers
                 db.SavedProfiles.Remove(savedProfiles);
                 db.SaveChanges();
             }
-            return RedirectToAction("DetailsAnotherProfile", "Profiles", new { id = id });
+            return RedirectToAction("DetailsAnotherProfile", "Profiles", new { id });
         }
 
-        // POST: SavedProfiles/Delete/5
-        [HttpPost, ActionName("Delete")]
-        [ValidateAntiForgeryToken]
-        public ActionResult DeleteConfirmed(int id)
+        public ActionResult DeleteBlocked(int? id)
         {
-            SavedProfiles savedProfiles = db.SavedProfiles.Find(id);
-            db.SavedProfiles.Remove(savedProfiles);
-            db.SaveChanges();
-            return RedirectToAction("Index");
+            if (id == null)
+            {
+                return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
+            }
+            SavedProfiles savedProfiles = db.SavedProfiles.Single(a => a.SavedProfile.ID == id && a.SavedAs == Saved.blocked);
+            if (savedProfiles == null)
+            {
+                return HttpNotFound();
+            }
+            else
+            {
+                db.SavedProfiles.Remove(savedProfiles);
+                db.SaveChanges();
+            }
+            return RedirectToAction("DetailsAnotherProfile", "Profiles", new { id });
         }
 
         protected override void Dispose(bool disposing)
