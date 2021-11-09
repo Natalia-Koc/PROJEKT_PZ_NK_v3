@@ -4,91 +4,98 @@
     ViewBag.Title = "Details";
 }
 
+<h2 style="margin: 4%" class="glyphicon glyphicon-search">  Szczegóły zwierzaka</h2>
 
-<div>
+<div class="container-fluid">
     <hr />
-    <dl class="dl-horizontal">
-        <dt>
-            Zdjęcie
-        </dt>
+    <div class="row">
+        <div class="col-5 list-group-item-heading">
 
-        <dd>
-            <img src="~/ImagesAnimals/@Html.DisplayFor(model => model.Image)" width="300px">
-        </dd>
+            <img src="~/ImagesAnimals/@Html.DisplayFor(model => model.Image)" width="400px">
+        </div>
+        <div class="col-6 active">
+            <div class="panel panel-info">
+                <div class="panel-heading">
+                    <dl class="dl-horizontal">
+                        <dd>
 
-        <dt>
-            Nazwa
-        </dt>
+                            <h3 class="panel-title">@Html.DisplayFor(model => model.Name)</h3>
 
-        <dd>
-            @Html.DisplayFor(model => model.Name)
-        </dd>
+                        </dd>
+                    </dl>
+                </div>
+                <div class="panel-body">
+                    <dl class="dl-horizontal">
+                        <dt>
+                            Gatunek
+                        </dt>
 
-        <dt>
-            Gatunek
-        </dt>
+                        <dd>
+                            @Html.DisplayFor(model => model.Species)
+                        </dd>
 
-        <dd>
-            @Html.DisplayFor(model => model.Species)
-        </dd>
+                        <dt>
+                            Rasa
+                        </dt>
 
-        <dt>
-            Rasa
-        </dt>
+                        <dd>
+                            @Html.DisplayFor(model => model.Race)
+                        </dd>
 
-        <dd>
-            @Html.DisplayFor(model => model.Race)
-        </dd>
+                        <dt>
+                            Płeć
+                        </dt>
 
-        <dt>
-            Płeć
-        </dt>
+                        <dd>
+                            @Html.DisplayFor(model => model.Gender)
+                        </dd>
 
-        <dd>
-            @Html.DisplayFor(model => model.Gender)
-        </dd>
+                        <dt>
+                            Waga
+                        </dt>
 
-        <dt>
-            Waga
-        </dt>
+                        <dd>
+                            @Html.DisplayFor(model => model.Weight)
+                        </dd>
 
-        <dd>
-            @Html.DisplayFor(model => model.Weight)
-        </dd>
+                        <dt>
+                            Data urodzenia
+                        </dt>
 
-        <dt>
-            Data urodzenia
-        </dt>
+                        <dd>
+                            @Html.DisplayFor(model => model.DateOfBirth)
+                        </dd>
 
-        <dd>
-            @Html.DisplayFor(model => model.DateOfBirth)
-        </dd>
+                        <dt>
+                            Opis
+                        </dt>
 
-        <dt>
-            Opis
-        </dt>
+                        <dd>
+                            @Html.DisplayFor(model => model.Description)
+                        </dd>
+                        @if (Model.Profiles.Email != User.Identity.Name)
+                        {
+                            <dt>
+                                Właściciel
+                            </dt>
 
-        <dd>
-            @Html.DisplayFor(model => model.Description)
-        </dd>
-        @if (Model.Profiles.Email != User.Identity.Name)
+                            <dd>
+                                @Html.ActionLink(Model.Profiles.Login, "DetailsAnotherProfile", "Profiles", new { id = Model.Profiles.ID }, null)
+                            </dd>
+                        }
+                    </dl>
+                </div>
+            </div>
+
+
+        </div>
+    </div>
+        @if (Model.Profiles.Email == User.Identity.Name)
         {
-            <dt>
-                Właściciel
-            </dt>
-
-            <dd>
-                @Html.ActionLink(Model.Profiles.Login, "DetailsAnotherProfile", "Profiles", new { id = Model.Profiles.ID }, null)
-            </dd>
+            <p>
+                @Html.ActionLink("Edytuj", "Edit", new { id = Model.ID }, new { @class = "btn btn-primary" })
+                @Html.ActionLink("Usuń", "Delete", new { id = Model.ID }, new { @class = "btn btn-danger" })
+            </p>
         }
-    </dl>
-</div>
-@if (Model.Profiles.Email == User.Identity.Name)
-{
-<p>
-    @Html.ActionLink("Edytuj", "Edit", new { id = Model.ID }, new { @class = "btn btn-primary" })
-    @Html.ActionLink("Usuń", "Delete", new { id = Model.ID }, new { @class = "btn btn-danger" })
-</p>
-}
 
 

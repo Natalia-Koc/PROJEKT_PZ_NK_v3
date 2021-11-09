@@ -128,6 +128,15 @@ namespace PROJEKT_PZ_NK_v3.Controllers
                 && a.StatusGuardian != "Usuniete"
                 && a.StatusOwner != "Usuniete");
             ViewBag.Applications = applications;
+
+            ViewBag.AnotherOffers = db.Offers
+                .Where(a => a.ID != id)
+                .OrderBy(a => a.Profile.ID == id)
+                .ThenBy(a => a.Animal.Species == offer.Animal.Species)
+                .ThenBy(a => a.Animal.Race == offer.Animal.Race)
+                .Take(5)
+                .ToList();
+
             return View(offer);
         }
 

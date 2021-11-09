@@ -4,7 +4,7 @@
     ViewBag.Title = "MyApplications";
 }
 <div class="container">
-    <h2 style="margin:4%">Moje zgłoszenia</h2>
+    <h2 style="margin:4%" class="glyphicon glyphicon-edit">  Moje zgłoszenia</h2>
 
     <table class="table table-striped">
         <tr>
@@ -17,8 +17,11 @@
             <th>
                 Zwierzak
             </th>
-            <th>
+            <th style="width: 30%">
                 Wiadomość
+            </th>
+            <th style="width: 10%">
+                Status
             </th>
             <th></th>
         </tr>
@@ -43,8 +46,8 @@
             <ins>Rasa</ins>: @Html.DisplayFor(modelItem => item.Offer.Animal.Race)<br />
             <ins>Waga</ins>: @Html.DisplayFor(modelItem => item.Offer.Animal.Weight)
         </td>
-        <td>
-            @Html.DisplayFor(modelItem => item.Message)
+        <td >
+            <p>@Html.DisplayFor(modelItem => item.Message)</p>
         </td>
         <td>
             @if (item.StatusGuardian == "Zaakceptowane!")

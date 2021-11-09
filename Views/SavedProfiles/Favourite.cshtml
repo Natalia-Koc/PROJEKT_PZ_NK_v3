@@ -4,7 +4,7 @@
     ViewBag.Title = "Favourite";
 }
 
-<h2 class="text-success"><span class="glyphicon glyphicon-heart"></span>  Ulubione profile  <span class="glyphicon glyphicon-heart"></span></h2>
+<h2 class="text-success glyphicon glyphicon-heart" style="margin: 4%">  Ulubione profile  <span class="glyphicon glyphicon-heart"></span></h2>
 
 
 
@@ -17,7 +17,7 @@
 
         <div class="panel-body">
             <span class="glyphicon glyphicon-user"> @item.SavedProfile.FirstName @item.SavedProfile.LastName</span><br />
-            <span class="glyphicon glyphicon-globe"> @item.SavedProfile.City, @item.SavedProfile.Street</span>
+            <span class="glyphicon glyphicon-map-marker"> @item.SavedProfile.City, @item.SavedProfile.Street</span>
         </div>
     </div>
 }
