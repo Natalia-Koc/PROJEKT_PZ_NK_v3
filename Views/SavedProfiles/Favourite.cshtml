@@ -1,0 +1,24 @@
+﻿@model IEnumerable<PROJEKT_PZ_NK_v3.Models.SavedProfiles>
+
+@{
+    ViewBag.Title = "Favourite";
+}
+
+<h2 class="text-success"><span class="glyphicon glyphicon-heart"></span>  Ulubione profile  <span class="glyphicon glyphicon-heart"></span></h2>
+
+
+
+@foreach (var item in Model)
+{
+    <div class="panel panel-success">
+        <div class="panel-heading">
+            <h3 class="panel-title">@Html.ActionLink(@item.SavedProfile.Login, "DetailsAnotherProfile", "Profiles", new { id = item.SavedProfile.ID }, null)</h3>
+        </div>
+
+        <div class="panel-body">
+            <span class="glyphicon glyphicon-user"> @item.SavedProfile.FirstName @item.SavedProfile.LastName</span><br />
+            <span class="glyphicon glyphicon-globe"> @item.SavedProfile.City, @item.SavedProfile.Street</span>
+        </div>
+    </div>
+}
+

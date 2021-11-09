@@ -16,9 +16,25 @@ namespace PROJEKT_PZ_NK_v3.Controllers
         private OfferContext db = new OfferContext();
 
         // GET: SavedProfiles
-        public ActionResult Index()
+        public ActionResult Blocked()
         {
-            return View(db.SavedProfiles.ToList());
+            var savedProfiles = db.SavedProfiles
+                .Include(a => a.SavedProfile)
+                .Where(a => a.MyProfile.Email == User.Identity.Name
+                    && a.SavedAs == Saved.blocked)
+                .ToList();
+            return View(savedProfiles);
+        }
+
+        // GET: SavedProfiles
+        public ActionResult Favourite()
+        {
+            var savedProfiles = db.SavedProfiles
+                .Include(a => a.SavedProfile)
+                .Where(a => a.MyProfile.Email == User.Identity.Name
+                    && a.SavedAs == Saved.favourite)
+                .ToList();
+            return View(savedProfiles);
         }
 
         // GET: SavedProfiles/Details/5

@@ -317,8 +317,8 @@
     <Content Include="Views\SavedProfiles\Create.cshtml" />
     <Content Include="Views\SavedProfiles\Delete.cshtml" />
     <Content Include="Views\SavedProfiles\Details.cshtml" />
-    <Content Include="Views\SavedProfiles\Edit.cshtml" />
-    <Content Include="Views\SavedProfiles\Index.cshtml" />
+    <Content Include="Views\SavedProfiles\Blocked.cshtml" />
+    <Content Include="Views\SavedProfiles\Favourite.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

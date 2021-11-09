@@ -1,0 +1,24 @@
+﻿@model IEnumerable<PROJEKT_PZ_NK_v3.Models.SavedProfiles>
+
+@{
+    ViewBag.Title = "Blocked";
+}
+
+<h2 class="text-danger"><span class="glyphicon glyphicon-ban-circle"></span>  Zablokowane profile  <span class="glyphicon glyphicon-ban-circle"></span></h2>
+
+
+
+@foreach (var item in Model)
+{
+    <div class="panel panel-danger">
+        <div class="panel-heading">
+            <h3 class="panel-title">@Html.ActionLink(@item.SavedProfile.Login, "DetailsAnotherProfile", "Profiles", new { id = item.SavedProfile.ID}, null)</h3>
+        </div>
+
+        <div class="panel-body">
+            <span class="glyphicon glyphicon-user"> @item.SavedProfile.FirstName @item.SavedProfile.LastName</span><br />
+            <span class="glyphicon glyphicon-globe"> @item.SavedProfile.City, @item.SavedProfile.Street</span>
+        </div>
+    </div>
+}
+
