@@ -208,6 +208,7 @@
     <Compile Include="Models\Comments.cs" />
     <Compile Include="Models\IdentityModels.cs" />
     <Compile Include="Models\ManageViewModels.cs" />
+    <Compile Include="Models\Notification.cs" />
     <Compile Include="Models\Offer.cs" />
     <Compile Include="Models\Profile.cs" />
     <Compile Include="Models\SavedProfiles.cs" />

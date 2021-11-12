@@ -64,6 +64,11 @@ namespace PROJEKT_PZ_NK_v3.Controllers
                     .OrderByDescending(a => a.Profile.Rate)
                     .Skip(4).Take(4).ToList();
             }
+
+            ViewBag.StatisticsAnimals = db.Animals.Count();
+            ViewBag.StatisticsOffers = db.Offers.Count();
+            ViewBag.StatisticsUsers = db.Profiles.Count();
+
             return View();
         }
 
