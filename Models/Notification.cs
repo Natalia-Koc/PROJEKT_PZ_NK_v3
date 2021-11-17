@@ -9,6 +9,8 @@ namespace PROJEKT_PZ_NK_v3.Models
     {
         public int ID { get; set; }
         public Profile Profile { get; set; }
+        public Offer Offer { get; set; }
+        public String Message { get; set; }
 
     }
 }
