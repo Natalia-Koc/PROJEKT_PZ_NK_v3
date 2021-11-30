@@ -98,26 +98,23 @@
             }
             else
             {
-                if (ViewBag.Favourite == 0)
+                if (ViewBag.Favourite == 0 && ViewBag.Blocked == 0)
                 {
                     <p style="width: 100%">
                         @Html.ActionLink("Dodaj do ulubionych", "NewFavourite", "SavedProfiles",
                         new { id = Model.ID }, new { @class = "btn btn-default btn-block" })
                     </p>
-                    if (ViewBag.Blocked == 0)
-                    {
-                        <p style="width: 100%">
-                            @Html.ActionLink("Zablokuj", "NewBlocked", "SavedProfiles",
-                            new { id = Model.ID }, new { @class = "btn btn-default btn-block" })
-                        </p>
-                    }
-                    else
-                    {
-                        <p style="width: 100%">
-                            @Html.ActionLink("Odblokuj", "DeleteBlocked", "SavedProfiles",
-                           new { id = Model.ID }, new { @class = "btn btn-dark btn-block" })
-                        </p>
-                    }
+                    <p style="width: 100%">
+                        @Html.ActionLink("Zablokuj", "NewBlocked", "SavedProfiles",
+                        new { id = Model.ID }, new { @class = "btn btn-default btn-block" })
+                    </p>
+                }
+                else if (ViewBag.Favourite == 0)
+                {
+                    <p style="width: 100%">
+                        @Html.ActionLink("Odblokuj", "DeleteBlocked", "SavedProfiles",
+                       new { id = Model.ID }, new { @class = "btn btn-dark btn-block" })
+                    </p>
                 }
                 else
                 {
@@ -126,8 +123,6 @@
                        new { id = Model.ID }, new { @class = "btn btn-success btn-block" })
                     </p>
                 }
-
-
             }
         </div>
         </div>

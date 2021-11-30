@@ -21,9 +21,11 @@ namespace PROJEKT_PZ_NK_v3.Controllers
             ViewBag.Profil = profile;
 
             var offers = db.Offers
-                .Where(a => a.Profile.Email != User.Identity.Name && a.Profile.Comments
-                    .Where(b => ((b.Author.Email == User.Identity.Name || b.Profile.Email == User.Identity.Name)
-                        && (b.Grade > 2 || b.Grade == 0)))
+                .Where(a => a.Profile.Email != User.Identity.Name 
+                    && a.EndDate > DateTime.Now
+                    && a.Profile.Comments
+                    .Where(b => (b.Author.Email == User.Identity.Name || b.Profile.Email == User.Identity.Name)
+                        && (b.Grade > 2 || b.Grade == 0))
                 .Count() >= 0);
 
             if (db.Applications.Any(a => a.Guardian.Email == User.Identity.Name))
