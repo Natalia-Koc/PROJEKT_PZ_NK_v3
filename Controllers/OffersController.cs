@@ -163,6 +163,17 @@ namespace PROJEKT_PZ_NK_v3.Controllers
                 db.Offers.Add(offer);
                 db.SaveChanges();
                 db.Profiles.Single(p => p.Email == User.Identity.Name).Offers.Add(offer);
+
+                foreach (var item in db.SavedProfiles.Where(a => a.SavedProfile.ID == offer.Profile.ID && a.SavedAs == Saved.favourite))
+                {
+                    Notification notifi = new Notification
+                    {
+                        Offer = offer,
+                        Message = offer.Profile.Login + " dodał nową ofertę",
+                        Profile = item.MyProfile
+                    };
+                    db.Notifications.Add(notifi);
+                }
                 db.SaveChanges();
                 return RedirectToAction("Index");
             }

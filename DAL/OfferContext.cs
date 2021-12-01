@@ -29,10 +29,12 @@ namespace PROJEKT_PZ_NK_v3.DAL
                     .WillCascadeOnDelete(false);
 
                 modelBuilder.Conventions.Remove<PluralizingTableNameConvention>();
+
             }
 
         public System.Data.Entity.DbSet<PROJEKT_PZ_NK_v3.Models.Applications> Applications { get; set; }
 
         public System.Data.Entity.DbSet<PROJEKT_PZ_NK_v3.Models.SavedProfiles> SavedProfiles { get; set; }
+        public DbSet<Notification> Notifications { get; set; }
     }
     }

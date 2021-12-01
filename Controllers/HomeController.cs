@@ -14,6 +14,8 @@ namespace PROJEKT_PZ_NK_v3.Controllers
     public class HomeController : Controller
     {
         OfferContext db = new OfferContext();
+
+
         public ActionResult Index()
         {
 

@@ -6,6 +6,7 @@ using System.Web.Mvc;
 using Microsoft.AspNet.Identity;
 using Microsoft.AspNet.Identity.Owin;
 using Microsoft.Owin.Security;
+using PROJEKT_PZ_NK_v3.DAL;
 using PROJEKT_PZ_NK_v3.Models;
 
 namespace PROJEKT_PZ_NK_v3.Controllers
@@ -19,6 +20,8 @@ namespace PROJEKT_PZ_NK_v3.Controllers
         public ManageController()
         {
         }
+
+        
 
         public ManageController(ApplicationUserManager userManager, ApplicationSignInManager signInManager)
         {

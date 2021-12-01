@@ -89,6 +89,14 @@ namespace PROJEKT_PZ_NK_v3.Controllers
             application.StatusGuardian = "Oczekuje na akceptacje";
             application.StatusOwner = "Oczekuje na akceptacje";
             db.Applications.Add(application);
+
+            Notification notifi = new Notification
+            {
+                Offer = db.Offers.Find(offerID),
+                Message = "Nowe zgłoszenie do oferty",
+                Profile = db.Profiles.Find(ownerID)
+            };
+            db.Notifications.Add(notifi);
             db.SaveChanges();
 
             return RedirectToAction("Details", "Offers", new { id = offerID });
@@ -103,6 +111,14 @@ namespace PROJEKT_PZ_NK_v3.Controllers
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             }
             db.Applications.Find(id).StatusGuardian = "Odrzucone";
+
+            Notification notifi = new Notification
+            {
+                Offer = db.Offers.Find(db.Applications.Find(id).OfferID),
+                Message = "Opiekun odrzucił ofertę",
+                Profile = db.Profiles.Find(db.Applications.Find(id).OwnerID)
+            };
+            db.Notifications.Add(notifi);
             db.SaveChanges();
             return RedirectToAction("MyApplications");
         }
@@ -114,6 +130,14 @@ namespace PROJEKT_PZ_NK_v3.Controllers
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             }
             db.Applications.Find(id).StatusOwner = "Odrzucone";
+
+            Notification notifi = new Notification
+            {
+                Offer = db.Offers.Find(db.Applications.Find(id).OfferID),
+                Message = "Właściciel odrzucił ofertę",
+                Profile = db.Profiles.Find(db.Applications.Find(id).GuardianID)
+            };
+            db.Notifications.Add(notifi);
             db.SaveChanges();
             return RedirectToAction("ApplicationsToMyOffers");
         }
@@ -126,6 +150,14 @@ namespace PROJEKT_PZ_NK_v3.Controllers
             }
             db.Applications.Find(id).StatusOwner = "Zaakceptowane!";
             db.Applications.Find(id).StatusGuardian = "Zaakceptowane!";
+
+            Notification notifi = new Notification
+            {
+                Offer = db.Offers.Find(db.Applications.Find(id).OfferID),
+                Message = "Właściciel zaakceptował ofertę!",
+                Profile = db.Profiles.Find(db.Applications.Find(id).GuardianID)
+            };
+            db.Notifications.Add(notifi);
             db.SaveChanges();
             return RedirectToAction("ApplicationsToMyOffers");
         }

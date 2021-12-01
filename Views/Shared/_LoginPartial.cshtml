@@ -10,16 +10,7 @@
         <a class="dropdown-toggle" data-toggle="dropdown" href="#">
             <span class="glyphicon glyphicon-menu-hamburger"></span>
         </a>
-        <ul class="dropdown-menu overflow-auto" data-bs-spy="scroll" data-bs-offset="20" style="max-height: 200px; max-width:150px">
-            <li>@Html.ActionLink("Ulubione", "Favourite", "SavedProfiles")</li>
-            <li>@Html.ActionLink("Zablokowane", "Blocked", "SavedProfiles")</li>
-            <li>@Html.ActionLink("Ulubione", "Favourite", "SavedProfiles")</li>
-            <li>@Html.ActionLink("Zablokowane", "Blocked", "SavedProfiles")</li>
-            <li>@Html.ActionLink("Ulubione", "Favourite", "SavedProfiles")</li>
-            <li>@Html.ActionLink("Zablokowane", "Blocked", "SavedProfiles")</li>
-            <li>@Html.ActionLink("Ulubione", "Favourite", "SavedProfiles")</li>
-            <li>@Html.ActionLink("Zablokowane", "Blocked", "SavedProfiles")</li>
-        </ul>
+        @{ Html.RenderAction("Index", "MyLayout"); }
     </li>
     <li>
         @Html.ActionLink("Witaj," + User.Identity.GetUserName() + "!", "Details", "Profiles", routeValues: null, htmlAttributes: new { title = "Details" })

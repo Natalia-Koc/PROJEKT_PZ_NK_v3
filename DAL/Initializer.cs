@@ -5,14 +5,17 @@ using System.Data.Entity;
 using System.Linq;
 using System.Web;
 
+
 namespace PROJEKT_PZ_NK_v3.DAL
 {
     public class Initializer : DropCreateDatabaseIfModelChanges<OfferContext>
     {
         protected override void Seed(OfferContext context)
         {
-            /*OfferContext db = new OfferContext();
-            db.Database.Delete();*/
+
+            OfferContext db = new OfferContext();
+            //db.Database.Delete();
+            //db.SaveChanges();
             /*List<Animal> animals = new List<Animal>
             {
                 new Animal {Name = "Meguniuniunia", Species = "Pies", Race ="Zmieszany mieszaniec przypomnijący krótkowłosego Owczarka",
