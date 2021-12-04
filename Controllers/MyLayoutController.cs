@@ -1,4 +1,5 @@
 ﻿using PROJEKT_PZ_NK_v3.DAL;
+using PROJEKT_PZ_NK_v3.Models;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -15,11 +16,13 @@ namespace PROJEKT_PZ_NK_v3.Controllers
         // GET: Layout
         public ActionResult Index()
         {
-            var notifi = new List<string>() {
-                "Category 1", "Category 2", "Category 3", "Category 4"
-            };
+            var notifi = db.Notifications
+                .Include("Offer")
+                .Where(a => a.Profile.Email == User.Identity.Name);
+            
             ViewBag.notifi = notifi;
             return PartialView("Index");
         }
+
     }
 }

@@ -1,8 +1,13 @@
 ﻿
-<ul class="dropdown-menu overflow-auto" data-bs-spy="scroll" data-bs-offset="20" style="max-height: 200px; max-width:150px">
+<ul class="dropdown-menu overflow-auto" data-bs-spy="scroll" data-bs-offset="20" style="max-height: 200px; width:300px">
     @foreach (var category in ViewBag.notifi)
     {
-        <li>@category</li>
+    <li class="row">
+        <p class="col-8">@category.Message</p>
+        <p class="row-cols-sm-auto">
+            <a href="@Url.Action("Details", "Offers", new { id = category.Offer.ID })" class = "glyphicon glyphicon-search"> Sprawdź</a> 
+        </p>
+    </li>
     }
 
 </ul>

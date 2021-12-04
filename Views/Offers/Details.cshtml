@@ -124,10 +124,10 @@
                 <th>
                     Opiekun
                 </th>
-                <th>
+                <th style="width: 25%">
                     Wiadomość
                 </th>
-                <th>
+                <th style="width: 10%">
                     Status
                 </th>
                 <th></th>
@@ -156,25 +156,22 @@
                         @item.Message
                     </td>
                     <td>
-                        @if (item.Status == "Zaakceptowane!")
+                        @if (item.StatusGuardian == "Zaakceptowane!")
                         {
                             <b style="color: limegreen">@item.Status</b>
                         }
-                        else if (item.Status == "Opiekun zrezygnował z oferty")
+                        else if (item.StatusOwner == "Opiekun zrezygnował z oferty")
                         {
                             <b style="color: darkred">@item.Status</b>
                         }
-                        else if (item.Status.Contains("Usunieta"))
-                        {
-                            <b style="color: black">Odrzucone</b>
-                        }
                         else
                         {
-                            <b>@item.Status</b>
+                            <b>@item.StatusOwner</b>
                         }
                     </td>
                     <td>
-                        @if (item.Status != "Zaakceptowane!" && item.Status != "Opiekun zrezygnował z oferty")
+                        @if (item.StatusGuardian != "Zaakceptowane!" && 
+                            (item.StatusGuardian != "Opiekun zrezygnował z oferty" || item.StatusOwner != "Opiekun zrezygnował z oferty"))
                         {
                             <a href='@Url.Action("EditAccept", "Applications", new { id = item.ID })'>
                                 <img src="~/Images/accept.jpg" width="45px" alt="Akceptuj">
