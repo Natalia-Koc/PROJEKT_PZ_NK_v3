@@ -1,4 +1,6 @@
-﻿
+﻿<a data-toggle="dropdown" href="#">
+    <span class="glyphicon glyphicon-bell label label-default text-xxl-center"> @ViewBag.notifiCount </span>
+</a>
 <ul class="dropdown-menu overflow-auto" data-bs-spy="scroll" data-bs-offset="20" style="max-height: 200px; width:300px">
     @foreach (var category in ViewBag.notifi)
     {

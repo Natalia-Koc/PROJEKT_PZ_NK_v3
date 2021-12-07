@@ -19,8 +19,8 @@ namespace PROJEKT_PZ_NK_v3.Controllers
             var notifi = db.Notifications
                 .Include("Offer")
                 .Where(a => a.Profile.Email == User.Identity.Name);
-            
             ViewBag.notifi = notifi;
+            ViewBag.notifiCount = notifi.Count();
             return PartialView("Index");
         }
 

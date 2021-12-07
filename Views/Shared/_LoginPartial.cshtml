@@ -31,9 +31,6 @@
         @Html.AntiForgeryToken()
         <ul class="nav navbar-nav navbar-right">
             <li class="dropdown">
-                <a class="dropdown-toggle" data-toggle="dropdown" href="#">
-                    <span class="glyphicon glyphicon-menu-hamburger"></span>
-                </a>
                 @{ Html.RenderAction("Index", "MyLayout"); }
             </li>
             <li>
