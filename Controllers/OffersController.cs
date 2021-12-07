@@ -13,13 +13,11 @@ using System.Data.Entity.SqlServer;
 
 namespace PROJEKT_PZ_NK_v3.Controllers
 {
-    [Authorize]
     public class OffersController : Controller
     {
         private OfferContext db = new OfferContext();
 
         // GET: Offers
-        [Authorize]
         public ActionResult Index(string sortOrder, string searchString, string searchSpecies, string searchRace, 
             string searchOwner, string searchAnimal, int? searchTime, int? page)
         {
@@ -94,7 +92,7 @@ namespace PROJEKT_PZ_NK_v3.Controllers
             return View(offers.ToPagedList(pageNumber, pageSize));
         }
 
-
+        [Authorize]
         public ActionResult MyOffers()
         {
             var offers = from s in db.Offers
@@ -103,6 +101,7 @@ namespace PROJEKT_PZ_NK_v3.Controllers
             return View(offers.ToList());
         }
 
+        [Authorize]
         // GET: Offers/Details/5
         public ActionResult Details(int? id)
         {
@@ -140,6 +139,7 @@ namespace PROJEKT_PZ_NK_v3.Controllers
             return View(offer);
         }
 
+        [Authorize]
         // GET: Offers/Create
         public ActionResult Create()
         {
@@ -181,6 +181,8 @@ namespace PROJEKT_PZ_NK_v3.Controllers
             return View(offer);
         }
 
+
+        [Authorize]
         // GET: Offers/Edit/5
         public ActionResult Edit(int? id)
         {
@@ -212,6 +214,7 @@ namespace PROJEKT_PZ_NK_v3.Controllers
             return View(offer);
         }
 
+        [Authorize]
         // GET: Offers/Delete/5
         public ActionResult Delete(int? id)
         {

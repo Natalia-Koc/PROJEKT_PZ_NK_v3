@@ -21,10 +21,12 @@
                     <div class="panel-heading">
                         <h4 class="panel-title list-group-item">
 
-                            <a data-toggle="collapse" data-parent="#accordion" href="#@item.ID"><b>@item.Login</b></a>
+                            <a data-toggle="collapse" data-parent="#accordion" href="#@item.ID">
+                                <b>@item.Login</b>
+                                @Html.ActionLink(" ", "Details", "Profiles", new { id = item.ID}, new { @class = "glyphicon glyphicon-search" })
+                            </a>
                             <span class="badge">@item.Rate%</span><br />
                             @item.FirstName @item.LastName
-
                         </h4>
                     </div>
 
