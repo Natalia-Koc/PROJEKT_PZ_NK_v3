@@ -150,7 +150,7 @@
 
         @using (Html.BeginForm("Create", "Comments"))
         {
-            if (Model.Email != User.Identity.Name)
+            if (Model.Email != User.Identity.Name && ViewBag.NotifiEnded != 0)
             {
                 if (!ViewBag.FoundComment)
                 {
@@ -189,53 +189,51 @@
             }
         }
         <hr />
-        <table class="table table-striped">
-            <tr>
-                <th>Autor</th>
-                <th>Komentarz</th>
-                <th>Ocena</th>
-            </tr>
-            @if (@ViewBag.MyComment != null)
-            {
-                <tr>
-                    <td>@ViewBag.MyComment.Author.Login</td>
-                    <td>@ViewBag.MyComment.Contents</td>
-                    <td>
-                        @if (ViewBag.MyComment.Grade == 0)
-                        {
-                            <p>brak</p>
-                        }
-                        else
-                        {
-                            @ViewBag.MyComment.Grade
-                        }
-                    </td>
-                    <td>
-                        @Html.ActionLink(" ", "Delete", "Comments", new { profileID = Model.ID },
-                        htmlAttributes: new { @class = "btn btn-danger glyphicon glyphicon-trash" })
-                    </td>
+        @if (@ViewBag.MyComment != null)
+        {
+            <div class="panel panel-success">
+                <div class="panel-heading">
+                    @ViewBag.MyComment.Author.Login <span style="float:right">
+                    @if (ViewBag.MyComment.Grade == 0)
+                    {
+                        <p class="glyphicon glyphicon-star">brak </p>
+                    }
+                    else
+                    {
+                        <p class="glyphicon glyphicon-star" style="font-size:100%">@ViewBag.MyComment.Grade </p>
+                    }
+                </span>
+            </div>
+            <div class="panel-body">
+                @ViewBag.MyComment.Contents
 
-                </tr>
-            }
+                <span style="float:right">
+                    @Html.ActionLink(" ", "Delete", "Comments", new { profileID = Model.ID },
+                    htmlAttributes: new { @class = "btn btn-danger glyphicon glyphicon-trash" })
+                </span>
+            </div>
+        </div>
+    }
 
-            @foreach (var item in Model.Comments.Where(m => m.Author.Email != User.Identity.Name))
-            {
-                <tr>
-                    <td><a href="@Url.Action("DetailsAnotherProfile", "Profiles", new { id = item.AuthorID })"><b>@item.Author.Login</b></a></td>
-                    <td>@item.Contents</td>
-                    <td>
-                        @if (item.Grade == 0)
-                        {
-                            <p>brak</p>
-                        }
-                        else
-                        {
-                            @item.Grade
-                        }
-                    </td>
-                </tr>
-            }
-        </table>
+    @foreach (var item in Model.Comments.Where(m => m.Author.Email != User.Identity.Name))
+    {
+        <div class="panel panel-success">
+            <div class="panel-heading">
+                <a href="@Url.Action("DetailsAnotherProfile", "Profiles", new { id = item.AuthorID })">@item.Author.Login</a> 
+                <span style="float:right">
+                    @if (item.Grade == 0)
+                    {
+                        <p class="glyphicon glyphicon-star">brak </p>
+                    }
+                    else
+                    {
+                        <p class="glyphicon glyphicon-star" style="font-size:100%">@item.Grade </p>
+                    }
+                </span>
+            </div>
+            <div class="panel-body">@item.Contents</div>
+        </div>
+    }
     </div>
 
 

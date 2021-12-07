@@ -57,6 +57,9 @@ namespace PROJEKT_PZ_NK_v3.Controllers
                 ViewBag.MyComment = db.Comments.First(m => m.Author.Email == User.Identity.Name);
             }
 
+            ViewBag.NotifiEnded = db.Notifications.Where(a => a.Message.Contains("Oceń") && a.Profile.Email == User.Identity.Name).Count();
+            
+
             if (profile == null)
             {
                 return HttpNotFound();

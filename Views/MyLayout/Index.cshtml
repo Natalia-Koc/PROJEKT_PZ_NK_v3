@@ -6,9 +6,18 @@
     {
     <li class="row">
         <p class="col-8">@category.Message</p>
-        <p class="row-cols-sm-auto">
-            <a href="@Url.Action("Details", "Offers", new { id = category.Offer.ID })" class = "glyphicon glyphicon-search"> Sprawdź</a> 
-        </p>
+        @if (category.Message.Contains("Oceń"))
+        {
+            <p class="row-cols-sm-auto">
+                <a href="@Url.Action("DetailsAnotherProfile", "Profiles", new { id = category.Offer.Profile.ID })" class="glyphicon glyphicon-search"> Sprawdź</a>
+            </p>
+        }
+        else
+        {
+            <p class="row-cols-sm-auto">
+                <a href="@Url.Action("Details", "Offers", new { id = category.Offer.ID })" class="glyphicon glyphicon-search"> Sprawdź</a>
+            </p>
+        }
     </li>
     }
 

@@ -120,21 +120,24 @@ namespace PROJEKT_PZ_NK_v3.Controllers
                 .Include(a => a.Guardian)
                 .Include(a => a.Offer)
                 .Include(a => a.Owner)
-                .Where(a => a.Owner.Email == User.Identity.Name
+                .Where(a => (a.Owner.Email == User.Identity.Name || a.Guardian.Email == User.Identity.Name)
                 && a.Offer.StartingDate > DateTime.Now
                 && a.StatusOwner != "Odrzucone"
                 && a.StatusGuardian != "Odrzucone"
                 && a.StatusGuardian != "Usuniete"
                 && a.StatusOwner != "Usuniete");
             ViewBag.Applications = applications;
+            ViewBag.ApplicationsCount = applications.Count();
 
-            ViewBag.AnotherOffers = db.Offers
-                .Where(a => a.ID != id)
+            var offers = db.Offers
+                .Where(a => a.ID != id && a.Profile.Email != User.Identity.Name)
                 .OrderBy(a => a.Profile.ID == id)
                 .ThenBy(a => a.Animal.Species == offer.Animal.Species)
                 .ThenBy(a => a.Animal.Race == offer.Animal.Race)
                 .Take(5)
                 .ToList();
+            ViewBag.AnotherOffers = offers;
+            ViewBag.AnotherOffersCount = offers.Count();
 
             return View(offer);
         }

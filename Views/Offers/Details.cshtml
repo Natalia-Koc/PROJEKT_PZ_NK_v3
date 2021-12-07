@@ -13,7 +13,6 @@
             <img src="~/ImagesAnimals/@Html.DisplayFor(model => model.Animal.Image)" width="400px" style="margin-bottom:2%">
             <br />
             <p>
-                @Html.ActionLink("Powrót do listy", "Index", null, new { @class = "btn btn-default" })
                 @if (Model.Profile.Email == User.Identity.Name)
                 {
                     @Html.ActionLink("Edytuj", "Edit", new { id = Model.ID }, new { @class = "btn btn-primary" })
@@ -109,10 +108,8 @@
         </div>
     </div>
     <br />
-    <hr />
-    @if (Model.Profile.Email == User.Identity.Name && ViewBag.Applications != null)
+    @if (ViewBag.ApplicationsCount != 0)
     {
-        <h3 style="margin:4%; margin-top:1%">Zgłoszenia do oferty</h3>
         <table class="table table-striped">
             <tr>
                 <th>
@@ -122,7 +119,14 @@
                     Zwierzak
                 </th>
                 <th>
-                    Opiekun
+                    @if (Model.Profile.Email == User.Identity.Name)
+                    {
+                        <p>Opiekun</p>
+                    }
+                    else
+                    {
+                        <p>Właściciel</p>
+                    }
                 </th>
                 <th style="width: 25%">
                     Wiadomość
@@ -146,23 +150,36 @@
                         <ins>Rasa</ins>: @item.Offer.Animal.Race<br />
                         <ins>Waga</ins>: @item.Offer.Animal.Weight
                     </td>
-                    <td>
-                        <b><a href="@Url.Action("DetailsAnotherProfile", "Profiles", new { id = item.GuardianID })">@item.Guardian.Login</a></b><br />
-                        <ins>Imię i nazwisko</ins>: @item.Guardian.FirstName @item.Guardian.LastName<br />
-                        <ins>Adres</ins>: @item.Guardian.City, @item.Guardian.Street <br />
-                        <ins>tel.</ins>: @item.Guardian.PhoneNumber
-                    </td>
+                    @if (Model.Profile.Email == item.Owner.Email)
+                    {
+                        <td>
+                            <b><a href="@Url.Action("DetailsAnotherProfile", "Profiles", new { id = item.GuardianID })">@item.Guardian.Login</a></b><br />
+                            <ins>Imię i nazwisko</ins>: @item.Guardian.FirstName @item.Guardian.LastName<br />
+                            <ins>Adres</ins>: @item.Guardian.City, @item.Guardian.Street <br />
+                            <ins>tel.</ins>: @item.Guardian.PhoneNumber
+                        </td>
+                    }
+                    else
+                    {
+                        <td>
+                            <b><a href="@Url.Action("DetailsAnotherProfile", "Profiles", new { id = item.OwnerID })">@item.Owner.Login</a></b><br />
+                            <ins>Imię i nazwisko</ins>: @item.Owner.FirstName @item.Owner.LastName<br />
+                            <ins>Adres</ins>: @item.Owner.City, @item.Owner.Street <br />
+                            <ins>tel.</ins>: @item.Owner.PhoneNumber
+                        </td>
+                    }
+
                     <td>
                         @item.Message
                     </td>
                     <td>
                         @if (item.StatusGuardian == "Zaakceptowane!")
                         {
-                            <b style="color: limegreen">@item.Status</b>
+                            <b style="color: limegreen">@item.StatusGuardian</b>
                         }
                         else if (item.StatusOwner == "Opiekun zrezygnował z oferty")
                         {
-                            <b style="color: darkred">@item.Status</b>
+                            <b style="color: darkred">@item.StatusOwner</b>
                         }
                         else
                         {
@@ -170,7 +187,7 @@
                         }
                     </td>
                     <td>
-                        @if (item.StatusGuardian != "Zaakceptowane!" && 
+                        @if (item.StatusGuardian != "Zaakceptowane!" &&
                             (item.StatusGuardian != "Opiekun zrezygnował z oferty" || item.StatusOwner != "Opiekun zrezygnował z oferty"))
                         {
                             <a href='@Url.Action("EditAccept", "Applications", new { id = item.ID })'>
@@ -185,7 +202,7 @@
             }
         </table>
     }
-    else
+    @if (Model.Profile.Email != User.Identity.Name && ViewBag.AnotherOffersCount != 0)
     {
         <h4 class="glyphicon glyphicon-bell" style="margin:2%">  Sprawdź również te oferty! </h4>
         <div class="container row">
@@ -208,4 +225,4 @@
     }
 
 
-        </div>
+</div>
