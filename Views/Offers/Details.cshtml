@@ -194,9 +194,12 @@
                                 <img src="~/Images/accept.jpg" width="45px" alt="Akceptuj">
                             </a>
                         }
-                        <a href='@Url.Action("EditDiscard", "Applications", new { id = item.ID })'>
-                            <img src="~/Images/discard.jpg" width="45px" alt="Odrzuć">
-                        </a>
+                        <div class="tooltip">
+                            <a href='@Url.Action("EditDiscard", "Applications", new { id = item.ID })'>
+                                <img src="~/Images/discard.jpg" width="45px" alt="Odrzuć">
+                            </a>@*
+                            <span class="tooltip">Rezygnuj</span>*@
+                        </div>
                     </td>
                 </tr>
             }
