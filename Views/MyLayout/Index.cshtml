@@ -1,21 +1,21 @@
 ﻿<a data-toggle="dropdown" href="#">
-    <span class="glyphicon glyphicon-bell label label-default text-xxl-center"> @ViewBag.notifiCount </span>
+    <span class="glyphicon glyphicon-bell text-xxl-center"> @ViewBag.notifiCount </span>
 </a>
-<ul class="dropdown-menu overflow-auto" data-bs-spy="scroll" data-bs-offset="20" style="max-height: 200px; width:300px">
+<ul class="dropdown-menu overflow-auto" data-bs-spy="scroll" data-bs-offset="20" style="max-height: 200px; width:250px">
     @foreach (var category in ViewBag.notifi)
     {
-    <li class="row">
-        <p class="col-8">@category.Message</p>
+    <li>
+
         @if (category.Message.Contains("Oceń"))
         {
-            <p class="row-cols-sm-auto">
-                <a href="@Url.Action("DetailsAnotherProfile", "Profiles", new { id = category.Offer.Profile.ID })" class="glyphicon glyphicon-search"> Sprawdź</a>
+            <p >
+                <a href="@Url.Action("DeleteAndViewProfile", "MyLayout", new { idNotifications = category.ID, idProfile = category.Offer.Profile.ID })"> @category.Message</a>
             </p>
         }
         else
         {
-            <p class="row-cols-sm-auto">
-                <a href="@Url.Action("Details", "Offers", new { id = category.Offer.ID })" class="glyphicon glyphicon-search"> Sprawdź</a>
+            <p >
+                <a href="@Url.Action("DeleteAndViewOffer", "MyLayout", new { idNotifications = category.ID, idOffer = category.Offer.ID })"> @category.Message</a>
             </p>
         }
     </li>

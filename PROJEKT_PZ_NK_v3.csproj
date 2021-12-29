@@ -327,7 +327,6 @@
     <Folder Include="App_Data\" />
     <Folder Include="ImagesAnimals\" />
     <Folder Include="Images\" />
-    <Folder Include="Views\Layout\" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="Content\bootstrap.rtl.min.css.map" />

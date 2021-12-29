@@ -45,5 +45,24 @@ namespace PROJEKT_PZ_NK_v3.Controllers
             return PartialView("Index");
         }
 
+        public ActionResult DeleteAndViewProfile(int idNotifications, int idProfile)
+        {
+            var notifi = db.Notifications.Find(idNotifications);
+            db.Notifications.Remove(notifi);
+            db.SaveChanges();
+
+            return RedirectToAction("DetailsAnotherProfile", "Profiles", new { id = idProfile });
+        }
+
+        public ActionResult DeleteAndViewOffer(int idNotifications, int idOffer)
+        {
+            var notifi = db.Notifications.Find(idNotifications);
+            db.Notifications.Remove(notifi);
+            db.SaveChanges();
+
+            return RedirectToAction("Details", "Offers", new { id = idOffer });
+
+        }
+
     }
 }

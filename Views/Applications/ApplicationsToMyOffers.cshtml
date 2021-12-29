@@ -69,7 +69,7 @@
                         item.StatusOwner != "Odrzucone")
                     {
                         <a href='@Url.Action("EditAccept", new { id = item.ID })'>
-                            <img src="~/Images/accept.jpg" width="45px" alt="Akceptuj">
+                            <img src="~/Images/accept.jpg" width="45px" alt="Akceptuj" title="Akceptuj">
                         </a>
                     }
                     <a href='@Url.Action("EditDiscard", new { id = item.ID })'>
