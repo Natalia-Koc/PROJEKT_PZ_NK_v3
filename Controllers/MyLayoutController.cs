@@ -15,31 +15,37 @@ namespace PROJEKT_PZ_NK_v3.Controllers
 
         // GET: Layout
         public ActionResult Index()
-        {
+        { 
             var notifi = db.Notifications
                 .Include("Offer")
                 .Where(a => a.Profile.Email == User.Identity.Name);
             ViewBag.notifi = notifi;
             ViewBag.notifiCount = notifi.Count();
 
-            var applicationsEnded = db.Applications
-                .Where(a => (a.StatusOwner == "Zaakceptowane!" || a.StatusGuardian == "Zaakceptowane!")
-                    && a.Offer.EndDate >= DateTime.Now).First();
-            if(applicationsEnded != null && db.Notifications.Find(applicationsEnded.OfferID) != null)
+            if (db.Applications != null )
             {
-                db.Notifications.Add(new Notification
+                var applications = db.Applications
+                    .Include("Offer");
+                var applicationsEnded = applications
+                    .Where(a => (a.StatusOwner == "Zaakceptowane!" || a.StatusGuardian == "Zaakceptowane!")
+                        && a.Offer.EndDate >= DateTime.Now).FirstOrDefault();
+
+                if (applicationsEnded != null && db.Notifications.Find(applicationsEnded.OfferID) != null)
                 {
-                    Offer = applicationsEnded.Offer,
-                    Profile = applicationsEnded.Guardian,
-                    Message = "Oferta zakończona. Oceń właściciela!"
-                });
-                db.Notifications.Add(new Notification
-                {
-                    Offer = applicationsEnded.Offer,
-                    Profile = applicationsEnded.Owner,
-                    Message = "Oferta zakończona. Oceń opiekuna!"
-                });
-                db.SaveChanges();
+                    db.Notifications.Add(new Notification
+                    {
+                        Offer = applicationsEnded.Offer,
+                        Profile = applicationsEnded.Guardian,
+                        Message = "Oferta zakończona. Oceń właściciela!"
+                    });
+                    db.Notifications.Add(new Notification
+                    {
+                        Offer = applicationsEnded.Offer,
+                        Profile = applicationsEnded.Owner,
+                        Message = "Oferta zakończona. Oceń opiekuna!"
+                    });
+                    db.SaveChanges();
+                }
             }
 
             return PartialView("Index");
@@ -62,6 +68,18 @@ namespace PROJEKT_PZ_NK_v3.Controllers
 
             return RedirectToAction("Details", "Offers", new { id = idOffer });
 
+        }
+
+        public ActionResult DeleteAllNotifications()
+        {
+            var notifi = db.Notifications.Where(a => a.Profile.Email == User.Identity.Name);
+            foreach (var notification in notifi)
+            {
+                db.Notifications.Remove(notification);
+            }
+            db.SaveChanges();
+
+            return RedirectToAction("Index", "Home");
         }
 
     }
