@@ -22,30 +22,43 @@
                         <h4 class="panel-title list-group-item">
                             @Html.ActionLink(item.Login, "Details", "Profiles", new { id = item.ID }, new { style= "font-weight: bold;" })<br />
                             @item.FirstName @item.LastName<br /><br />
-                            <a data-toggle="collapse" data-parent="#accordion" href="#@item.ID"><small><kbd style="background-color:white; color:black">Pokaż oferty</kbd></small> </a>
+                            <a data-toggle="collapse" data-parent="#accordion" href="#@item.ID">
+                                <small>
+                                    <kbd style="background-color:white; color:black">
+                                        Pokaż oferty 
+                                        (@item.Offers.Count())
+                                    </kbd>
+                                </small> 
+                            </a>
                         </h4>
                     </div>
 
                     <div id="@item.ID" class="panel-collapse collapse panel-body">
                         <div class="container row">
-                            @foreach (var item2 in item.Offers)
+                            @if (item.Offers.Count() > 0)
                             {
-                                <div class="card col-xs-2 list-group-item-heading" style="padding:1%">
-                                    <a href="@Url.Action("Details", "Offers", new { id = item2.ID })">
-                                        <img class="card-img-top center-block block d-block mx-auto"
-                                             style="max-height: 100px; object-fit: cover;"
-                                             src="~/ImagesAnimals/@item2.Animal.Image"
-                                             alt="Card image">
-                                    </a>
-                                    <div class="card-body">
-                                        <h4 class="card-title">@item2.Title</h4>
-                                        <p class="card-text">
-                                            Zwierze: @Html.ActionLink(item2.Animal.Name, "Details", "Animals", new { id = item2.AnimalID }, null)
-                                        </p>
-                                        <p class="text-right btn-block"> </p>
+                                foreach (var item2 in item.Offers)
+                                {
+                                    <div class="card col-xs-2 list-group-item-heading" style="padding:1%">
+                                        <a href="@Url.Action("Details", "Offers", new { id = item2.ID })">
+                                            <img class="card-img-top center-block block d-block mx-auto"
+                                                 style="max-height: 100px; object-fit: cover;"
+                                                 src="~/ImagesAnimals/@item2.Animal.Image"
+                                                 alt="Card image">
+                                        </a>
+                                        <div class="card-body">
+                                            <h4 class="card-title">@item2.Title</h4>
+                                            <p class="card-text">
+                                                Zwierze: @Html.ActionLink(item2.Animal.Name, "Details", "Animals", new { id = item2.AnimalID }, null)
+                                            </p>
+                                            <p class="text-right btn-block"> </p>
+                                        </div>
                                     </div>
-                                </div>
+                                }
+                            } else {
+                                <p>Brak ofert</p>
                             }
+
                         </div>
                     </div>
                 </div>
