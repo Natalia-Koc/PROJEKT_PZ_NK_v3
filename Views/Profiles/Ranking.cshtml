@@ -26,7 +26,7 @@
                                 <small>
                                     <kbd style="background-color:white; color:black">
                                         Pokaż oferty 
-                                        (@item.Offers.Count())
+                                        (@item.Offers.Where(a => a.StartingDate >= DateTime.Now).Count())
                                     </kbd>
                                 </small> 
                             </a>
@@ -35,9 +35,9 @@
 
                     <div id="@item.ID" class="panel-collapse collapse panel-body">
                         <div class="container row">
-                            @if (item.Offers.Count() > 0)
+                            @if (item.Offers.Where(a => a.StartingDate >= DateTime.Now).Count() > 0)
                             {
-                                foreach (var item2 in item.Offers)
+                                foreach (var item2 in item.Offers.Where(a => a.StartingDate >= DateTime.Now))
                                 {
                                     <div class="card col-xs-2 list-group-item-heading" style="padding:1%">
                                         <a href="@Url.Action("Details", "Offers", new { id = item2.ID })">

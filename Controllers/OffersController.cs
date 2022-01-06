@@ -130,7 +130,7 @@ namespace PROJEKT_PZ_NK_v3.Controllers
             ViewBag.ApplicationsCount = applications.Count();
 
             var offers = db.Offers
-                .Where(a => a.ID != id && a.Profile.Email != User.Identity.Name)
+                .Where(a => a.ID != id && a.Profile.Email != User.Identity.Name && a.StartingDate >= DateTime.Now)
                 .OrderBy(a => a.Profile.ID == id)
                 .ThenBy(a => a.Animal.Species == offer.Animal.Species)
                 .ThenBy(a => a.Animal.Race == offer.Animal.Race)
