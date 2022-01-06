@@ -10,7 +10,15 @@
 <div class="container-fluid">
     <div class="row">
         <div class="col-8">
-            <h1> Witaj @Model.Login! </h1>
+            @if (Model.Email == User.Identity.Name)
+            {
+                <h1> Witaj @Model.Login! </h1>
+            } 
+            else
+            {
+                <h1> Profil użytkownika @Model.Login </h1>
+            }
+
         </div>
         <div class="col-4">
             <div class="list-group-item-heading" style="margin-top: 0.7%">
@@ -111,18 +119,18 @@
                 {
                     <p style="width: 100%">
                         @Html.ActionLink("Dodaj do ulubionych", "NewFavourite", "SavedProfiles",
-                        new { id = Model.ID }, new { @class = "btn btn-default btn-block" })
+                        new { id = Model.ID }, new { @class = "btn btn-success btn-block" })
                     </p>
                     <p style="width: 100%">
                         @Html.ActionLink("Zablokuj", "NewBlocked", "SavedProfiles",
-                        new { id = Model.ID }, new { @class = "btn btn-default btn-block" })
+                        new { id = Model.ID }, new { @class = "btn btn-secondary btn-block", type = "button" })
                     </p>
                 }
                 else if (ViewBag.Favourite == 0)
                 {
                     <p style="width: 100%">
                         @Html.ActionLink("Odblokuj", "DeleteBlocked", "SavedProfiles",
-                       new { id = Model.ID }, new { @class = "btn btn-dark btn-block" })
+                       new { id = Model.ID }, new { @class = "btn btn-danger btn-block" })
                     </p>
                 }
                 else
