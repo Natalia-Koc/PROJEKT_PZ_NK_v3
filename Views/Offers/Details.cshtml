@@ -35,11 +35,20 @@
                 <div class="panel-body">
                     <dl class="dl-horizontal">
                         <dt>
-                            Opis
+                            Zwierze
                         </dt>
 
                         <dd>
-                            @Html.DisplayFor(model => model.Description)
+                            @Html.ActionLink(Model.Animal.Name, "Details", "Animals", new { id = Model.Animal.ID }, null)
+                        </dd>
+
+                        <dt>
+                            Właściciel
+                        </dt>
+
+                        <dd>
+                            @Html.ActionLink(Model.Profile.Login, "DetailsAnotherProfile", "Profiles",
+                           new { id = Model.Profile.ID }, null)
                         </dd>
 
                         <dt>
@@ -59,20 +68,11 @@
                         </dd>
 
                         <dt>
-                            Właściciel
+                            Opis
                         </dt>
 
                         <dd>
-                            @Html.ActionLink(Model.Profile.Login, "DetailsAnotherProfile", "Profiles",
-                           new { id = Model.Profile.ID }, null)
-                        </dd>
-
-                        <dt>
-                            Zwierze
-                        </dt>
-
-                        <dd>
-                            @Html.ActionLink(Model.Animal.Name, "Details", "Animals", new { id = Model.Animal.ID }, null)
+                            @Html.DisplayFor(model => model.Description)
                         </dd>
                     </dl>
                 </div>

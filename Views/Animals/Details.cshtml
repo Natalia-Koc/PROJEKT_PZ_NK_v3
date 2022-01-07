@@ -62,7 +62,7 @@
                         </dt>
 
                         <dd>
-                            @Html.DisplayFor(model => model.DateOfBirth)
+                            @Model.DateOfBirth.ToLongDateString()
                         </dd>
 
                         <dt>
@@ -97,24 +97,55 @@
         </p>
     }
 
-    <h4 class="glyphicon glyphicon-bell" style="margin:2%"> Oferty tego zwierzaka </h4>
-    <div class="container row">
-        @foreach (var item in ViewBag.AnimalOffers)
-        {
-            <div class="card col-2 list-group-item-heading" style="padding:1%">
-                <a href="@Url.Action("Details", "Offers", new { id = item.ID })">
-                    <img class="card-img-top center-block block d-block mx-auto"
-                         style="max-height: 130px; object-fit: cover;"
-                         src="~/ImagesAnimals/@item.Animal.Image" alt="Card image"
-                         title="Pokaż więcej informacji">
-                </a>
-                <div class="card-body">
-                    <a href="@Url.Action("Details", "Offers", new { id = item.ID })">
-                        <h5 class="card-title">@item.Title</h5>
-                    </a>
-                </div>
-            </div>
-        }
-    </div>
+    <hr />
 
+    @if (ViewBag.AnimalOffersCount > 0)
+    {
+        <h4 class="glyphicon glyphicon-book" style="margin:2%"> Oferty tego zwierzaka </h4>
+
+        <table class="table table-striped">
+            <tr>
+                <th>
+                    Tytuł
+                </th>
+                <th style="width: 50%">
+                    Opis
+                </th>
+                <th>
+                    Data początku
+                </th>
+                <th>
+                    Data Końca
+                </th>
+                <th></th>
+            </tr>
+
+            @foreach (var item in ViewBag.AnimalOffers)
+            {
+                <tr>
+                    <td>
+                        <a href="@Url.Action("Details", "Offers", new { id = item.ID })">
+                            @item.Title
+                        </a>
+                    </td>
+                    <td style="width: 45%">
+                        @item.Description
+                    </td>
+                    <td>
+                        @item.StartingDate.ToShortDateString() @item.StartingDate.ToShortTimeString()
+                    </td>
+                    <td>
+                        @item.EndDate.ToShortDateString() @item.EndDate.ToShortTimeString()
+                    </td>
+                    <td>
+                        <em>
+                            <a>
+                                Powtórz ofertę
+                            </a>
+                        </em>
+                    </td>
+                </tr>
+            }
+        </table>
+    }
 </div>
