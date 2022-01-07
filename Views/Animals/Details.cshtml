@@ -122,29 +122,58 @@
 
             @foreach (var item in ViewBag.AnimalOffers)
             {
-                <tr>
-                    <td>
-                        <a href="@Url.Action("Details", "Offers", new { id = item.ID })">
-                            @item.Title
-                        </a>
-                    </td>
-                    <td style="width: 45%">
-                        @item.Description
-                    </td>
-                    <td>
-                        @item.StartingDate.ToShortDateString() @item.StartingDate.ToShortTimeString()
-                    </td>
-                    <td>
-                        @item.EndDate.ToShortDateString() @item.EndDate.ToShortTimeString()
-                    </td>
-                    <td>
-                        <em>
-                            <a href="@Url.Action("Copy","Offers",new { id = item.ID})">
-                                Powtórz ofertę
+                if (item.EndDate.Date < DateTime.Now.Date)
+                {
+                    <tr style="background-color:lightgray">
+                        <td>
+                            <a href="@Url.Action("Details", "Offers", new { id = item.ID })">
+                                @item.Title
                             </a>
-                        </em>
-                    </td>
-                </tr>
+                        </td>
+                        <td style="width: 45%">
+                            @item.Description
+                        </td>
+                        <td>
+                            @item.StartingDate.ToShortDateString() @item.StartingDate.ToShortTimeString()
+                        </td>
+                        <td>
+                            @item.EndDate.ToShortDateString() @item.EndDate.ToShortTimeString()
+                        </td>
+                        <td>
+                            <em>
+                                <a href="@Url.Action("Copy","Offers",new { id = item.ID})">
+                                    Powtórz ofertę
+                                </a>
+                            </em>
+                        </td>
+                    </tr>
+                }
+                else
+                {
+                    <tr>
+                        <td>
+                            <a href="@Url.Action("Details", "Offers", new { id = item.ID })">
+                                @item.Title
+                            </a>
+                        </td>
+                        <td style="width: 45%">
+                            @item.Description
+                        </td>
+                        <td>
+                            @item.StartingDate.ToShortDateString() @item.StartingDate.ToShortTimeString()
+                        </td>
+                        <td>
+                            @item.EndDate.ToShortDateString() @item.EndDate.ToShortTimeString()
+                        </td>
+                        <td>
+                            <em>
+                                <a href="@Url.Action("Copy","Offers",new { id = item.ID})">
+                                    Powtórz ofertę
+                                </a>
+                            </em>
+                        </td>
+                    </tr>
+                }
             }
         </table>
     }
