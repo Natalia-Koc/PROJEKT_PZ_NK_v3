@@ -121,6 +121,7 @@ namespace PROJEKT_PZ_NK_v3.Controllers
                 .Include(a => a.Offer)
                 .Include(a => a.Owner)
                 .Where(a => (a.Owner.Email == User.Identity.Name || a.Guardian.Email == User.Identity.Name)
+                && a.OfferID == id
                 && a.Offer.StartingDate > DateTime.Now
                 && a.StatusOwner != "Odrzucone"
                 && a.StatusGuardian != "Odrzucone"
@@ -213,6 +214,39 @@ namespace PROJEKT_PZ_NK_v3.Controllers
                 db.Entry(offer).State = EntityState.Modified;
                 db.SaveChanges();
                 return RedirectToAction("Index");
+            }
+            return View(offer);
+        }
+
+        [Authorize]
+        // GET: Offers/Edit/5
+        public ActionResult Copy(int? id)
+        {
+            if (id == null)
+            {
+                return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
+            }
+            Offer offer = db.Offers.Find(id);
+            if (offer == null)
+            {
+                return HttpNotFound();
+            }
+            return View(offer);
+        }
+
+        // POST: Offers/Edit/5
+        // Aby zapewnić ochronę przed atakami polegającymi na przesyłaniu dodatkowych danych, włącz określone właściwości, z którymi chcesz utworzyć powiązania.
+        // Aby uzyskać więcej szczegółów, zobacz https://go.microsoft.com/fwlink/?LinkId=317598.
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public ActionResult Copy(Offer offer)
+        {
+            if (ModelState.IsValid)
+            {
+                offer.Profile = db.Profiles.Single(a => a.Email == User.Identity.Name);
+                db.Offers.Add(offer);
+                db.SaveChanges();
+                return RedirectToAction("Details", new { id = offer.ID });
             }
             return View(offer);
         }

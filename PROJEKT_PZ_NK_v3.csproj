@@ -322,6 +322,7 @@
     <Content Include="Views\SavedProfiles\Blocked.cshtml" />
     <Content Include="Views\SavedProfiles\Favourite.cshtml" />
     <Content Include="Views\MyLayout\Index.cshtml" />
+    <Content Include="Views\Offers\Copy.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

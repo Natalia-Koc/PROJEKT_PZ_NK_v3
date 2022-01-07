@@ -78,9 +78,9 @@
                 </div>
             </div>
             <br />
-            <hr />
             @if (Model.Profile.Email != User.Identity.Name)
             {
+                <hr />
                 if (!ViewBag.IsApplied)
                 {
                     using (Html.BeginForm("Create", "Applications", new { offerID = Model.ID, ownerID = Model.Profile.ID }))
@@ -107,9 +107,10 @@
             }
         </div>
     </div>
-    <br />
     @if (ViewBag.ApplicationsCount != 0)
     {
+        <hr />
+        <h4 style="margin:4%; margin-top:2%" class="glyphicon glyphicon-envelope">  Zgłoszenia do oferty</h4>
         <table class="table table-striped">
             <tr>
                 <th>
