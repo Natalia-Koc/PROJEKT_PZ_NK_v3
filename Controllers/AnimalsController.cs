@@ -40,6 +40,15 @@ namespace PROJEKT_PZ_NK_v3.Controllers
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             }
             Animal animal = db.Animals.Find(id);
+
+            var offers = db.Offers
+                .Where(a => a.Profile.Email == User.Identity.Name)
+                .OrderBy(a => a.StartingDate.Year)
+                .ThenBy(a => a.StartingDate.Month)
+                .ThenBy(a => a.StartingDate.Day)
+                .ToList();
+            ViewBag.AnimalOffers = offers;
+            ViewBag.AnimalOffersCount = offers.Count();
             if (animal == null)
             {
                 return HttpNotFound();

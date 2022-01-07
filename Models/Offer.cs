@@ -15,16 +15,16 @@ namespace PROJEKT_PZ_NK_v3.Models
 
         [Required]
         [Display(Name = "Title")]
-        [StringLength(80, MinimumLength = 3, ErrorMessage = "Title cannot be longer than 30 characters.")]
+        [StringLength(80, MinimumLength = 3, ErrorMessage = "Tytuł musi się składać z minimum 3 znaków")]
         public String Title { get; set; }
 
         [Required]
         [Display(Name = "Description")]
-        [StringLength(1500, ErrorMessage = "Description cannot be longer than 1500 characters.")]
+        [StringLength(1500, ErrorMessage = "Opis może sie składać z maksymalnie 1500 znaków")]
         public String Description { get; set; }
 
         [DataType(DataType.DateTime)]
-        [DisplayFormat(DataFormatString = "{0:yyyy-MM-dd HH:mm}", ApplyFormatInEditMode = true)]
+        [DisplayFormat( DataFormatString = "{0:yyyy-MM-dd HH:mm}", ApplyFormatInEditMode = true)]
         public DateTime StartingDate { get; set; }
 
         [DataType(DataType.DateTime)]

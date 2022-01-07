@@ -89,12 +89,32 @@
 
         </div>
     </div>
-        @if (Model.Profiles.Email == User.Identity.Name)
+    @if (Model.Profiles.Email == User.Identity.Name)
+    {
+        <p>
+            @Html.ActionLink("Edytuj", "Edit", new { id = Model.ID }, new { @class = "btn btn-primary" })
+            @Html.ActionLink("Usuń", "Delete", new { id = Model.ID }, new { @class = "btn btn-danger" })
+        </p>
+    }
+
+    <h4 class="glyphicon glyphicon-bell" style="margin:2%"> Oferty tego zwierzaka </h4>
+    <div class="container row">
+        @foreach (var item in ViewBag.AnimalOffers)
         {
-            <p>
-                @Html.ActionLink("Edytuj", "Edit", new { id = Model.ID }, new { @class = "btn btn-primary" })
-                @Html.ActionLink("Usuń", "Delete", new { id = Model.ID }, new { @class = "btn btn-danger" })
-            </p>
+            <div class="card col-2 list-group-item-heading" style="padding:1%">
+                <a href="@Url.Action("Details", "Offers", new { id = item.ID })">
+                    <img class="card-img-top center-block block d-block mx-auto"
+                         style="max-height: 130px; object-fit: cover;"
+                         src="~/ImagesAnimals/@item.Animal.Image" alt="Card image"
+                         title="Pokaż więcej informacji">
+                </a>
+                <div class="card-body">
+                    <a href="@Url.Action("Details", "Offers", new { id = item.ID })">
+                        <h5 class="card-title">@item.Title</h5>
+                    </a>
+                </div>
+            </div>
         }
+    </div>
 
-
+</div>
