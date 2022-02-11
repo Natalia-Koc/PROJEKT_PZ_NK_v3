@@ -13,7 +13,7 @@
             @if (Model.Email == User.Identity.Name)
             {
                 <h1> Witaj @Model.Login! </h1>
-            } 
+            }
             else
             {
                 <h1> Profil użytkownika @Model.Login </h1>
@@ -142,25 +142,76 @@
                 }
             }
         </div>
-        </div>
+    </div>
 
-    <div class="container row">
-        @foreach (var item in Model.Animals)
-        {
-            <div class="card col-3 list-group-item-heading" style="padding:1%">
-                <a href="@Url.Action("Details", "Animals", new { id = item.ID })">
-                    <img class="card-img-top center-block block d-block mx-auto"
-                         style="max-height: 200px; object-fit: cover;"
-                         src="~/ImagesAnimals/@item.Image" alt="Card image">
-                </a>
-                <div class="card-body">
-                    <a href="@Url.Action("Details", "Animals", new { id = item.ID })">
-                        <h4 class="card-title">@item.Name</h4>
-                    </a>
+    <hr />
+
+
+    <div class="container">
+        <div class="list-group" id="accordion">
+            <div class="panel" style="margin-right:6%">
+                <div class="panel-heading">
+                    <h4 class="panel-title list-group-item" style="background-color:ghostwhite">
+                        <a data-toggle="collapse" data-parent="#accordion" href="#1">
+                            Pokaż zwierzaki
+                        </a>
+                    </h4>
+                </div>
+
+                <div id="1" class="panel-collapse collapse panel-body">
+                    <div class="container row">
+                        @foreach (var item in Model.Animals)
+                        {
+                            <div class="card col-2 list-group-item-heading" style="padding:1%">
+                                <a href="@Url.Action("Details", "Animals", new { id = item.ID })">
+                                    <img class="card-img-top center-block block d-block mx-auto"
+                                            style="max-height: 150px; object-fit: cover;"
+                                            src="~/ImagesAnimals/@item.Image" alt="Card image">
+                                </a>
+                                <div class="card-body">
+                                    <a href="@Url.Action("Details", "Animals", new { id = item.ID })">
+                                        <h4 class="card-title">@item.Name</h4>
+                                    </a>
+                                </div>
+                            </div>
+                        }
+
+                    </div>
+                </div>
+                
+                <div class="panel-heading">
+                    <h4 class="panel-title list-group-item" style="background-color: ghostwhite">
+                        <a data-toggle="collapse" data-parent="#accordion" href="#2">
+                            Pokaż oferty
+                        </a>
+                    </h4>
+                </div>
+
+                <div id="2" class="panel-collapse collapse panel-body">
+                    <div class="container row">
+                        @foreach (var item in Model.Offers.Where(a => a.StartingDate > DateTime.Now).ToList())
+                        {
+                            <div class="card col-2 list-group-item-heading" style="padding:1%">
+                                <a href="@Url.Action("Details", "Offers", new { id = item.ID })">
+                                    @item.Title
+                                </a>
+                                <div class="card-body">
+                                    <a href="@Url.Action("Details", "Animals", new { id = item.AnimalID })">
+                                        @item.Animal.Name
+                                    </a>
+                                    <br />
+                                    @item.StartingDate<br />
+                                </div>
+                            </div>
+                        }
+
+                    </div>
                 </div>
             </div>
-        }
+        </div>
     </div>
+    <br />
+
     <hr />
     <div>
         <h2>Komentarze</h2>
@@ -211,46 +262,46 @@
             <div class="panel panel-success">
                 <div class="panel-heading">
                     @ViewBag.MyComment.Author.Login <span style="float:right">
-                    @if (ViewBag.MyComment.Grade == 0)
-                    {
-                        <p class="glyphicon glyphicon-star">brak </p>
-                    }
-                    else
-                    {
-                        <p class="glyphicon glyphicon-star" style="font-size:100%">@ViewBag.MyComment.Grade </p>
-                    }
-                </span>
-            </div>
-            <div class="panel-body">
-                @ViewBag.MyComment.Contents
+                        @if (ViewBag.MyComment.Grade == 0)
+                        {
+                            <p class="glyphicon glyphicon-star">brak </p>
+                        }
+                        else
+                        {
+                            <p class="glyphicon glyphicon-star" style="font-size:100%">@ViewBag.MyComment.Grade </p>
+                        }
+                    </span>
+                </div>
+                <div class="panel-body">
+                    @ViewBag.MyComment.Contents
 
-                <span style="float:right">
-                    @Html.ActionLink(" ", "Delete", "Comments", new { profileID = Model.ID },
-                    htmlAttributes: new { @class = "btn btn-danger glyphicon glyphicon-trash" })
-                </span>
+                    <span style="float:right">
+                        @Html.ActionLink(" ", "Delete", "Comments", new { profileID = Model.ID },
+                        htmlAttributes: new { @class = "btn btn-danger glyphicon glyphicon-trash" })
+                    </span>
+                </div>
             </div>
-        </div>
-    }
+        }
 
-    @foreach (var item in Model.Comments.Where(m => m.Author.Email != User.Identity.Name))
-    {
-        <div class="panel panel-success">
-            <div class="panel-heading">
-                <a href="@Url.Action("DetailsAnotherProfile", "Profiles", new { id = item.AuthorID })">@item.Author.Login</a> 
-                <span style="float:right">
-                    @if (item.Grade == 0)
-                    {
-                        <p class="glyphicon glyphicon-star">brak </p>
-                    }
-                    else
-                    {
-                        <p class="glyphicon glyphicon-star" style="font-size:100%">@item.Grade </p>
-                    }
-                </span>
+        @foreach (var item in Model.Comments.Where(m => m.Author.Email != User.Identity.Name))
+        {
+            <div class="panel panel-success">
+                <div class="panel-heading">
+                    <a href="@Url.Action("DetailsAnotherProfile", "Profiles", new { id = item.AuthorID })">@item.Author.Login</a>
+                    <span style="float:right">
+                        @if (item.Grade == 0)
+                        {
+                            <p class="glyphicon glyphicon-star">brak </p>
+                        }
+                        else
+                        {
+                            <p class="glyphicon glyphicon-star" style="font-size:100%">@item.Grade </p>
+                        }
+                    </span>
+                </div>
+                <div class="panel-body">@item.Contents</div>
             </div>
-            <div class="panel-body">@item.Contents</div>
-        </div>
-    }
+        }
     </div>
 
 

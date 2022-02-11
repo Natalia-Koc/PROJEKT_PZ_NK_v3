@@ -39,9 +39,9 @@ namespace PROJEKT_PZ_NK_v3.Controllers
             ViewBag.CurrentFilterA = searchAnimal;
             ViewBag.CurrentFilterT = searchTime;
 
-            var offers = from s in db.Offers
-                         where s.StartingDate > DateTime.Now
-                         select s;
+            var offers = db.Offers
+                         .Include(a => a.Profile)
+                         .Where(w => w.StartingDate > DateTime.Now);
 
             if (!String.IsNullOrEmpty(searchString))
             {

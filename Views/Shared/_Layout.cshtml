@@ -33,8 +33,11 @@
                         </a>
                         <ul class="dropdown-menu">
                             <li>@Html.ActionLink("Wszystkie oferty", "Index", "Offers")</li>
-                            <li>@Html.ActionLink("Ranking", "Ranking", "Profiles")</li>
-                            <li>@Html.ActionLink("Moje oferty", "MyOffers", "Offers")</li>
+                            @if (User.Identity.IsAuthenticated)
+                            {
+                                <li>@Html.ActionLink("Moje oferty", "MyOffers", "Offers")</li>
+                                <li>@Html.ActionLink("Ranking", "Ranking", "Profiles")</li>
+                            }
                         </ul>
                     </li>
                 </ul>
