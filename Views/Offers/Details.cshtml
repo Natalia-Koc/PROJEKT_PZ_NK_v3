@@ -10,12 +10,13 @@
     <hr />
     <div class="row">
         <div class="col-5 list-group-item-heading">
-            <img src="~/ImagesAnimals/@Html.DisplayFor(model => model.Animal.Image)" width="400px" style="margin-bottom:2%">
+            <img src="~/ImagesAnimals/@Html.DisplayFor(model => model.Animal.Image)" class="btn-" width="400px" style="margin-bottom:2%;">
             <br />
             <p>
                 @if (Model.Profile.Email == User.Identity.Name)
                 {
                     @Html.ActionLink("Edytuj", "Edit", new { id = Model.ID }, new { @class = "btn btn-primary" })
+                    @Html.ActionLink("Kopiuj", "Copy", new { id = Model.ID }, new { @class = "btn btn-secondary" })
                     @Html.ActionLink("Usuń", "Delete", new { id = Model.ID }, new { @class = "btn btn-danger" })
                 }
             </p>
@@ -107,6 +108,7 @@
             }
         </div>
     </div>
+
     @if (ViewBag.ApplicationsCount != 0)
     {
         <hr />
@@ -213,6 +215,8 @@
             }
         </table>
     }
+
+    <hr />
     @if (Model.Profile.Email != User.Identity.Name && ViewBag.AnotherOffersCount != 0)
     {
         <h4 class="glyphicon glyphicon-bell" style="margin:2%">  Sprawdź również te oferty! </h4>
