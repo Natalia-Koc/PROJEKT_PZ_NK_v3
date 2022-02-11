@@ -56,9 +56,10 @@ namespace PROJEKT_PZ_NK_v3.Controllers
                 .Include(a => a.Guardian)
                 .Include(a => a.Offer)
                 .Include(a => a.Owner)
-                .Where(a => a.Offer.StartingDate < DateTime.Now || 
-                    ((a.StatusOwner == "Odrzucone" && a.Owner.Email == User.Identity.Name) ||
-                    (a.StatusGuardian == "Odrzucone" && a.Guardian.Email == User.Identity.Name)));
+                .Where(a => (a.Offer.StartingDate < DateTime.Now || 
+                    (a.StatusOwner == "Odrzucone" && a.Owner.Email == User.Identity.Name) ||
+                    (a.StatusGuardian == "Odrzucone" && a.Guardian.Email == User.Identity.Name))&&
+                    (a.Guardian.Email == User.Identity.Name || a.Owner.Email == User.Identity.Name));
             return View(applications.ToList());
         }
 

@@ -6,7 +6,7 @@
         @Html.AntiForgeryToken()
         <ul class="nav navbar-nav">
             <li class="dropdown">
-                <a class="dropdown-toggle" data-toggle="dropdown" href="#">
+                <a class="dropdown-toggle text-light" data-toggle="dropdown" href="#" style="background-color:transparent !important">
                     Zgłoszenia
                 </a>
                 <ul class="dropdown-menu">
@@ -16,10 +16,10 @@
                 </ul>
             </li>
             <li class="dropdown">
-                <a class="dropdown-toggle" data-toggle="dropdown" href="#">
+                <a class="dropdown-toggle text-light" data-toggle="dropdown" href="#" style="background-color:transparent !important">
                     Zapisane profile
                 </a>
-                <ul class="dropdown-menu">
+                <ul class="dropdown-menu text-light">
                     <li>@Html.ActionLink("Ulubione", "Favourite", "SavedProfiles")</li>
                     <li>@Html.ActionLink("Zablokowane", "Blocked", "SavedProfiles")</li>
                 </ul>
@@ -30,21 +30,21 @@
     {
         @Html.AntiForgeryToken()
         <ul class="nav navbar-nav navbar-right">
-            <li class="dropdown">
+            <li class="dropdown text-light" style="background-color:transparent !important">
                 @{ Html.RenderAction("Index", "MyLayout"); }
             </li>
-            <li>
-                @Html.ActionLink("Witaj," + User.Identity.GetUserName() + "!", "Details", "Profiles", routeValues: null, htmlAttributes: new { title = "Details" })
+            <li style="background-color:transparent !important">
+                @Html.ActionLink("Witaj," + User.Identity.GetUserName() + "!", "Details", "Profiles", routeValues: null, htmlAttributes: new { @class= " text-light", title = "Details", style = "background-color:transparent !important" })
             </li>
-            <li><a href="javascript:document.getElementById('logoutForm').submit()">Wyloguj</a></li>
+            <li><a href="javascript:document.getElementById('logoutForm').submit()" class=" text-light" style="background-color:transparent !important">Wyloguj</a></li>
         </ul>
     }
 }
 else
 {
-    <ul class="nav navbar-nav navbar-right">
-        <li>@Html.ActionLink("Zarejestruj", "Register", "Account", routeValues: null, htmlAttributes: new { id = "registerLink" })</li>
-        <li>@Html.ActionLink("Zaloguj", "Login", "Account", routeValues: null, htmlAttributes: new { id = "loginLink" })</li>
+    <ul class="nav navbar-nav navbar-right" style="background-color:transparent !important">
+        <li>@Html.ActionLink("Zarejestruj", "Register", "Account", routeValues: null, htmlAttributes: new { @class = " text-light", id = "registerLink", style = "background-color:transparent !important" })</li>
+        <li>@Html.ActionLink("Zaloguj", "Login", "Account", routeValues: null, htmlAttributes: new { @class = " text-light", id = "loginLink", style = "background-color:transparent !important" })</li>
     </ul>
 }
 

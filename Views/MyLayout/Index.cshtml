@@ -1,12 +1,13 @@
-﻿<a data-toggle="dropdown" href="#">
-    <span class="glyphicon glyphicon-bell text-xxl-center"> @ViewBag.notifiCount </span>
+﻿<a data-toggle="dropdown" style="background-color:transparent !important" href="#">
+    <span class="glyphicon glyphicon-bell text-xxl-center text-light"> @ViewBag.notifiCount </span>
 </a>
-<ul class="dropdown-menu overflow-auto" data-bs-spy="scroll" data-bs-offset="20" 
-    style="max-height: 200px; width: 250px; background-color: transparent !important">
     @if (ViewBag.notifiCount > 0)
     {
-        foreach (var category in ViewBag.notifi)
-        {
+        <ul class="dropdown-menu overflow-auto" data-bs-spy="scroll" data-bs-offset="20"
+            style="max-height: 200px; width: 250px; background-color: transparent !important">
+
+            @foreach (var category in ViewBag.notifi)
+            {
             <li style="margin:0">
 
                 @if (category.Message.Contains("Oceń"))
@@ -29,16 +30,19 @@
                     </button>
                 }
             </li>
-        }
-        <li style="margin:0">
-            @Html.ActionLink("Usuń wszystkie powiadomienia", "DeleteAllNotifications", "MyLayout", null,
-                new { @class = "button btn-default well", style = "margin:0; text-align: center; width: 248px; height: 25px" })
-        </li>
+            }
+            <li style="margin:0">
+                @Html.ActionLink("Usuń wszystkie powiadomienia", "DeleteAllNotifications", "MyLayout", null,
+                    new { @class = "button btn-default well", style = "margin:0; text-align: center; width: 248px; height: 25px" })
+            </li>
+        </ul>
     }
     else
     {
-        <li style="margin:0">
-            <p style="text-align:center"> brak powiadomień</p>
-        </li>
-    }
-    </ul>
+<ul class="dropdown-menu overflow-auto" data-bs-spy="scroll" data-bs-offset="20"
+    style="max-height: 200px; width: 250px;">
+    <li style="margin:5%; background-color:white">
+        <p style="text-align:center; background-color:white"> brak powiadomień</p>
+    </li>
+</ul>
+            }

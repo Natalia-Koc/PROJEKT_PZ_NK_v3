@@ -19,9 +19,6 @@
         <th>
             Zwierze
         </th>
-        <th>
-            Status
-        </th>
     </tr>
 
 @foreach (var item in Model) {
@@ -61,22 +58,6 @@
     <td>
         @Html.ActionLink(item.Offer.Animal.Name, "Details", "Animals", new { id = item.Offer.AnimalID}, null)<br />
         @Html.DisplayFor(modelItem => item.Offer.Animal.Species) - @Html.DisplayFor(modelItem => item.Offer.Animal.Race)
-    </td>
-    <td>
-        @if (item.StatusGuardian == "Zaakceptowane!")
-        {
-            <b style="color: limegreen">@Html.DisplayFor(modelItem => item.StatusGuardian)</b>
-        }
-        else if (item.StatusGuardian == "Odrzucone"
-                        || item.StatusOwner == "Odrzucone")
-        {
-            <b style="color: darkred">Odrzucone</b>
-        }
-        else if ((item.StatusGuardian == "Usuniete" && item.Guardian.Email != User.Identity.Name)
-                       || (item.StatusOwner == "Usuniete" && item.Owner.Email != User.Identity.Name))
-        {
-            <b style="color: darkred">Odrzucone</b>
-        }
     </td>
 </tr>
 }
