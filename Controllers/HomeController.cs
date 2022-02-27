@@ -8,12 +8,14 @@ using Xamarin.Forms.Maps;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using System.Data.Entity;
+using Microsoft.JSInterop;
 
 namespace PROJEKT_PZ_NK_v3.Controllers
 {
     public class HomeController : Controller
     {
         OfferContext db = new OfferContext();
+
 
 
         public ActionResult Index()
@@ -101,6 +103,9 @@ namespace PROJEKT_PZ_NK_v3.Controllers
                                                        Species = Group.Key,
                                                        SpeciesCount = Group.Count()
                                                    };
+            
+
+
             return View(data.ToList());
         }
 
