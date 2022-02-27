@@ -8,7 +8,6 @@ using Xamarin.Forms.Maps;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using System.Data.Entity;
-using Microsoft.JSInterop;
 
 namespace PROJEKT_PZ_NK_v3.Controllers
 {
@@ -96,17 +95,11 @@ namespace PROJEKT_PZ_NK_v3.Controllers
 
         public ActionResult About()
         {
-            IQueryable<EnrollmentDateGroup> data = from animal in db.Animals
-                                                   group animal by animal.Species into Group
-                                                   select new EnrollmentDateGroup()
-                                                   {
-                                                       Species = Group.Key,
-                                                       SpeciesCount = Group.Count()
-                                                   };
+            List<Profile> data = db.Profiles.ToList();
             
 
 
-            return View(data.ToList());
+            return View(data);
         }
 
         public ActionResult Contact()

@@ -1,8 +1,9 @@
-﻿@model IEnumerable<PROJEKT_PZ_NK_v3.ViewModels.EnrollmentDateGroup>
+﻿@model IEnumerable<PROJEKT_PZ_NK_v3.Models.Profile>
 
 @{
     ViewBag.Title = "About";
 }
+
 
 <style>
     #map {
@@ -17,49 +18,50 @@
 
 
         <div id="map"></div>
-        
         <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyA1BOzf3325XV08x9aMj_kELckTcgL3xrQ&callback=initMap&v=weekly&channel=2" async></script>
-
-    </div>
-</div>
-        <div id="directions-panel"></div>
+         @foreach (var item in Model)
+         {
         <script>
             function initMap() {
-                const directionsService = new google.maps.DirectionsService();
-                const directionsRenderer = new google.maps.DirectionsRenderer();
-                const map = new google.maps.Map(document.getElementById("map"), {
+             const directionsService = new google.maps.DirectionsService();
+             const directionsRenderer = new google.maps.DirectionsRenderer();
+             const map = new google.maps.Map(document.getElementById("map"), {
                     zoom: 6,
                     center: { lat: 41.85, lng: -87.65 },
                 });
 
-                directionsRenderer.setMap(map);
-
-                directionsService
-                    .route({
-                        origin: "Siedlce",
+         directionsRenderer.setMap(map);
+         directionsService
+             .route({
+                 origin: "Siedlce",
                         destination: "Warszawa",
                         travelMode: google.maps.TravelMode.DRIVING,
                     })
                     .then((response) => {
-                        directionsRenderer.setDirections(response);
+                         directionsRenderer.setDirections(response);
 
-                        const route = response.routes[0];
-                        const summaryPanel = document.getElementById("directions-panel");
+                         const route = response.routes[0];
+                         const summaryPanel = document.getElementById("directions-panel");
 
 
-                        summaryPanel.innerHTML = "";
+                         summaryPanel.innerHTML = "";
 
-                        // For each route, display summary information.
-                        for (let i = 0; i < route.legs.length; i++) {
-                            const routeSegment = i + 1;
+                         // For each route, display summary information.
+                         for (let i = 0; i < route.legs.length; i++) {
+                             const routeSegment = i + 1;
 
-                            summaryPanel.innerHTML +=
-                                "<b>Route Segment: " + routeSegment + "</b><br>";
-                            summaryPanel.innerHTML += route.legs[i].start_address + " to ";
-                            summaryPanel.innerHTML += route.legs[i].end_address + "<br>";
-                            summaryPanel.innerHTML += route.legs[i].distance.text + "<br><br>";
-                        }
-                    })
+                             summaryPanel.innerHTML +=
+                                 "<b>Route Segment: " + routeSegment + "</b><br>";
+                             summaryPanel.innerHTML += route.legs[i].start_address + " to ";
+                             summaryPanel.innerHTML += route.legs[i].end_address + "<br>";
+                             summaryPanel.innerHTML += route.legs[i].distance.text + "<br><br>";
+                         }
+                     })
                     .catch((e) => window.alert("Directions request failed due to " + status));
-            }
+         }
         </script>
+         }
+
+    </div>
+</div>
+<div id="directions-panel"></div>
