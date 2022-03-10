@@ -8,6 +8,13 @@ using Xamarin.Forms.Maps;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using System.Data.Entity;
+using System.Net;
+using System.IO;
+using System.Data;
+using Google.Protobuf.WellKnownTypes;
+using System.Text;
+using Nest;
+using MathNet.Numerics;
 
 namespace PROJEKT_PZ_NK_v3.Controllers
 {
@@ -20,16 +27,18 @@ namespace PROJEKT_PZ_NK_v3.Controllers
         public ActionResult Index()
         {
 
-            Profile profile = db.Profiles.FirstOrDefault(p => p.Email == User.Identity.Name);
+            Models.Profile profile = db.Profiles.FirstOrDefault(p => p.Email == User.Identity.Name);
             ViewBag.Profil = profile;
 
             var offers = db.Offers
-                .Where(a => a.Profile.Email != User.Identity.Name 
+                .Where(a => a.Profile.Email != User.Identity.Name
                     && a.EndDate > DateTime.Now
                     && a.Profile.Comments
                     .Where(b => (b.Author.Email == User.Identity.Name || b.Profile.Email == User.Identity.Name)
                         && (b.Grade > 2 || b.Grade == 0))
                 .Count() >= 0);
+
+            //offers.OrderBy(a => CalculateDistance(a.Profile.City + " " + a.Profile.Street, profile.City + " " + profile.Street)).ToList();
 
             if (db.Applications.Any(a => a.Guardian.Email == User.Identity.Name))
             {
@@ -37,9 +46,10 @@ namespace PROJEKT_PZ_NK_v3.Controllers
                 int days = db.Applications.Where(a => a.Guardian.Email == User.Identity.Name && DbFunctions.DiffDays(a.Offer.EndDate, a.Offer.StartingDate) > 0).Count();
                 if (hours > days)
                 {
-                    ViewBag.Offers1 = offers
-                        .OrderByDescending(a => DbFunctions.DiffDays(a.EndDate, a.StartingDate))
-                        .ThenByDescending(a => a.Profile.Rate)
+                    ViewBag.Offers1 = offers.ToList()
+                        .OrderByDescending(a => CalculateDistance(a.Profile.City + " " + a.Profile.Street, profile.City + " " + profile.Street))
+                        /*.ThenByDescending(a => a.EndDate.Subtract(a.StartingDate))
+                        .ThenByDescending(a => a.Profile.Rate)*/
                     .Take(4).ToList();
 
 
@@ -51,8 +61,9 @@ namespace PROJEKT_PZ_NK_v3.Controllers
                 else
                 {
                     ViewBag.Offers1 = offers
-                        .OrderBy(a => DbFunctions.DiffDays(a.EndDate, a.StartingDate))
-                        .ThenByDescending(a => a.Profile.Rate)
+                        .OrderByDescending(a => CalculateDistance(a.Profile.City + " " + a.Profile.Street, profile.City + " " + profile.Street))
+                        /*.ThenBy(a => a.EndDate.Subtract(a.StartingDate))
+                        .ThenByDescending(a => a.Profile.Rate)*/
                     .Take(4).ToList();
                     ViewBag.Offers2 = offers
                         .OrderBy(a => DbFunctions.DiffDays(a.EndDate, a.StartingDate))
@@ -95,12 +106,29 @@ namespace PROJEKT_PZ_NK_v3.Controllers
 
         public ActionResult About()
         {
-            List<Profile> data = db.Profiles.ToList();
-            
+            List<Models.Profile> data = db.Profiles.ToList();
 
 
-            return View(data);
+            return View();
         }
+
+        float CalculateDistance(string source, string destination)
+        {
+            string distance;
+            string url = "https://maps.googleapis.com/maps/api/distancematrix/xml?origins=" + source + "&destinations=" + destination + "&key=AIzaSyA1BOzf3325XV08x9aMj_kELckTcgL3xrQ";
+            WebRequest request = WebRequest.Create(url);
+            using (WebResponse response = (HttpWebResponse)request.GetResponse())
+            {
+                using (StreamReader reader = new StreamReader(response.GetResponseStream(), Encoding.UTF8))
+                {
+                    DataSet dsResult = new DataSet();
+                    dsResult.ReadXml(reader);
+                    distance = dsResult.Tables["distance"].Rows[0]["value"].ToString();
+                }
+            }
+            return float.Parse(distance);
+        }
+
 
         public ActionResult Contact()
         {

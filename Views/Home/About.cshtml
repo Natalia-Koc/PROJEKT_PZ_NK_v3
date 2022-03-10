@@ -1,5 +1,5 @@
-﻿@model IEnumerable<PROJEKT_PZ_NK_v3.Models.Profile>
-
+﻿@*@model IEnumerable<PROJEKT_PZ_NK_v3.Models.Profile>
+*@
 @{
     ViewBag.Title = "About";
 }
@@ -12,7 +12,13 @@
     }
 </style>
 <br />
-<div class="row">
+
+
+
+<div>
+    @Model
+</div>
+@*<div class="row">
 
     <div id="container">
 
@@ -33,7 +39,7 @@
          directionsRenderer.setMap(map);
          directionsService
              .route({
-                 origin: "Siedlce",
+                 origin: "@item.City @item.Street",
                         destination: "Warszawa",
                         travelMode: google.maps.TravelMode.DRIVING,
                     })
@@ -58,10 +64,10 @@
                          }
                      })
                     .catch((e) => window.alert("Directions request failed due to " + status));
-         }
+                }
         </script>
          }
 
     </div>
 </div>
-<div id="directions-panel"></div>
+<div id="directions-panel"></div>*@
