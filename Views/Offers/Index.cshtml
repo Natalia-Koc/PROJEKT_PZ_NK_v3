@@ -16,14 +16,14 @@
             <div class="form-group row">
                 <div class="col-xs-3">
                     <label for="ex1">Tytuł:</label>
-                    @Html.TextBox("SearchString", ViewBag.CurrentFilterT as string, new { placeholder = "Tytuł", style = "height:32px", @id = "ex1", @class = "form-control" })
+                    @Html.TextBox("SearchString", ViewBag.CurrentFilterSt as string, new { placeholder = "Tytuł", style = "height:32px", @id = "ex1", @class = "form-control" })
                 </div>
                 <div class="col-xs-3">
                     <label for="ex4">Właściciel:</label>
                     @Html.TextBox("SearchOwner", ViewBag.CurrentFilterO as string, new { placeholder = "Właściciel", style = "height:32px", @id = "ex4", @class = "form-control" })
                 </div>
                 <div class="col-xs-3">
-                    <label for="ex6">Czas opieki:</label>
+                    <label for="ex6">Czas opieki (w dniach):</label>
                     @Html.TextBox("SearchTime", ViewBag.CurrentFilterT as string, new { value=-1, style = "height:32px", @id = "ex6", @class = "form-control", type="number" })
                 </div>
                 <div class="col-xs-1">
@@ -35,7 +35,7 @@
             </div>
                 <div class="form-group row">
                     <div class="col-xs-3">
-                        <label for="ex5">Zwierzak:</label>
+                        <label for="ex5">Imię zwierzaka:</label>
                         @Html.TextBox("SearchAnimal", ViewBag.CurrentFilterA as string, new { placeholder = "Zwierzak", style = "height:32px", @id = "ex5", @class = "form-control" })
                     </div>
                     <div class="col-xs-3">
@@ -57,10 +57,66 @@
                     Sortuj po..
                 </button>
                 <ul class="dropdown-menu">
-                    <li>@Html.ActionLink("tytuł rosnąco", "Index", "Offers", new { sortOrder = ViewBag.TitleSortParmAsc, searchString = ViewBag.CurrentFilterT, searchSpecies = ViewBag.CurrentFilterS, searchRace = ViewBag.CurrentFilterR }, null)</li>
-                    <li>@Html.ActionLink("tytuł malejąco", "Index", "Offers", new { sortOrder = ViewBag.TitleSortParmDesc, searchString = ViewBag.CurrentFilterT, searchSpecies = ViewBag.CurrentFilterS, searchRace = ViewBag.CurrentFilterR }, null)</li>
-                    <li>@Html.ActionLink("data rosnąco", "Index", "Offers", new { sortOrder = ViewBag.DateSortParmAsc, searchString = ViewBag.CurrentFilterT, searchSpecies = ViewBag.CurrentFilterS, searchRace = ViewBag.CurrentFilterR }, null)</li>
-                    <li>@Html.ActionLink("data malejąco", "Index", "Offers", new { sortOrder = ViewBag.DateSortParmDesc, searchString = ViewBag.CurrentFilterT, searchSpecies = ViewBag.CurrentFilterS, searchRace = ViewBag.CurrentFilterR }, null)</li>
+                    <li>@Html.ActionLink("tytuł rosnąco", "Index", "Offers",
+                       new {
+                           sortOrder = ViewBag.TitleSortParmAsc,
+                           searchString = ViewBag.CurrentFilterSt,
+                           searchSpecies = ViewBag.CurrentFilterS,
+                           searchRace = ViewBag.CurrentFilterR,
+                           searchOwner = ViewBag.CurrentFilterO,
+                           searchAnimal = ViewBag.CurrentFilterA,
+                           searchTime = ViewBag.CurrentFilterT
+                       }, null)</li>
+                    <li>@Html.ActionLink("tytuł malejąco", "Index", "Offers",
+                       new {
+                           sortOrder = ViewBag.TitleSortParmDesc,
+                           searchString = ViewBag.CurrentFilterSt,
+                           searchSpecies = ViewBag.CurrentFilterS,
+                           searchRace = ViewBag.CurrentFilterR,
+                           searchOwner = ViewBag.CurrentFilterO,
+                           searchAnimal = ViewBag.CurrentFilterA,
+                           searchTime = ViewBag.CurrentFilterT
+                       }, null)</li>
+                    <li>@Html.ActionLink("data rosnąco", "Index", "Offers",
+                       new {
+                           sortOrder = ViewBag.DateSortParmAsc,
+                           searchString = ViewBag.CurrentFilterSt,
+                           searchSpecies = ViewBag.CurrentFilterS,
+                           searchRace = ViewBag.CurrentFilterR,
+                           searchOwner = ViewBag.CurrentFilterO,
+                           searchAnimal = ViewBag.CurrentFilterA,
+                           searchTime = ViewBag.CurrentFilterT
+                       }, null)</li>
+                    <li>@Html.ActionLink("data malejąco", "Index", "Offers",
+                       new {
+                           sortOrder = ViewBag.DateSortParmDesc,
+                           searchString = ViewBag.CurrentFilterSt,
+                           searchSpecies = ViewBag.CurrentFilterS,
+                           searchRace = ViewBag.CurrentFilterR,
+                           searchOwner = ViewBag.CurrentFilterO,
+                           searchAnimal = ViewBag.CurrentFilterA,
+                           searchTime = ViewBag.CurrentFilterT
+                       }, null)</li>
+                    <li>@Html.ActionLink("odległość rosnąco", "Index", "Offers",
+                       new {
+                           sortOrder = ViewBag.DistanceSortParmAsc,
+                           searchString = ViewBag.CurrentFilterSt,
+                           searchSpecies = ViewBag.CurrentFilterS,
+                           searchRace = ViewBag.CurrentFilterR,
+                           searchOwner = ViewBag.CurrentFilterO,
+                           searchAnimal = ViewBag.CurrentFilterA,
+                           searchTime = ViewBag.CurrentFilterT
+                       }, null)</li>
+                    <li>@Html.ActionLink("odległość malejąco", "Index", "Offers",
+                       new {
+                           sortOrder = ViewBag.DistanceSortParmDesc,
+                           searchString = ViewBag.CurrentFilterSt,
+                           searchSpecies = ViewBag.CurrentFilterS,
+                           searchRace = ViewBag.CurrentFilterR,
+                           searchOwner = ViewBag.CurrentFilterO,
+                           searchAnimal = ViewBag.CurrentFilterA,
+                           searchTime = ViewBag.CurrentFilterT
+                       }, null)</li>
                 </ul>
             </div>
         </div>

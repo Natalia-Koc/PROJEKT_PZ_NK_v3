@@ -10,12 +10,30 @@ using PROJEKT_PZ_NK_v3.DAL;
 using PROJEKT_PZ_NK_v3.Models;
 using PagedList;
 using System.Data.Entity.SqlServer;
+using System.IO;
+using System.Text;
 
 namespace PROJEKT_PZ_NK_v3.Controllers
 {
     public class OffersController : Controller
     {
         private OfferContext db = new OfferContext();
+        float CalculateDistance(string source, string destination)
+        {
+            string distance;
+            string url = "https://maps.googleapis.com/maps/api/distancematrix/xml?origins=" + source + "&destinations=" + destination + "&key=AIzaSyA1BOzf3325XV08x9aMj_kELckTcgL3xrQ";
+            WebRequest request = WebRequest.Create(url);
+            using (WebResponse response = (HttpWebResponse)request.GetResponse())
+            {
+                using (StreamReader reader = new StreamReader(response.GetResponseStream(), Encoding.UTF8))
+                {
+                    DataSet dsResult = new DataSet();
+                    dsResult.ReadXml(reader);
+                    distance = dsResult.Tables["distance"].Rows[0]["value"].ToString();
+                }
+            }
+            return float.Parse(distance);
+        }
 
         // GET: Offers
         public ActionResult Index(string sortOrder, string searchString, string searchSpecies, string searchRace, 
@@ -27,12 +45,14 @@ namespace PROJEKT_PZ_NK_v3.Controllers
             ViewBag.TitleSortParmDesc = String.IsNullOrEmpty(sortOrder) ? "Title_desc" : "";
             ViewBag.DateSortParmAsc = String.IsNullOrEmpty(sortOrder) ? "StartingDateAsc" : "";
             ViewBag.DateSortParmDesc = String.IsNullOrEmpty(sortOrder) ? "StartingDateDesc" : "";
+            ViewBag.DistanceSortParmAsc = String.IsNullOrEmpty(sortOrder) ? "DistanceAsc" : "";
+            ViewBag.DistanceSortParmDesc = String.IsNullOrEmpty(sortOrder) ? "DistanceDesc" : "";
 
-            if (searchString != null)
+            if (searchString != null || searchSpecies != null || searchRace != null || searchOwner != null || searchAnimal != null || searchTime != null)
             {
                 page = 1;
             }
-            ViewBag.CurrentFilterT = searchString;
+            ViewBag.CurrentFilterSt = searchString;
             ViewBag.CurrentFilterS = searchSpecies;
             ViewBag.CurrentFilterR = searchRace;
             ViewBag.CurrentFilterO = searchOwner;
@@ -41,56 +61,69 @@ namespace PROJEKT_PZ_NK_v3.Controllers
 
             var offers = db.Offers
                          .Include(a => a.Profile)
-                         .Where(w => w.StartingDate > DateTime.Now);
+                         .Where(w => w.StartingDate > DateTime.Now)
+                         .ToList();
 
             if (!String.IsNullOrEmpty(searchString))
             {
-                offers = offers.Where(s => s.Title.ToLower().Contains(searchString.ToLower()));
+                offers = offers.Where(s => s.Title.ToLower().Contains(searchString.ToLower())).ToList();
             }
             if (!String.IsNullOrEmpty(searchSpecies))
             {
-                offers = offers.Where(s => s.Animal.Species.ToLower().Contains(searchSpecies.ToLower()));
+                offers = offers.Where(s => s.Animal.Species.ToLower().Contains(searchSpecies.ToLower())).ToList();
             }
             if (!String.IsNullOrEmpty(searchRace))
             {
-                offers = offers.Where(s => s.Animal.Race.ToLower().Contains(searchRace.ToLower()));
+                offers = offers.Where(s => s.Animal.Race.ToLower().Contains(searchRace.ToLower())).ToList();
             }
             if (!String.IsNullOrEmpty(searchOwner))
             {
                 offers = offers.Where(s => s.Profile.FirstName.ToLower().Contains(searchOwner.ToLower()) 
-                    || s.Profile.Login.ToLower().Contains(searchOwner.ToLower()));
+                    || s.Profile.Login.ToLower().Contains(searchOwner.ToLower())).ToList();
             }
             if (!String.IsNullOrEmpty(searchAnimal))
             {
-                offers = offers.Where(s => s.Animal.Name.ToLower().Contains(searchAnimal.ToLower()));
+                offers = offers.Where(s => s.Animal.Name.ToLower().Contains(searchAnimal.ToLower())).ToList();
             }
             if (searchTime != null)
             {
-                offers = offers.Where(s => SqlFunctions.DateDiff("DD", s.StartingDate, s.EndDate) == searchTime);
+                var DDoffers = offers.Where(s => (s.EndDate.DayOfYear - s.StartingDate.DayOfYear) == searchTime);
+                offers = DDoffers.ToList();
             }
+
+            Profile profile = db.Profiles.FirstOrDefault(p => p.Email == User.Identity.Name);
+            ViewBag.Profil = profile;
+
             switch (sortOrder)
             {
                 case "StartingDateAsc":
-                    offers = offers.OrderBy(s => s.StartingDate.Year).ThenBy(s => s.StartingDate.Month).ThenBy(s => s.StartingDate.Day);
+                    offers = offers.OrderBy(s => s.StartingDate.Year).ThenBy(s => s.StartingDate.Month).ThenBy(s => s.StartingDate.Day).ToList();
                     break;
                 case "StartingDateDesc":
-                    offers = offers.OrderByDescending(s => s.StartingDate.Year).ThenByDescending(s => s.StartingDate.Month).ThenByDescending(s => s.StartingDate.Day);
+                    offers = offers.OrderByDescending(s => s.StartingDate.Year).ThenByDescending(s => s.StartingDate.Month).ThenByDescending(s => s.StartingDate.Day).ToList();
                     break;
                 case "Title_desc":
-                    offers = offers.OrderByDescending(s => s.Title);
+                    offers = offers.OrderByDescending(s => s.Title).ToList();
                     break;
                 case "Title_asc":
-                    offers = offers.OrderBy(s => s.Title);
+                    offers = offers.OrderBy(s => s.Title).ToList();
+                    break;
+                case "DistanceDesc":
+                    offers = offers.OrderByDescending(a => CalculateDistance(a.Profile.City + " " + a.Profile.Street, profile.City + " " + profile.Street)).ToList();
+                    break;
+                case "DistanceAsc":
+                    offers = offers.OrderBy(a => CalculateDistance(a.Profile.City + " " + a.Profile.Street, profile.City + " " + profile.Street)).ToList();
                     break;
                 default:
-                    offers = offers.OrderBy(s => s.ID);
+                    offers = offers.OrderBy(s => s.ID).ToList();
                     break;
             }
             int pageSize = 12;
             int pageNumber = (page ?? 1);
-            ViewBag.SortList = new List<string>() {"tytuł malejąco", "tytuł rosnąco", "data malejąco", "data rosnąco"};
-            return View(offers.ToPagedList(pageNumber, pageSize));
+            ViewBag.SortList = new List<string>() {"tytuł malejąco", "tytuł rosnąco", "data malejąco", "data rosnąco", "odległość malejąco", "odległość rosnąco" };
+            return View(offers.ToList().ToPagedList(pageNumber, pageSize));
         }
+
 
         [Authorize]
         public ActionResult MyOffers()
