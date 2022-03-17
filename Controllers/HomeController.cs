@@ -30,56 +30,27 @@ namespace PROJEKT_PZ_NK_v3.Controllers
             Models.Profile profile = db.Profiles.FirstOrDefault(p => p.Email == User.Identity.Name);
             ViewBag.Profil = profile;
 
-            var offers = db.Offers
+            
+            if (profile != null)
+            {
+                var offers = db.Offers
                 .Where(a => a.Profile.Email != User.Identity.Name
                     && a.EndDate > DateTime.Now
                     && a.Profile.Comments
                     .Where(b => (b.Author.Email == User.Identity.Name || b.Profile.Email == User.Identity.Name)
                         && (b.Grade > 2 || b.Grade == 0))
-                .Count() >= 0);
+                .Count() >= 0)
+                .ToList();
 
-            //offers.OrderBy(a => CalculateDistance(a.Profile.City + " " + a.Profile.Street, profile.City + " " + profile.Street)).ToList();
-
-            if (db.Applications.Any(a => a.Guardian.Email == User.Identity.Name))
-            {
-                int hours = db.Applications.Where(a => a.Guardian.Email == User.Identity.Name && DbFunctions.DiffDays(a.Offer.EndDate, a.Offer.StartingDate) == 0).Count();
-                int days = db.Applications.Where(a => a.Guardian.Email == User.Identity.Name && DbFunctions.DiffDays(a.Offer.EndDate, a.Offer.StartingDate) > 0).Count();
-                if (hours > days)
-                {
-                    ViewBag.Offers1 = offers.ToList()
-                        .OrderByDescending(a => CalculateDistance(a.Profile.City + " " + a.Profile.Street, profile.City + " " + profile.Street))
-                        /*.ThenByDescending(a => a.EndDate.Subtract(a.StartingDate))
-                        .ThenByDescending(a => a.Profile.Rate)*/
-                    .Take(4).ToList();
-
-
-                    ViewBag.Offers2 = offers
-                        .OrderByDescending(a => DbFunctions.DiffDays(a.EndDate, a.StartingDate))
-                        .ThenByDescending(a => a.Profile.Rate)
-                    .Skip(4).Take(4).ToList();
-                }
-                else
-                {
-                    ViewBag.Offers1 = offers
-                        .OrderByDescending(a => CalculateDistance(a.Profile.City + " " + a.Profile.Street, profile.City + " " + profile.Street))
-                        /*.ThenBy(a => a.EndDate.Subtract(a.StartingDate))
-                        .ThenByDescending(a => a.Profile.Rate)*/
-                    .Take(4).ToList();
-                    ViewBag.Offers2 = offers
-                        .OrderBy(a => DbFunctions.DiffDays(a.EndDate, a.StartingDate))
-                        .ThenByDescending(a => a.Profile.Rate)
-                    .Skip(4).Take(4).ToList();
-                }
-            }
-            else
-            {
                 ViewBag.Offers1 = offers
-                    .OrderByDescending(a => a.Profile.Rate)
+                    .OrderBy(a => CalculateDistance(a.Profile.City + " " + a.Profile.Street, profile.City + " " + profile.Street))
                     .Take(4).ToList();
+
                 ViewBag.Offers2 = offers
-                    .OrderByDescending(a => a.Profile.Rate)
+                    .OrderByDescending(a => CalculateDistance(a.Profile.City + " " + a.Profile.Street, profile.City + " " + profile.Street))
                     .Skip(4).Take(4).ToList();
             }
+
 
             ViewBag.StatisticsAnimals = db.Animals.Count();
             ViewBag.StatisticsOffers = db.Offers.Count();
