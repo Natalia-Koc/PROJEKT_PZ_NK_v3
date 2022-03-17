@@ -47,6 +47,8 @@ namespace PROJEKT_PZ_NK_v3.Controllers
             ViewBag.DateSortParmDesc = String.IsNullOrEmpty(sortOrder) ? "StartingDateDesc" : "";
             ViewBag.DistanceSortParmAsc = String.IsNullOrEmpty(sortOrder) ? "DistanceAsc" : "";
             ViewBag.DistanceSortParmDesc = String.IsNullOrEmpty(sortOrder) ? "DistanceDesc" : "";
+            ViewBag.TimeSortParmAsc = String.IsNullOrEmpty(sortOrder) ? "TimeAsc" : "";
+            ViewBag.TimeSortParmDesc = String.IsNullOrEmpty(sortOrder) ? "TimeDesc" : "";
 
             if (searchString != null || searchSpecies != null || searchRace != null || searchOwner != null || searchAnimal != null || searchTime != null)
             {
@@ -114,13 +116,28 @@ namespace PROJEKT_PZ_NK_v3.Controllers
                 case "DistanceAsc":
                     offers = offers.OrderBy(a => CalculateDistance(a.Profile.City + " " + a.Profile.Street, profile.City + " " + profile.Street)).ToList();
                     break;
+                case "TimeDesc":
+                    offers = offers.OrderByDescending(s => (s.EndDate.DayOfYear - s.StartingDate.DayOfYear)).ToList();
+                    break;
+                case "TimeAsc":
+                    offers = offers.OrderBy(s => (s.EndDate.DayOfYear - s.StartingDate.DayOfYear)).ToList();
+                    break;
                 default:
                     offers = offers.OrderBy(s => s.ID).ToList();
                     break;
             }
             int pageSize = 12;
             int pageNumber = (page ?? 1);
-            ViewBag.SortList = new List<string>() {"tytuł malejąco", "tytuł rosnąco", "data malejąco", "data rosnąco", "odległość malejąco", "odległość rosnąco" };
+            ViewBag.SortList = new List<string>() {
+                "tytuł malejąco", 
+                "tytuł rosnąco", 
+                "data malejąco", 
+                "data rosnąco", 
+                "odległość malejąco", 
+                "odległość rosnąco", 
+                "czas trwania malejąco", 
+                "czas trwania rosnąco" 
+            };
             return View(offers.ToList().ToPagedList(pageNumber, pageSize));
         }
 
