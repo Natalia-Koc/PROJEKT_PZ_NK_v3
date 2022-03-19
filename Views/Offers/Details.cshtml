@@ -3,14 +3,22 @@
 @{
     ViewBag.Title = "Details";
 }
+<div style=" margin: 4%; width: 90%; text-align-last: justify;">
+    <h2 class="glyphicon glyphicon-search">  Szczegóły oferty</h2>
+    <button type="button" class="btn btn-info" id="submitButton" data-toggle="modal" data-target="#myModal">
+        Pokaż na mapie 
+        <svg width="19" height="19" fill="currentColor" class="bi bi-geo-alt-fill" viewBox="0 0 16 16">
+            <path d="M8 16s6-5.686 6-10A6 6 0 0 0 2 6c0 4.314 6 10 6 10zm0-7a3 3 0 1 1 0-6 3 3 0 0 1 0 6z" />
+        </svg>
+    </button>
+</div>
 
-<h2 style="margin: 4%" class="glyphicon glyphicon-search">  Szczegóły oferty</h2>
 
 <div class="container-fluid">
     <hr />
     <div class="row">
         <div class="col-5 list-group-item-heading">
-            <img src="~/ImagesAnimals/@Html.DisplayFor(model => model.Animal.Image)" class="btn-" width="400px" style="margin-bottom:2%;">
+            <img src="~/ImagesAnimals/@Html.DisplayFor(model => model.Animal.Image)" class="btn-" width="400px" style="margin-bottom: 2%; border-radius: 4px;">
             <br />
             <p>
                 @if (Model.Profile.Email == User.Identity.Name)
@@ -19,10 +27,79 @@
                     @Html.ActionLink("Kopiuj", "Copy", new { id = Model.ID }, new { @class = "btn btn-secondary" })
                     @Html.ActionLink("Usuń", "Delete", new { id = Model.ID }, new { @class = "btn btn-danger" })
                 }
+                else
+                {
+                    <div class="container">
+                        <!-- Trigger the modal with a button -->
+                        <!-- Modal -->
+                        <div class="modal fade" id="myModal" role="dialog">
+                            <div class="modal-dialog">
+
+                                <!-- Modal content-->
+                                <div class="modal-content" style="width: 200%; margin-left: -40%;">
+                                    <div class="modal-header">
+                                        <h4 class="modal-title" style="text-align: left">Lokalizacja zwierzaka na mapie</h4>
+                                        <button type="button" class="close" data-dismiss="modal">&times;</button>
+                                    </div>
+                                    <div class="modal-body">
+                                        <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyA1BOzf3325XV08x9aMj_kELckTcgL3xrQ&callback=initMap&v=weekly&channel=2" async></script>
+                                        <script>
+                                            function initMap() {
+                                                map = new google.maps.Map(document.getElementById("map"), {
+                                                    zoom: 15,
+                                                    center: { lat: 52.10, lng: 19.5 },
+                                                    mapTypeControl: false,
+                                                });
+                                                geocoder = new google.maps.Geocoder();
+
+                                                document.getElementById("submitButton").addEventListener("click", () =>
+                                                    geocode({ address: "@Model.Profile.City @Model.Profile.Street @Model.Profile.HouseNumber" })
+                                                );
+                                            }
+
+                                            function geocode(request) {
+                                                geocoder
+                                                    .geocode(request)
+                                                    .then((result) => {
+                                                        const { results } = result;
+                                                        map.setCenter(results[0].geometry.location);
+
+                                                        new google.maps.Circle({
+                                                            strokeColor: "blue",
+                                                            strokeOpacity: 0.8,
+                                                            strokeWeight: 2,
+                                                            fillColor: "blue",
+                                                            fillOpacity: 0.35,
+                                                            map,
+                                                            center: results[0].geometry.location,
+                                                            radius: 300,
+                                                        });
+
+                                                        return results;
+                                                    })
+                                                    .catch((e) => {
+                                                        alert("Geocode was not successful for the following reason: ");
+                                                    });
+                                            }
+                                        </script>
+                                        <div>
+                                            <div id="map" style="width: 100%; height: 480px;"></div>
+                                        </div>
+                                    </div>
+                                    <div class="modal-footer">
+                                        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                                    </div>
+                                </div>
+
+                            </div>
+                        </div>
+
+                    </div>
+                }
             </p>
         </div>
 
-        <div class="col-6 active">
+        <div class="col-7 active">
             <div class="panel panel-info">
                 <div class="panel-heading">
                     <dl class="dl-horizontal">
@@ -79,35 +156,38 @@
                 </div>
             </div>
             <br />
-            @if (Model.Profile.Email != User.Identity.Name)
-            {
-                <hr />
-                if (!ViewBag.IsApplied)
-                {
-                    using (Html.BeginForm("Create", "Applications", new { offerID = Model.ID, ownerID = Model.Profile.ID }))
-                    {
-                        @Html.AntiForgeryToken()
-                        <div class="form-horizontal">
-                            @Html.ValidationSummary(true, "", new { @class = "text-danger" })
 
-                            <div class="form-group">
-                                <p> Zaproponuj cenę i napisz wiadomość:</p>
-                                <textarea name="Message" id="Message" class="form-control w-75"></textarea>
-                                <br />
-                                <div class="col-md-10">
-                                    <input type="submit" value="Zgłaszam się do oferty" class="btn btn-success" />
-                                </div>
-                            </div>
-                        </div>
-                    }
-                }
-                else
-                {
-                    <em style="color:blue" class="navbar-right">Wysłano zgłoszenie do oferty</em>
-                }
-            }
         </div>
     </div>
+    @if (Model.Profile.Email != User.Identity.Name)
+    {
+        <hr />
+        if (!ViewBag.IsApplied)
+        {
+            using (Html.BeginForm("Create", "Applications", new { offerID = Model.ID, ownerID = Model.Profile.ID }))
+            {
+                @Html.AntiForgeryToken()
+                <div class="form-horizontal">
+                    @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+
+                    <div class="form-group" style="display: inline; text-align: -webkit-center;">
+                        <p> Zaproponuj cenę i napisz wiadomość:</p>
+                        <div class="ofert__form" style=" display: flex; align-items: baseline; justify-content: center;">
+                            <textarea name="Message" id="Message" class="form-control w-75" style="height: 36px;"></textarea>
+                            <br>
+                            <div>
+                                <input type="submit" value="Zgłaszam się do oferty" class="btn btn-success">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            }
+        }
+        else
+        {
+            <em style="color:blue" class="navbar-right">Wysłano zgłoszenie do oferty</em>
+        }
+    }
 
     @if (ViewBag.ApplicationsCount != 0)
     {
