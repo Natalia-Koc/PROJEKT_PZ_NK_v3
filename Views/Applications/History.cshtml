@@ -19,6 +19,9 @@
         <th>
             Zwierze
         </th>
+        <th>
+            Status
+        </th>
     </tr>
 
 @foreach (var item in Model) {
@@ -34,7 +37,7 @@
         }
         else
         {
-            @Html.ActionLink(item.Owner.Login, "DetailsAnotherProfile", "Profiles", new {id = item.OwnerID }, null)<br />
+            @Html.ActionLink(item.Owner.Login, "DetailsAnotherProfile", "Profiles", new { id = item.OwnerID }, null)<br />
             <p style="word-spacing: 0.1cm; ">
                 @Html.DisplayFor(modelItem => item.Owner.FirstName)
                 @Html.DisplayFor(modelItem => item.Owner.LastName)
@@ -56,8 +59,18 @@
         }
     </td>
     <td>
-        @Html.ActionLink(item.Offer.Animal.Name, "Details", "Animals", new { id = item.Offer.AnimalID}, null)<br />
+        @Html.ActionLink(item.Offer.Animal.Name, "Details", "Animals", new { id = item.Offer.AnimalID }, null)<br />
         @Html.DisplayFor(modelItem => item.Offer.Animal.Species) - @Html.DisplayFor(modelItem => item.Offer.Animal.Race)
+    </td>
+    <td>
+        @if (User.Identity.Name == item.Guardian.Email)
+        {
+            @Html.DisplayFor(modelItem => item.StatusGuardian)
+        }
+        else
+        {
+            @Html.DisplayFor(modelItem => item.StatusOwner)
+        }
     </td>
 </tr>
 }
