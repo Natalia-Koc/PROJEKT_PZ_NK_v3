@@ -444,7 +444,7 @@ namespace PROJEKT_PZ_NK_v3.Controllers
                     ConfigurationManager.AppSettings["password"]),
                 EnableSsl = true
             };
-            smtpClient.Send(message);
+            //smtpClient.Send(message);
         }
 
         #region Pomocnicy
