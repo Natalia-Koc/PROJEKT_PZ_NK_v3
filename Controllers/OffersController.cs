@@ -218,12 +218,12 @@ namespace PROJEKT_PZ_NK_v3.Controllers
                 db.SaveChanges();
                 db.Profiles.Single(p => p.Email == User.Identity.Name).Offers.Add(offer);
 
-                foreach (var item in db.SavedProfiles.Where(a => a.SavedProfile.ID == offer.Profile.ID && a.SavedAs == Saved.favourite))
+                foreach (var item in db.SavedProfiles.Include("MyProfile").Where(a => a.SavedProfile.Email == myProfile.Email && a.SavedAs == Saved.favourite))
                 {
                     Notification notifi = new Notification
                     {
                         Offer = offer,
-                        Message = offer.Profile.Login + " dodał nową ofertę",
+                        Message = myProfile.Login + " dodał(a) nową ofertę",
                         Profile = item.MyProfile
                     };
                     db.Notifications.Add(notifi);

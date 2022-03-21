@@ -4,7 +4,7 @@
     @if (ViewBag.notifiCount > 0)
     {
         <ul class="dropdown-menu overflow-auto" data-bs-spy="scroll" data-bs-offset="20"
-            style="max-height: 200px; width: 250px; background-color: transparent !important">
+            style="max-height: 200px; width: 250px; background-color: transparent !important; border-radius: 5px; padding-bottom: 0px; margin-top: -10px;">
 
             @foreach (var category in ViewBag.notifi)
             {
@@ -40,7 +40,7 @@
     else
     {
 <ul class="dropdown-menu overflow-auto" data-bs-spy="scroll" data-bs-offset="20"
-    style="max-height: 200px; width: 250px;">
+    style="max-height: 200px; width: 250px; border-radius: 5px; padding: 5px; margin-top: -10px;">
     <li style="margin:5%; background-color:white">
         <p style="text-align:center; background-color:white"> brak powiadomień</p>
     </li>

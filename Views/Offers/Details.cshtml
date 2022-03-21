@@ -161,9 +161,9 @@
     </div>
     @if (Model.Profile.Email != User.Identity.Name)
     {
-        <hr />
         if (!ViewBag.IsApplied)
         {
+            <hr />
             using (Html.BeginForm("Create", "Applications", new { offerID = Model.ID, ownerID = Model.Profile.ID }))
             {
                 @Html.AntiForgeryToken()
@@ -296,9 +296,9 @@
         </table>
     }
 
-    <hr />
     @if (Model.Profile.Email != User.Identity.Name && ViewBag.AnotherOffersCount != 0)
     {
+        <hr />
         <h4 class="glyphicon glyphicon-bell" style="margin:2%">  Sprawdź również te oferty! </h4>
         <div class="container row">
             @foreach (var item in ViewBag.AnotherOffers)
