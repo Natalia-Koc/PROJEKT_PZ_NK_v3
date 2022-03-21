@@ -163,7 +163,6 @@
     {
         if (!ViewBag.IsApplied)
         {
-            <hr />
             using (Html.BeginForm("Create", "Applications", new { offerID = Model.ID, ownerID = Model.Profile.ID }))
             {
                 @Html.AntiForgeryToken()

@@ -116,7 +116,7 @@ namespace PROJEKT_PZ_NK_v3.Controllers
             Notification notifi = new Notification
             {
                 Offer = db.Offers.Find(db.Applications.Find(id).OfferID),
-                Message = "Opiekun odrzucił ofertę",
+                Message = "Opiekun zrezygmnował z oferty",
                 Profile = db.Profiles.Find(db.Applications.Find(id).OwnerID)
             };
             db.Notifications.Add(notifi);
