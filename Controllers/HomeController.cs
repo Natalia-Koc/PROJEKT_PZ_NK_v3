@@ -34,12 +34,19 @@ namespace PROJEKT_PZ_NK_v3.Controllers
             if (profile != null)
             {
                 var offers = db.Offers
-                .Where(a => a.Profile.Email != User.Identity.Name
-                    && a.EndDate > DateTime.Now
-                    && a.Profile.Comments
-                    .Where(b => (b.Author.Email == User.Identity.Name || b.Profile.Email == User.Identity.Name)
-                        && (b.Grade > 2 || b.Grade == 0))
-                .Count() >= 0)
+                .Where(o => o.Profile.Email != User.Identity.Name
+                    && o.EndDate > DateTime.Now
+                    && !o.Profile.SavedProfiles
+                        .Any(sp => sp.MyProfile.Email == User.Identity.Name
+                            && sp.SavedProfile.Email == o.Profile.Email
+                            && sp.SavedAs == Saved.blocked)
+                    && !o.Profile.MySavedProfiles
+                        .Any(sp => sp.SavedProfile.Email == User.Identity.Name
+                            && sp.MyProfile.Email == o.Profile.Email
+                            && sp.SavedAs == Saved.blocked)
+                    && o.Profile.Comments.Where(b => (b.Author.Email == User.Identity.Name 
+                        || b.Profile.Email == User.Identity.Name)
+                        && (b.Grade > 2 || b.Grade == 0)).Count() >= 0)
                 .ToList();
 
                 ViewBag.Offers1 = offers

@@ -1,17 +1,15 @@
-﻿using System;
+﻿using PagedList;
+using PROJEKT_PZ_NK_v3.DAL;
+using PROJEKT_PZ_NK_v3.Models;
+using System;
 using System.Collections.Generic;
 using System.Data;
 using System.Data.Entity;
+using System.IO;
 using System.Linq;
 using System.Net;
-using System.Web;
-using System.Web.Mvc;
-using PROJEKT_PZ_NK_v3.DAL;
-using PROJEKT_PZ_NK_v3.Models;
-using PagedList;
-using System.Data.Entity.SqlServer;
-using System.IO;
 using System.Text;
+using System.Web.Mvc;
 
 namespace PROJEKT_PZ_NK_v3.Controllers
 {
@@ -61,9 +59,21 @@ namespace PROJEKT_PZ_NK_v3.Controllers
             ViewBag.CurrentFilterA = searchAnimal;
             ViewBag.CurrentFilterT = searchTime;
 
-            var offers = db.Offers
+            var offers1 = db.Offers
                          .Include(a => a.Profile)
-                         .Where(w => w.StartingDate > DateTime.Now)
+                         .Include(a => a.Profile.SavedProfiles)
+                         .ToList();
+
+            var offers = offers1.Where(o => o.StartingDate > DateTime.Now 
+                            && !o.Profile.SavedProfiles
+                                .Any(sp => sp.MyProfile.Email == User.Identity.Name 
+                                    && sp.SavedProfile.Email == o.Profile.Email 
+                                    && sp.SavedAs == Saved.blocked)
+                            && !o.Profile.MySavedProfiles
+                                .Any(sp => sp.SavedProfile.Email == User.Identity.Name 
+                                    && sp.MyProfile.Email == o.Profile.Email 
+                                    && sp.SavedAs == Saved.blocked)
+                                )
                          .ToList();
 
             if (!String.IsNullOrEmpty(searchString))
@@ -129,15 +139,25 @@ namespace PROJEKT_PZ_NK_v3.Controllers
             int pageSize = 12;
             int pageNumber = (page ?? 1);
             ViewBag.SortList = new List<string>() {
-                "tytuł malejąco", 
-                "tytuł rosnąco", 
-                "data malejąco", 
-                "data rosnąco", 
-                "odległość malejąco", 
-                "odległość rosnąco", 
-                "czas trwania malejąco", 
-                "czas trwania rosnąco" 
+                "tytuł malejąco",
+                "tytuł rosnąco",
+                "data malejąco",
+                "data rosnąco",
+                "odległość malejąco",
+                "odległość rosnąco",
+                "czas trwania malejąco",
+                "czas trwania rosnąco"
             };
+
+            ViewBag.TitleSortParmAsc = "Title_asc";
+            ViewBag.TitleSortParmDesc = "Title_desc";
+            ViewBag.DateSortParmAsc = "StartingDateAsc";
+            ViewBag.DateSortParmDesc = "StartingDateDesc";
+            ViewBag.DistanceSortParmAsc = "DistanceAsc";
+            ViewBag.DistanceSortParmDesc = "DistanceDesc";
+            ViewBag.TimeSortParmAsc = "TimeAsc";
+            ViewBag.TimeSortParmDesc = "TimeDesc";
+
             return View(offers.ToList().ToPagedList(pageNumber, pageSize));
         }
 

@@ -21,6 +21,14 @@ namespace PROJEKT_PZ_NK_v3.DAL
                 modelBuilder.Entity<Comments>().HasRequired<Profile>(comment => comment.Profile)
                     .WithMany(profile => profile.Comments).HasForeignKey(comment => comment.ProfileID)
                     .WillCascadeOnDelete(false);
+            
+                modelBuilder.Entity<SavedProfiles>().HasRequired<Profile>(sp => sp.MyProfile)
+                    .WithMany(profile => profile.MySavedProfiles).HasForeignKey(sp => sp.MyProfileID)
+                    .WillCascadeOnDelete(false);
+
+                modelBuilder.Entity<SavedProfiles>().HasRequired<Profile>(sp => sp.SavedProfile)
+                    .WithMany(profile => profile.SavedProfiles).HasForeignKey(sp => sp.SavedProfileID)
+                    .WillCascadeOnDelete(false);
                 //usuniecie cyklicznego usuwania 
                 //ręczne definiowanie relacji i niecykliczne usuwanie 
 
