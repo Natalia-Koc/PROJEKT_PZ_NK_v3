@@ -165,10 +165,10 @@
                             <div class="card col-2 list-group-item-heading" style="padding:1%">
                                 <a href="@Url.Action("Details", "Animals", new { id = item.ID })">
                                     <img class="card-img-top center-block block d-block mx-auto"
-                                            style="max-height: 150px; object-fit: cover;"
+                                            style="max-height: 120px; object-fit: cover;"
                                             src="~/ImagesAnimals/@item.Image" alt="Card image">
                                 </a>
-                                <div class="card-body">
+                                <div class="card-body" style="padding: 0 1.25rem;">
                                     <a href="@Url.Action("Details", "Animals", new { id = item.ID })">
                                         <h4 class="card-title">@item.Name</h4>
                                     </a>

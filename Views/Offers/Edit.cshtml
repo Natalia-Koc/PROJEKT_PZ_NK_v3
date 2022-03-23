@@ -43,7 +43,7 @@
     <div class="form-group">
         <b class="control-label col-md-2">Opis</b>
         <div class="col-md-10">
-            <textarea name="Description" id="Description" class="form-control w-75">@Html.DisplayFor(m => m.Description)</textarea>
+            <textarea name="Description" id="Description" class="form-control w-75" style="height: 150px" >@Html.DisplayFor(m => m.Description)</textarea>
             @Html.ValidationMessageFor(model => model.Description, "", new { @class = "text-danger" })
         </div>
     </div>
