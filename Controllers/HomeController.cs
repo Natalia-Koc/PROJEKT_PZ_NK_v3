@@ -44,17 +44,18 @@ namespace PROJEKT_PZ_NK_v3.Controllers
                         .Any(sp => sp.SavedProfile.Email == User.Identity.Name
                             && sp.MyProfile.Email == o.Profile.Email
                             && sp.SavedAs == Saved.blocked)
-                    && o.Profile.Comments.Where(b => (b.Author.Email == User.Identity.Name 
+                    && o.Profile.Comments.Where(b => (b.Author.Email == User.Identity.Name
                         || b.Profile.Email == User.Identity.Name)
                         && (b.Grade > 2 || b.Grade == 0)).Count() >= 0)
                 .ToList();
 
-                ViewBag.Offers1 = offers
-                    .OrderBy(a => CalculateDistance(a.Profile.City + " " + a.Profile.Street, profile.City + " " + profile.Street))
+                var offers2 = offers
+                    .OrderBy(a => CalculateDistance(a.Profile.City + " " + a.Profile.Street, profile.City + " " + profile.Street));
+
+                ViewBag.Offers1 = offers2
                     .Take(4).ToList();
 
-                ViewBag.Offers2 = offers
-                    .OrderByDescending(a => CalculateDistance(a.Profile.City + " " + a.Profile.Street, profile.City + " " + profile.Street))
+                ViewBag.Offers2 = offers2
                     .Skip(4).Take(4).ToList();
             }
 
