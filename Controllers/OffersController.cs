@@ -249,7 +249,7 @@ namespace PROJEKT_PZ_NK_v3.Controllers
                     db.Notifications.Add(notifi);
                 }
                 db.SaveChanges();
-                return RedirectToAction("Index");
+                return RedirectToAction("Details", new { id = offer.ID });
             }
 
             return View(offer);
@@ -283,7 +283,7 @@ namespace PROJEKT_PZ_NK_v3.Controllers
             {
                 db.Entry(offer).State = EntityState.Modified;
                 db.SaveChanges();
-                return RedirectToAction("Index");
+                return RedirectToAction("Details", new { id = offer.ID });
             }
             return View(offer);
         }
