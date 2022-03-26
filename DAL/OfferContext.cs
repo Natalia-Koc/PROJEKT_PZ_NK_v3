@@ -21,6 +21,17 @@ namespace PROJEKT_PZ_NK_v3.DAL
                 modelBuilder.Entity<Comments>().HasRequired<Profile>(comment => comment.Profile)
                     .WithMany(profile => profile.Comments).HasForeignKey(comment => comment.ProfileID)
                     .WillCascadeOnDelete(false);
+
+            
+                modelBuilder.Entity<Offer>().HasRequired<Profile>(sp => sp.Profile)
+                    .WithMany(profile => profile.Offers).HasForeignKey(sp => sp.ProfileID)
+                    .WillCascadeOnDelete(false);
+
+            
+                modelBuilder.Entity<Notification>().HasRequired<Profile>(sp => sp.Profile)
+                    .WithMany(profile => profile.Notifications).HasForeignKey(sp => sp.ProfileID)
+                    .WillCascadeOnDelete(false);
+
             
                 modelBuilder.Entity<SavedProfiles>().HasRequired<Profile>(sp => sp.MyProfile)
                     .WithMany(profile => profile.MySavedProfiles).HasForeignKey(sp => sp.MyProfileID)
@@ -31,9 +42,13 @@ namespace PROJEKT_PZ_NK_v3.DAL
                     .WillCascadeOnDelete(false);
                 //usuniecie cyklicznego usuwania 
                 //ręczne definiowanie relacji i niecykliczne usuwanie 
-
+                
                 modelBuilder.Entity<Applications>().HasRequired<Profile>(application => application.Owner)
-                    .WithMany(profile => profile.Applications).HasForeignKey(application => application.OwnerID)
+                    .WithMany(profile => profile.OwnerApplications).HasForeignKey(application => application.OwnerID)
+                    .WillCascadeOnDelete(false);
+            
+                modelBuilder.Entity<Applications>().HasRequired<Profile>(application => application.Guardian)
+                    .WithMany(profile => profile.GuardianApplications).HasForeignKey(application => application.GuardianID)
                     .WillCascadeOnDelete(false);
 
                 modelBuilder.Conventions.Remove<PluralizingTableNameConvention>();

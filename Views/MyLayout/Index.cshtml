@@ -1,48 +1,48 @@
-﻿<a data-toggle="dropdown" style="background-color:transparent !important" href="#">
+﻿@model IEnumerable<PROJEKT_PZ_NK_v3.Models.Notification>
+
+
+<a data-toggle="dropdown" style="background-color:transparent !important" href="#">
     <span class="glyphicon glyphicon-bell text-xxl-center text-light"> @ViewBag.notifiCount </span>
 </a>
-    @if (ViewBag.notifiCount > 0)
-    {
-        <ul class="dropdown-menu overflow-auto" data-bs-spy="scroll" data-bs-offset="20"
-            style="max-height: 200px; width: 250px; background-color: transparent !important; border-radius: 5px; padding-bottom: 0px; margin-top: -10px;">
+@if (ViewBag.notifiCount > 0)
+{
+    <ul class="dropdown-menu overflow-auto" data-bs-spy="scroll" data-bs-offset="20"
+        style="max-height: 200px; width: 250px; background-color: transparent !important; border-radius: 5px; padding-bottom: 0px; margin-top: -10px;">
 
-            @foreach (var category in ViewBag.notifi)
-            {
+        @foreach (var category in (IEnumerable<PROJEKT_PZ_NK_v3.Models.Notification>)ViewBag.notifi)
+        {
             <li style="margin:0">
 
                 @if (category.Message.Contains("Oceń"))
                 {
-                    <button class="well-sm well" style="margin: 0; text-align: center; width: 248px; height: 60px">
-                        <a style="margin: 0; padding: 0; text-decoration: none" href="@Url.Action("DeleteAndViewProfile", "MyLayout",
-                                                             new { idNotifications = category.ID, idProfile = category.Offer.Profile.ID })">
+                        <a class="well-sm well" style="margin: 0; padding: 15px 8px; height: 60px;" href="@Url.Action("DeleteAndViewProfile", "MyLayout",
+                                                                new { idNotifications = category.ID, idProfile = category.WhoIRateID })">
                             @category.Message
                         </a>
-                    </button>
+                    
                 }
                 else
                 {
-                    <button class="well-sm well" style="margin: 0; text-align: center; width: 248px; height: 60px ">
-                        <a style="margin: 0; padding: 0; text-decoration:none" href="@Url.Action("DeleteAndViewOffer", "MyLayout",
+                    <a class="well-sm well" style="margin: 0; padding: 15px 8px; height: 60px;" href="@Url.Action("DeleteAndViewOffer", "MyLayout",
                                                              new { idNotifications = category.ID, idOffer = category.Offer.ID })">
                             @category.Message
 
-                        </a>
-                    </button>
+                    </a>
                 }
             </li>
-            }
-            <li style="margin:0">
-                @Html.ActionLink("Usuń wszystkie powiadomienia", "DeleteAllNotifications", "MyLayout", null,
-                    new { @class = "button btn-default well", style = "margin:0; text-align: center; width: 248px; height: 25px" })
-            </li>
-        </ul>
-    }
-    else
-    {
-<ul class="dropdown-menu overflow-auto" data-bs-spy="scroll" data-bs-offset="20"
-    style="max-height: 200px; width: 250px; border-radius: 5px; padding: 5px; margin-top: -10px;">
-    <li style="margin:5%; background-color:white">
-        <p style="text-align:center; background-color:white"> brak powiadomień</p>
-    </li>
-</ul>
-            }
+        }
+        <li style="margin:0">
+            @Html.ActionLink("Usuń wszystkie powiadomienia", "DeleteAllNotifications", "MyLayout", null,
+                new { @class = "button btn-default well", style = "margin:0; padding: 2px 8px; width: 248px; height: 25px" })
+        </li>
+    </ul>
+}
+else
+{
+    <ul class="dropdown-menu overflow-auto" data-bs-spy="scroll" data-bs-offset="20"
+        style="max-height: 200px; width: 250px; border-radius: 5px; padding: 5px; margin-top: -10px;">
+        <li style="margin:5%; background-color:white">
+            <p style="text-align:center; background-color:white"> brak powiadomień</p>
+        </li>
+    </ul>
+}

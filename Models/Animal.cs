@@ -36,7 +36,9 @@ namespace PROJEKT_PZ_NK_v3.Models
         [StringLength(1500, MinimumLength = 10, ErrorMessage = "Description cannot be longer than 1500 characters.")]
         public string Description { get; set; }
         public string Image { get; set; }
-
+        public int ProfileID { get; set; }
+        
         public virtual Profile Profiles { get; set; }
     }
+
 }

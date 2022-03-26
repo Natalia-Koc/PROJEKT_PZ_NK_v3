@@ -84,7 +84,7 @@
                 <dd>
                     @Html.DisplayFor(model => model.City),
                     @Html.DisplayFor(model => model.Street)
-                    @if (Model.Email == User.Identity.Name || Model.Applications.Any(a => a.OwnerID == Model.ID && a.StatusOwner == "Zaakceptowane!"))
+                    @if (Model.Email == User.Identity.Name || Model.OwnerApplications.Any(a => a.OwnerID == Model.ID && a.StatusOwner == "Zaakceptowane!"))
                     {
                         @Html.DisplayFor(model => model.HouseNumber)
                     }
@@ -217,7 +217,7 @@
 
         @using (Html.BeginForm("Create", "Comments"))
         {
-            if (Model.Email != User.Identity.Name && ViewBag.NotifiEnded != 0)
+            if (Model.Email != User.Identity.Name && ViewBag.Notified)
             {
                 if (!ViewBag.FoundComment)
                 {

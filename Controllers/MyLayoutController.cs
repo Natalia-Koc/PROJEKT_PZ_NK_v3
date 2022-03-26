@@ -15,38 +15,37 @@ namespace PROJEKT_PZ_NK_v3.Controllers
 
         // GET: Layout
         public ActionResult Index()
-        { 
-            var notifi = db.Notifications
-                .Include("Offer")
-                .Where(a => a.Profile.Email == User.Identity.Name);
-            ViewBag.notifi = notifi;
-            ViewBag.notifiCount = notifi.Count();
+        {
+            var profile = db.Profiles.Single(p => p.Email == User.Identity.Name);
+            ViewBag.notifi = profile.Notifications.Where(n => n.Removed == false).ToList();
+            ViewBag.notifiCount = profile.Notifications.Where(n => n.Removed == false).Count();
 
-            if (db.Applications != null )
+
+
+            var applicationsEnded = db.Applications
+                .Where(a => (a.StatusOwner == "Zaakceptowane!" || a.StatusGuardian == "Zaakceptowane!")
+                    && a.Offer.EndDate < DateTime.Now
+                    && !db.Notifications.Any(n => n.OfferID == a.OfferID && n.Message.Contains("Oceń"))).FirstOrDefault();
+
+            if (applicationsEnded != null && db.Notifications.Find(applicationsEnded.OfferID) != null)
             {
-                var applications = db.Applications
-                    .Include("Offer");
-                var applicationsEnded = applications
-                    .Where(a => (a.StatusOwner == "Zaakceptowane!" || a.StatusGuardian == "Zaakceptowane!")
-                        && a.Offer.EndDate >= DateTime.Now).FirstOrDefault();
-
-                if (applicationsEnded != null && db.Notifications.Find(applicationsEnded.OfferID) != null)
+                db.Notifications.Add(new Notification
                 {
-                    db.Notifications.Add(new Notification
-                    {
-                        Offer = applicationsEnded.Offer,
-                        Profile = applicationsEnded.Guardian,
-                        Message = "Oferta zakończona. Oceń właściciela!"
-                    });
-                    db.Notifications.Add(new Notification
-                    {
-                        Offer = applicationsEnded.Offer,
-                        Profile = applicationsEnded.Owner,
-                        Message = "Oferta zakończona. Oceń opiekuna!"
-                    });
-                    db.SaveChanges();
-                }
+                    Offer = applicationsEnded.Offer,
+                    Profile = applicationsEnded.Guardian,
+                    WhoIRateID = applicationsEnded.OwnerID,
+                    Message = "Oferta zakończona. Oceń właściciela!"
+                });
+                db.Notifications.Add(new Notification
+                {
+                    Offer = applicationsEnded.Offer,
+                    Profile = applicationsEnded.Owner,
+                    WhoIRateID = applicationsEnded.GuardianID,
+                    Message = "Oferta zakończona. Oceń opiekuna!"
+                });
+                db.SaveChanges();
             }
+            
 
             return PartialView("Index");
         }
@@ -54,7 +53,7 @@ namespace PROJEKT_PZ_NK_v3.Controllers
         public ActionResult DeleteAndViewProfile(int idNotifications, int idProfile)
         {
             var notifi = db.Notifications.Find(idNotifications);
-            db.Notifications.Remove(notifi);
+            notifi.Removed = true;
             db.SaveChanges();
 
             return RedirectToAction("DetailsAnotherProfile", "Profiles", new { id = idProfile });
@@ -63,7 +62,7 @@ namespace PROJEKT_PZ_NK_v3.Controllers
         public ActionResult DeleteAndViewOffer(int idNotifications, int idOffer)
         {
             var notifi = db.Notifications.Find(idNotifications);
-            db.Notifications.Remove(notifi);
+            notifi.Removed = true;
             db.SaveChanges();
 
             return RedirectToAction("Details", "Offers", new { id = idOffer });
@@ -75,7 +74,7 @@ namespace PROJEKT_PZ_NK_v3.Controllers
             var notifi = db.Notifications.Where(a => a.Profile.Email == User.Identity.Name);
             foreach (var notification in notifi)
             {
-                db.Notifications.Remove(notification);
+                notification.Removed = true;
             }
             db.SaveChanges();
 

@@ -29,6 +29,8 @@ namespace PROJEKT_PZ_NK_v3.Controllers
             ViewBag.ProgressBarCount = db.Comments.Where(m => m.Profile.Email == User.Identity.Name && m.Grade != 0).Count();
             ViewBag.FoundComment = db.Comments.Any(m => m.Author.Email == User.Identity.Name);
             
+            
+
             return View(profile);
         }
 
@@ -56,6 +58,34 @@ namespace PROJEKT_PZ_NK_v3.Controllers
             {
                 ViewBag.MyComment = db.Comments.First(m => m.Author.Email == User.Identity.Name);
             }
+
+
+            var zmienna = db.Applications
+                .Include("Offer")
+                .Include("Owner")
+                .Include("Guardian")
+                .Any(a => a.StatusOwner == "Zaakceptowane!"
+                    && (a.Guardian.Email == User.Identity.Name
+                    || a.Owner.Email == User.Identity.Name)
+                    && a.Offer.StartingDate < DateTime.Now);
+
+
+            var costam = profile.GuardianApplications.Any(a => a.StatusOwner == "Zaakceptowane!"
+                    && a.Owner.Email == User.Identity.Name
+                    && a.Offer.StartingDate < DateTime.Now) 
+                || profile.OwnerApplications.Any(a => a.StatusOwner == "Zaakceptowane!"
+                    && a.Guardian.Email == User.Identity.Name
+                    && a.Offer.StartingDate < DateTime.Now);
+
+
+
+
+            ViewBag.Notified = costam;
+
+
+
+
+
 
             ViewBag.NotifiEnded = db.Notifications.Where(a => a.Message.Contains("Oceń") && a.Profile.Email == User.Identity.Name).Count();
             
