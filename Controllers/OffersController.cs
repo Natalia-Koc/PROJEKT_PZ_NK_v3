@@ -136,7 +136,7 @@ namespace PROJEKT_PZ_NK_v3.Controllers
                     offers = offers.OrderBy(s => s.ID).ToList();
                     break;
             }
-            int pageSize = 12;
+            int pageSize = 9;
             int pageNumber = (page ?? 1);
             ViewBag.SortList = new List<string>() {
                 "tytuł malejąco",

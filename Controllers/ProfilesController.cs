@@ -40,8 +40,7 @@ namespace PROJEKT_PZ_NK_v3.Controllers
             {
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             }
-            Profile 
-            profile = db.Profiles.Find(id); 
+            Profile profile = db.Profiles.Find(id); 
             ViewBag.ProgressBarCount = db.Comments.Where(m => m.ProfileID == id && m.Grade != 0).Count();
             ViewBag.FoundComment = db.Comments.Any(m => m.Author.Email == User.Identity.Name && m.ProfileID == id);
             ViewBag.Favourite = db.SavedProfiles
@@ -56,7 +55,7 @@ namespace PROJEKT_PZ_NK_v3.Controllers
             }
             else
             {
-                ViewBag.MyComment = db.Comments.First(m => m.Author.Email == User.Identity.Name);
+                ViewBag.MyComment = db.Comments.First(c => c.Author.Email == User.Identity.Name && c.ProfileID == id);
             }
 
 
