@@ -21,7 +21,7 @@
     <hr />
     <div class="row">
         <div class="col-5 list-group-item-heading">
-            <img src="~/ImagesAnimals/@Html.DisplayFor(model => model.Animal.Image)" class="btn-" width="400px" style="margin-bottom: 2%; border-radius: 4px;">
+            <img src="~/ImagesAnimals/@Html.DisplayFor(model => model.Animal.Image)" class="btn-" width="400px" style="margin-bottom: 2%; border-radius: 4px; max-height: 400px; object-fit: cover;">
             <br />
             <p>
                 @if (Model.Profile.Email == User.Identity.Name)

@@ -20,30 +20,35 @@ namespace PROJEKT_PZ_NK_v3.Controllers
             ViewBag.notifi = profile.Notifications.Where(n => n.Removed == false).ToList();
             ViewBag.notifiCount = profile.Notifications.Where(n => n.Removed == false).Count();
 
+            var zmienna = db.Applications
+                .Where(a => (a.StatusOwner == "Zaakceptowane!" || a.StatusGuardian == "Zaakceptowane!")).ToList();
 
+            var applicationsEnded = zmienna.Where(a => a.Offer.EndDate < DateTime.Now
+                    && (a.Guardian.Email == User.Identity.Name || a.Owner.Email == User.Identity.Name)
+                    && !profile.Notifications.Any(n => n.OfferID == a.OfferID && n.Message.Contains("Oceń"))).ToList();
 
-            var applicationsEnded = db.Applications
-                .Where(a => (a.StatusOwner == "Zaakceptowane!" || a.StatusGuardian == "Zaakceptowane!")
-                    && a.Offer.EndDate < DateTime.Now
-                    && !db.Notifications.Any(n => n.OfferID == a.OfferID && n.Message.Contains("Oceń"))).FirstOrDefault();
-
-            if (applicationsEnded != null && db.Notifications.Find(applicationsEnded.OfferID) != null)
+            foreach (Applications item in applicationsEnded)
             {
-                db.Notifications.Add(new Notification
+                if (item != null && db.Notifications.Any(n => n.OfferID == item.OfferID))
                 {
-                    Offer = applicationsEnded.Offer,
-                    Profile = applicationsEnded.Guardian,
-                    WhoIRateID = applicationsEnded.OwnerID,
-                    Message = "Oferta zakończona. Oceń właściciela!"
-                });
-                db.Notifications.Add(new Notification
-                {
-                    Offer = applicationsEnded.Offer,
-                    Profile = applicationsEnded.Owner,
-                    WhoIRateID = applicationsEnded.GuardianID,
-                    Message = "Oferta zakończona. Oceń opiekuna!"
-                });
-                db.SaveChanges();
+                    db.Notifications.Add(new Notification
+                    {
+                        OfferID = item.OfferID,
+                        ProfileID = item.GuardianID,
+                        WhoIRateID = item.OwnerID,
+                        Message = "Oferta zakończona. Oceń właściciela!",
+                        Removed = false
+                    });
+                    db.Notifications.Add(new Notification
+                    {
+                        OfferID = item.OfferID,
+                        ProfileID = item.OwnerID,
+                        WhoIRateID = item.GuardianID,
+                        Message = "Oferta zakończona. Oceń opiekuna!",
+                        Removed = false
+                    });
+                    db.SaveChanges();
+                }
             }
             
 

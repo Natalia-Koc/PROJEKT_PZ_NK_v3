@@ -11,7 +11,7 @@
     <div class="row">
         <div class="col-5 list-group-item-heading">
 
-            <img src="~/ImagesAnimals/@Html.DisplayFor(model => model.Image)" width="400px"><br />
+            <img src="~/ImagesAnimals/@Html.DisplayFor(model => model.Image)" width="400px" style=" border-radius: 4px; max-height: 400px; object-fit: cover;"><br />
             @if (Model.Profiles.Email == User.Identity.Name)
             {
                 <p>
