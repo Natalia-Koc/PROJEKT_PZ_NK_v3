@@ -16,6 +16,7 @@ namespace PROJEKT_PZ_NK_v3.DAL
             OfferContext db = new OfferContext();
             //db.Database.Delete();
             //db.SaveChanges();
+
             /*List<Animal> animals = new List<Animal>
             {
                 new Animal {Name = "Meguniuniunia", Species = "Pies", Race ="Zmieszany mieszaniec przypomnijący krótkowłosego Owczarka",
@@ -32,24 +33,25 @@ namespace PROJEKT_PZ_NK_v3.DAL
                     Description = "Okropna przylepa, przedewszystkim uwielbia głaskanie ale nie pogardzi również dobrą zabawą."}
             };
             context.Animals.AddRange(animals);
-
+            */
             List<Profile> profiles = new List<Profile>
             {
                 new Profile{FirstName = "Natalia", LastName = "Koć", Login = "Tallusza",
                     Email = "tallusza@o2.pl",
-                    Address = "Siedlce 2", PhoneNumber ="793871271",
-                    Animals = new List<Animal>{animals[0]} },
-                new Profile{FirstName = "Daria", LastName = "Sitkowska", Login = "Darcia",
-                    Email = "darcia@o2.pl", 
-                    Address = "Warszawa 5", PhoneNumber ="756852943",
-                    Animals = new List<Animal>{animals[1]} },
-                new Profile{FirstName = "Zofia", LastName = "Biernacka", Login = "Zosia",
-                    Email = "zosia@o2.pl", 
-                    Address = "Siedlce 8", PhoneNumber ="726159423",
-                    Animals = new List<Animal>{animals[2], animals[3]} }
+                    City = "08-110 Siedlce", Street="Modrzewiowa", HouseNumber="56",
+                    PhoneNumber ="793871271",
+                    Comments = new List<Comments>{ },
+                    GuardianApplications = new List<Applications>{ },
+                    MySavedProfiles = new List<SavedProfiles>{ },
+                    Notifications = new List<Notification>{ },
+                    Offers = new List<Offer>{ },
+                    OwnerApplications = new List<Applications>{ },
+                    Rate = 0,
+                    SavedProfiles = new List<SavedProfiles>{ },
+                    Animals = new List<Animal>{ }}
             };
             context.Profiles.AddRange(profiles);
-
+            /*
             List<Offer> offers = new List<Offer>
             {
                 new Offer {Title = "Wyprowadzanie psa", Description = "Szukam osoby, która chciałaby wyprowadzić mojego psa na spacer.",

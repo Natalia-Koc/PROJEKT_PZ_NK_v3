@@ -26,37 +26,39 @@ namespace PROJEKT_PZ_NK_v3.Controllers
 
         public ActionResult Index()
         {
-
-            Models.Profile profile = db.Profiles.FirstOrDefault(p => p.Email == User.Identity.Name);
-            ViewBag.Profil = profile;
-
-            
-            if (profile != null)
+            if (User.Identity.IsAuthenticated)
             {
-                var offers = db.Offers
-                .Where(o => o.Profile.Email != User.Identity.Name
-                    && o.EndDate > DateTime.Now
-                    && !o.Profile.SavedProfiles
-                        .Any(sp => sp.MyProfile.Email == User.Identity.Name
-                            && sp.SavedProfile.Email == o.Profile.Email
-                            && sp.SavedAs == Saved.blocked)
-                    && !o.Profile.MySavedProfiles
-                        .Any(sp => sp.SavedProfile.Email == User.Identity.Name
-                            && sp.MyProfile.Email == o.Profile.Email
-                            && sp.SavedAs == Saved.blocked)
-                    && o.Profile.Comments.Where(b => (b.Author.Email == User.Identity.Name
-                        || b.Profile.Email == User.Identity.Name)
-                        && (b.Grade > 2 || b.Grade == 0)).Count() >= 0)
-                .ToList();
+                Models.Profile profile = db.Profiles.FirstOrDefault(p => p.Email == User.Identity.Name);
+                ViewBag.Profil = profile;
 
-                var offers2 = offers
-                    .OrderBy(a => CalculateDistance(a.Profile.City + " " + a.Profile.Street, profile.City + " " + profile.Street));
+                if (profile != null)
+                {
+                    var offers = db.Offers
+                    .Where(o => o.Profile.Email != User.Identity.Name
+                        && o.EndDate > DateTime.Now
+                        && !o.Profile.SavedProfiles
+                            .Any(sp => sp.MyProfile.Email == User.Identity.Name
+                                && sp.SavedProfile.Email == o.Profile.Email
+                                && sp.SavedAs == Saved.blocked)
+                        && !o.Profile.MySavedProfiles
+                            .Any(sp => sp.SavedProfile.Email == User.Identity.Name
+                                && sp.MyProfile.Email == o.Profile.Email
+                                && sp.SavedAs == Saved.blocked)
+                        && o.Profile.Comments.Where(b => (b.Author.Email == User.Identity.Name
+                            || b.Profile.Email == User.Identity.Name)
+                            && (b.Grade > 2 || b.Grade == 0)).Count() >= 0)
+                    .ToList();
 
-                ViewBag.Offers1 = offers2
-                    .Take(4).ToList();
+                    var offers2 = offers
+                        .OrderBy(a => CalculateDistance(a.Profile.City + " " + a.Profile.Street, profile.City + " " + profile.Street));
 
-                ViewBag.Offers2 = offers2
-                    .Skip(4).Take(4).ToList();
+                    ViewBag.Offers1 = offers2
+                        .Take(4).ToList();
+
+                    ViewBag.Offers2 = offers2
+                        .Skip(4).Take(4).ToList();
+                }
+
             }
 
 

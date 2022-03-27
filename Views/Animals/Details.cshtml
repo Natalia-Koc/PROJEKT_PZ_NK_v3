@@ -11,7 +11,15 @@
     <div class="row">
         <div class="col-5 list-group-item-heading">
 
-            <img src="~/ImagesAnimals/@Html.DisplayFor(model => model.Image)" width="400px">
+            <img src="~/ImagesAnimals/@Html.DisplayFor(model => model.Image)" width="400px"><br />
+            @if (Model.Profiles.Email == User.Identity.Name)
+            {
+                <p>
+                    @Html.ActionLink("Edytuj", "Edit", new { id = Model.ID }, new { @class = "btn btn-primary" })
+                    @Html.ActionLink("Usuń", "Delete", new { id = Model.ID }, new { @class = "btn btn-danger" })
+                </p>
+            }
+            </dd>
         </div>
         <div class="col-6 active">
             <div class="panel panel-info">
@@ -19,8 +27,6 @@
                     <dl class="dl-horizontal">
                         <dd>
                             <h2>@Html.DisplayFor(model => model.Name)</h2>
-
-                        </dd>
                     </dl>
                 </div>
                 <div class="panel-body">
@@ -89,13 +95,7 @@
 
         </div>
     </div>
-    @if (Model.Profiles.Email == User.Identity.Name)
-    {
-        <p>
-            @Html.ActionLink("Edytuj", "Edit", new { id = Model.ID }, new { @class = "btn btn-primary" })
-            @Html.ActionLink("Usuń", "Delete", new { id = Model.ID }, new { @class = "btn btn-danger" })
-        </p>
-    }
+
 
 
     @if (ViewBag.AnimalOffersCount > 0)

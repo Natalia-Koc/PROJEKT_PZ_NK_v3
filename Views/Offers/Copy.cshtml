@@ -55,7 +55,8 @@
                     <div class="custom-control custom-radio image-checkbox form-check form-check-inline">
                         <input type="radio" class="custom-control-input" id="@item.ID" name="AnimalID" value="@item.ID" @((Model.AnimalID == item.ID) ? "checked" : "")>
                         <label class="custom-control-label" for="@item.ID">
-                            <img src="~/ImagesAnimals/@item.Image" alt="#" class="img-fluid">
+                            <img style="width: 150px; max-height: 140px; object-fit: cover;" 
+                                 src="~/ImagesAnimals/@item.Image" alt="#" class="img-fluid">
                         </label>
                     </div>
                 </div>
@@ -72,9 +73,6 @@
 </div>
 }
 
-<div>
-    @Html.ActionLink("Powrót do listy wszystkich ofert ", "Index", null, new { @class = "btn btn-default" })
-</div>
 
 @section Scripts {
     @Scripts.Render("~/bundles/jqueryval")

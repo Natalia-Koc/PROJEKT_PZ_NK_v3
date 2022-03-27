@@ -26,6 +26,7 @@ namespace PROJEKT_PZ_NK_v3.DAL
                 modelBuilder.Entity<Offer>().HasRequired<Profile>(sp => sp.Profile)
                     .WithMany(profile => profile.Offers).HasForeignKey(sp => sp.ProfileID)
                     .WillCascadeOnDelete(false);
+            
 
             
                 modelBuilder.Entity<Notification>().HasRequired<Profile>(sp => sp.Profile)

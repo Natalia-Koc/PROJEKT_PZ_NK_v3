@@ -192,7 +192,7 @@ namespace PROJEKT_PZ_NK_v3.Controllers
                 .Include(a => a.Owner)
                 .Where(a => (a.Owner.Email == User.Identity.Name || a.Guardian.Email == User.Identity.Name)
                 && a.OfferID == id
-                && a.Offer.StartingDate > DateTime.Now
+                && a.Offer.EndDate > DateTime.Now
                 && a.StatusOwner != "Odrzucone"
                 && a.StatusGuardian != "Odrzucone"
                 && a.StatusGuardian != "Usuniete"

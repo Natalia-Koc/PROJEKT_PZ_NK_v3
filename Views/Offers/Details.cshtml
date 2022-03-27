@@ -5,12 +5,15 @@
 }
 <div style=" margin: 4%; width: 90%; text-align-last: justify;">
     <h2 class="glyphicon glyphicon-search">  Szczegóły oferty</h2>
-    <button type="button" class="btn btn-info" id="submitButton" data-toggle="modal" data-target="#myModal">
-        Pokaż na mapie 
-        <svg width="19" height="19" fill="currentColor" class="bi bi-geo-alt-fill" viewBox="0 0 16 16">
-            <path d="M8 16s6-5.686 6-10A6 6 0 0 0 2 6c0 4.314 6 10 6 10zm0-7a3 3 0 1 1 0-6 3 3 0 0 1 0 6z" />
-        </svg>
-    </button>
+    @if (Model.Profile.Email != User.Identity.Name)
+    {
+        <button type="button" class="btn btn-info" id="submitButton" data-toggle="modal" data-target="#myModal">
+            Pokaż na mapie 
+            <svg width="19" height="19" fill="currentColor" class="bi bi-geo-alt-fill" viewBox="0 0 16 16">
+                <path d="M8 16s6-5.686 6-10A6 6 0 0 0 2 6c0 4.314 6 10 6 10zm0-7a3 3 0 1 1 0-6 3 3 0 0 1 0 6z" />
+            </svg>
+        </button>
+    }
 </div>
 
 
