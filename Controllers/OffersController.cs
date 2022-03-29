@@ -202,9 +202,9 @@ namespace PROJEKT_PZ_NK_v3.Controllers
 
             var offers = db.Offers
                 .Where(a => a.ID != id && a.Profile.Email != User.Identity.Name && a.StartingDate >= DateTime.Now)
-                .OrderBy(a => a.Profile.ID == id)
-                .ThenBy(a => a.Animal.Species == offer.Animal.Species)
-                .ThenBy(a => a.Animal.Race == offer.Animal.Race)
+                .OrderByDescending(a => a.Animal.Species == offer.Animal.Species)
+                .ThenByDescending(a => a.Animal.Race == offer.Animal.Race)
+                .ThenByDescending(a => a.Profile.ID == offer.Profile.ID)
                 .Take(5)
                 .ToList();
             ViewBag.AnotherOffers = offers;

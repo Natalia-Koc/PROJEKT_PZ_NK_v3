@@ -17,7 +17,7 @@ namespace PROJEKT_PZ_NK_v3.Controllers
         public ActionResult Index()
         {
             var profile = db.Profiles.Single(p => p.Email == User.Identity.Name);
-            ViewBag.notifi = profile.Notifications.Where(n => n.Removed == false).ToList();
+            ViewBag.notifi = profile.Notifications.Where(n => n.Removed == false).OrderByDescending(n => n.ID).ToList();
             ViewBag.notifiCount = profile.Notifications.Where(n => n.Removed == false).Count();
 
             var zmienna = db.Applications

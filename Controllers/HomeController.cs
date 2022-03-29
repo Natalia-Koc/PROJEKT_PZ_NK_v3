@@ -26,46 +26,34 @@ namespace PROJEKT_PZ_NK_v3.Controllers
 
         public ActionResult Index()
         {
-            if (User.Identity.IsAuthenticated)
+            Models.Profile profile = db.Profiles.FirstOrDefault(p => p.Email == User.Identity.Name);
+            ViewBag.Profil = profile;
+            if (profile != null)
             {
-                Models.Profile profile = db.Profiles.FirstOrDefault(p => p.Email == User.Identity.Name);
-                ViewBag.Profil = profile;
-
-                if (profile != null)
-                {
-                    var offers = db.Offers
-                    .Where(o => o.Profile.Email != User.Identity.Name
-                        && o.EndDate > DateTime.Now
-                        && !o.Profile.SavedProfiles
-                            .Any(sp => sp.MyProfile.Email == User.Identity.Name
-                                && sp.SavedProfile.Email == o.Profile.Email
-                                && sp.SavedAs == Saved.blocked)
-                        && !o.Profile.MySavedProfiles
-                            .Any(sp => sp.SavedProfile.Email == User.Identity.Name
-                                && sp.MyProfile.Email == o.Profile.Email
-                                && sp.SavedAs == Saved.blocked)
-                        && o.Profile.Comments.Where(b => (b.Author.Email == User.Identity.Name
+                var offers = db.Offers
+                .Where(o => o.Profile.Email != User.Identity.Name
+                    && o.StartingDate > DateTime.Now
+                    && !o.Profile.SavedProfiles
+                        .Any(sp => sp.MyProfile.Email == User.Identity.Name
+                            && sp.SavedProfile.Email == o.Profile.Email && sp.SavedAs == Saved.blocked)
+                    && !o.Profile.MySavedProfiles
+                        .Any(sp => sp.SavedProfile.Email == User.Identity.Name
+                            && sp.MyProfile.Email == o.Profile.Email && sp.SavedAs == Saved.blocked)
+                    && o.Profile.Comments.Where(b => (b.Author.Email == User.Identity.Name 
                             || b.Profile.Email == User.Identity.Name)
-                            && (b.Grade > 2 || b.Grade == 0)).Count() >= 0)
-                    .ToList();
+                            && (b.Grade > 2 || b.Grade == 0))
+                        .Count() >= 0)
+                .ToList();
 
-                    var offers2 = offers
-                        .OrderBy(a => CalculateDistance(a.Profile.City + " " + a.Profile.Street, profile.City + " " + profile.Street));
-
-                    ViewBag.Offers1 = offers2
-                        .Take(4).ToList();
-
-                    ViewBag.Offers2 = offers2
-                        .Skip(4).Take(4).ToList();
-                }
-
+                var orderOffer = offers
+                    .OrderBy(a => CalculateDistance(a.Profile.City + " " + a.Profile.Street, profile.City + " " + profile.Street));
+                
+                ViewBag.Offers1 = orderOffer.Take(4).ToList();
+                ViewBag.Offers2 = orderOffer.Skip(4).Take(4).ToList();
             }
-
-
             ViewBag.StatisticsAnimals = db.Animals.Count();
             ViewBag.StatisticsOffers = db.Offers.Count();
             ViewBag.StatisticsUsers = db.Profiles.Count();
-
             return View();
         }
 
@@ -96,7 +84,9 @@ namespace PROJEKT_PZ_NK_v3.Controllers
         float CalculateDistance(string source, string destination)
         {
             string distance;
-            string url = "https://maps.googleapis.com/maps/api/distancematrix/xml?origins=" + source + "&destinations=" + destination + "&key=AIzaSyA1BOzf3325XV08x9aMj_kELckTcgL3xrQ";
+            string url = "https://maps.googleapis.com/maps/api/distancematrix/xml?origins=" + source 
+                + "&destinations=" + destination 
+                + "&key=AIzaSyA1BOzf3325XV08x9aMj_kELckTcgL3xrQ";
             WebRequest request = WebRequest.Create(url);
             using (WebResponse response = (HttpWebResponse)request.GetResponse())
             {

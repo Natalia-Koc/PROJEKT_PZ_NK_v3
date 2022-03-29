@@ -7,7 +7,7 @@
     <h2 class="glyphicon glyphicon-search">  Szczegóły oferty</h2>
     @if (Model.Profile.Email != User.Identity.Name)
     {
-        <button type="button" class="btn btn-info" id="submitButton" data-toggle="modal" data-target="#myModal">
+        <button type="button" class="btn btn-primary" id="submitButton" data-toggle="modal" data-target="#myModal">
             Pokaż na mapie 
             <svg width="19" height="19" fill="currentColor" class="bi bi-geo-alt-fill" viewBox="0 0 16 16">
                 <path d="M8 16s6-5.686 6-10A6 6 0 0 0 2 6c0 4.314 6 10 6 10zm0-7a3 3 0 1 1 0-6 3 3 0 0 1 0 6z" />
@@ -21,7 +21,7 @@
     <hr />
     <div class="row">
         <div class="col-5 list-group-item-heading">
-            <img src="~/ImagesAnimals/@Html.DisplayFor(model => model.Animal.Image)" class="btn-" width="400px" style="margin-bottom: 2%; border-radius: 4px; max-height: 400px; object-fit: cover;">
+            <img src="~/ImagesAnimals/@Html.DisplayFor(model => model.Animal.Image)" width="400px" style="margin-bottom: 2%; border-radius: 4px; max-height: 300px; object-fit: cover;">
             <br />
             <p>
                 @if (Model.Profile.Email == User.Identity.Name)
@@ -103,7 +103,7 @@
         </div>
 
         <div class="col-7 active">
-            <div class="panel panel-info">
+            <div class="panel panel-default">
                 <div class="panel-heading">
                     <dl class="dl-horizontal">
                         <dd>
@@ -271,7 +271,7 @@
                             <b>@item.StatusOwner</b>
                         }
                     </td>
-                    <td>
+                    <td style="display: flex; align-items: center;">
                         @if (Model.Profile.Email == User.Identity.Name)
                         {
                             if (item.StatusGuardian != "Zaakceptowane!" &&
@@ -308,11 +308,11 @@
                 <div class="card col-2 list-group-item-heading" style="padding:1%">
                     <a href="@Url.Action("Details", "Offers", new { id = item.ID })">
                         <img class="card-img-top center-block block d-block mx-auto"
-                             style="max-height: 130px; object-fit: cover;"
+                             style="height: 120px; object-fit: cover;"
                              src="~/ImagesAnimals/@item.Animal.Image" alt="Card image"
                              title="Pokaż więcej informacji">
                     </a>
-                    <div class="card-body">
+                    <div class="card-body" style="padding: 0.3rem;">
                         <a href="@Url.Action("Details", "Offers", new { id = item.ID })">
                             <h5 class="card-title">@item.Title</h5>
                         </a>

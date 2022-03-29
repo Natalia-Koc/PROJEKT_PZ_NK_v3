@@ -22,7 +22,7 @@
                         <h4 class="panel-title list-group-item">
                             @Html.ActionLink(item.Login, "DetailsAnotherProfile", "Profiles", new { id = item.ID }, new { style= "font-weight: bold;" })<br />
                             @item.FirstName @item.LastName<br /><br />
-                            <a data-toggle="collapse" data-parent="#accordion" href="#@item.ID">
+                            <a data-toggle="collapse" data-parent="#accordion" href="#@item.ID" style=" text-decoration: none;">
                                 <small>
                                     <kbd style="background-color:white; color:black">
                                         Pokaż oferty 

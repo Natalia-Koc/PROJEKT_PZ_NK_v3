@@ -47,7 +47,7 @@
                     <ins>Rasa</ins>: @Html.DisplayFor(modelItem => item.Offer.Animal.Race)<br />
                     <ins>Waga</ins>: @Html.DisplayFor(modelItem => item.Offer.Animal.Weight)
                 </td>
-                <td>
+                <td width="250px">
                     @Html.DisplayFor(modelItem => item.Message)
                 </td>
                 <td>
@@ -64,7 +64,7 @@
                         <b>@Html.DisplayFor(modelItem => item.StatusOwner)</b>
                     }
                 </td>
-                <td>
+                <td style="display: flex; align-items: center;">
                     @if (item.StatusGuardian != "Zaakceptowane!" && item.StatusGuardian != "Odrzucone" && 
                         item.StatusOwner != "Odrzucone")
                     {
